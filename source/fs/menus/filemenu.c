@@ -1,27 +1,29 @@
 #include "filemenu.h"
-#include "../../err.h"
-#include "../../gfx/menu.h"
-#include "../../gfx/gfxutils.h"
-#include "../fsutils.h"
+
+#include <libs/fatfs/ff.h>
 #include <mem/heap.h>
+#include <storage/nx_sd.h>
 #include <string.h>
 #include <utils/sprintf.h>
-#include "../../tegraexplorer/tconf.h"
-#include "../../hid/hid.h"
-#include <libs/fatfs/ff.h>
-#include "../../utils/utils.h"
-#include "../../keys/nca.h"
-#include <storage/nx_sd.h>
-#include "../../storage/emummc.h"
-#include "../../script/eval.h"
-#include "../../script/parser.h"
-#include "../../script/garbageCollector.h"
 
+#include "../../err.h"
+#include "../../gfx/gfxutils.h"
+#include "../../gfx/menu.h"
+#include "../../hid/hid.h"
+#include "../../keys/nca.h"
+#include "../../kiptool/kiptoolMenu.h"
+#include "../../script/eval.h"
+#include "../../script/garbageCollector.h"
+#include "../../script/parser.h"
+#include "../../storage/emummc.h"
+#include "../../tegraexplorer/tconf.h"
+#include "../../utils/utils.h"
+#include "../fsutils.h"
 
 MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- File menu --"},
-    {.optionUnion = COLORTORGB(COLOR_GREEN) | SKIPBIT}, // For the file name and size
-    {.optionUnion = COLORTORGB(COLOR_VIOLET) | SKIPBIT}, // For the file Attribs
+    {.optionUnion = COLORTORGB(COLOR_GREEN) | SKIPBIT},   // For the file name and size
+    {.optionUnion = COLORTORGB(COLOR_VIOLET) | SKIPBIT},  // For the file Attribs
     {.optionUnion = HIDEBIT},
     {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "<- Back"},
     {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nCopy to clipboard"},
@@ -31,48 +33,46 @@ MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "View hex"},
     {.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Launch Payload"},
     {.optionUnion = COLORTORGB(COLOR_YELLOW), .name = "Launch Script"},
+    {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nKip tool"},
 };
 
-
-void UnimplementedException(char *path, FSEntry_t entry){
+void UnimplementedException(char *path, FSEntry_t entry) {
     DrawError(newErrCode(TE_ERR_UNIMPLEMENTED));
 }
 
 extern int launch_payload(char *path);
 
-void LaunchPayload(char *path, FSEntry_t entry){
-    launch_payload(CombinePaths(path, entry.name));
-}
+void LaunchPayload(char *path, FSEntry_t entry) { launch_payload(CombinePaths(path, entry.name)); }
 
-void CopyClipboard(char *path, FSEntry_t entry){
+void KipTool(char *path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
+
+void CopyClipboard(char *path, FSEntry_t entry) {
     char *thing = CombinePaths(path, entry.name);
     SetCopyParams(thing, CMODE_Copy);
     free(thing);
 }
 
-void MoveClipboard(char *path, FSEntry_t entry){
+void MoveClipboard(char *path, FSEntry_t entry) {
     char *thing = CombinePaths(path, entry.name);
     SetCopyParams(thing, CMODE_Move);
     free(thing);
 }
 
-void DeleteFile(char *path, FSEntry_t entry){
+void DeleteFile(char *path, FSEntry_t entry) {
     gfx_con_setpos(384 + 16, 200 + 16 + 10 * 16);
     SETCOLOR(COLOR_RED, COLOR_DARKGREY);
     gfx_printf("Are you sure?      ");
-    
+
     WaitFor(500);
-    if (!MakeYesNoHorzMenu(3, COLOR_DARKGREY))
-        return;
+    if (!MakeYesNoHorzMenu(3, COLOR_DARKGREY)) return;
 
     char *thing = CombinePaths(path, entry.name);
     int res = f_unlink(thing);
-    if (res)
-        DrawError(newErrCode(res));
+    if (res) DrawError(newErrCode(res));
     free(thing);
 }
 
-void RunScriptString(char *str, u32 size){
+void RunScriptString(char *str, u32 size) {
     TConf.scriptCWD = "sd:/";
     gfx_clearscreen();
     ParserRet_t ret = parseScript(str, size);
@@ -86,15 +86,14 @@ void RunScriptString(char *str, u32 size){
     vecFree(ret.main.operations);
 }
 
-void RunScript(char *path, FSEntry_t entry){
+void RunScript(char *path, FSEntry_t entry) {
     char *thing = CombinePaths(path, entry.name);
     u32 size;
     char *script = sd_file_read(thing, &size);
     free(thing);
     TConf.scriptCWD = path;
 
-    if (!script)
-        return;
+    if (!script) return;
 
     if (((entry.size >= 16 && entry.sizeDef == 1) || entry.sizeDef >= 2) && !TConf.minervaEnabled)
         return;
@@ -105,7 +104,7 @@ void RunScript(char *path, FSEntry_t entry){
     free(script);
     setStaticVars(&ret.staticVarHolder);
     initRuntimeVars();
-    Variable_t* res = eval(ret.main.operations.data, ret.main.operations.count, 1);
+    eval(ret.main.operations.data, ret.main.operations.count, 1);
     exitRuntimeVars();
     exitStaticVars(&ret.staticVarHolder);
     exitFunction(ret.main.operations.data, ret.main.operations.count);
@@ -113,17 +112,17 @@ void RunScript(char *path, FSEntry_t entry){
     vecFree(ret.main.operations);
 }
 
-void RenameFile(char *path, FSEntry_t entry){
+void RenameFile(char *path, FSEntry_t entry) {
     gfx_clearscreen();
     char *renameTo = ShowKeyboard(entry.name, false);
-    if (renameTo == NULL || !(*renameTo)) // smol memory leak but eh
+    if (renameTo == NULL || !(*renameTo))  // smol memory leak but eh
         return;
-    
+
     char *src = CombinePaths(path, entry.name);
     char *dst = CombinePaths(path, renameTo);
 
     int res = f_rename(src, dst);
-    if (res){
+    if (res) {
         DrawError(newErrCode(res));
     }
 
@@ -133,7 +132,7 @@ void RenameFile(char *path, FSEntry_t entry){
 }
 
 // This is from the original TE and it's bad but uhh i'm too lazy to fix it
-void HexView(char *path, FSEntry_t entry){
+void HexView(char *path, FSEntry_t entry) {
     char *filePath = CombinePaths(path, entry.name);
 
     FIL in;
@@ -143,21 +142,20 @@ void HexView(char *path, FSEntry_t entry){
     int res;
     Input_t *input = hidRead();
 
-    while (input->buttons & (BtnPow | JoyB))
-        hidRead();
+    while (input->buttons & (BtnPow | JoyB)) hidRead();
 
     gfx_clearscreen();
     print = calloc(2048, 1);
 
-    if ((res = f_open(&in, filePath, FA_READ | FA_OPEN_EXISTING))){
+    if ((res = f_open(&in, filePath, FA_READ | FA_OPEN_EXISTING))) {
         DrawError(newErrCode(res));
         return;
     }
 
-    while (1){
+    while (1) {
         f_lseek(&in, offset * 32);
 
-        if ((res = f_read(&in, print, 2048, &size))){
+        if ((res = f_read(&in, print, 2048, &size))) {
             DrawError(newErrCode(res));
             return;
         }
@@ -167,32 +165,21 @@ void HexView(char *path, FSEntry_t entry){
 
         input = hidRead();
 
-        if (!(input->buttons))
-            input = hidWait();
+        if (!(input->buttons)) input = hidWait();
 
-        if (input->down && 2048 == size)
-            offset += 2;
-        if (input->up && offset > 0)
-            offset -= 2;
-        if (input->buttons & (BtnPow | JoyB))
-            break;
+        if (input->down && 2048 == size) offset += 2;
+        if (input->up && offset > 0) offset -= 2;
+        if (input->buttons & (BtnPow | JoyB)) break;
     }
     f_close(&in);
     free(print);
     free(filePath);
 }
 
-fileMenuPath FileMenuPaths[] = {
-    CopyClipboard,
-    MoveClipboard,
-    RenameFile,
-    DeleteFile,
-    HexView,
-    LaunchPayload,
-    RunScript
-};
+fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile,
+                                HexView,       LaunchPayload, RunScript,  KipTool};
 
-void FileMenu(char *path, FSEntry_t entry){
+void FileMenu(char *path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;
     FileMenuEntries[0].sizeUnion = entry.sizeUnion;
     char attribs[16];
@@ -203,14 +190,14 @@ void FileMenu(char *path, FSEntry_t entry){
 
     FileMenuEntries[10].hide = !StrEndsWith(entry.name, ".bin");
     FileMenuEntries[11].hide = !StrEndsWith(entry.name, ".te");
+    FileMenuEntries[12].hide = !StrEndsWith(entry.name, ".kip");
 
     Vector_t ent = vecFromArray(FileMenuEntries, ARR_LEN(FileMenuEntries), sizeof(MenuEntry_t));
     gfx_boxGrey(384, 200, 384 + 512, 200 + 320, 0x33);
     gfx_con_setpos(384 + 16, 200 + 16);
     int res = newMenu(&ent, 0, 30, 19, ENABLEB | ALWAYSREDRAW | USELIGHTGREY, ent.count);
-    
-    if (res <= 4)
-        return;
-    
+
+    if (res <= 4) return;
+
     FileMenuPaths[res - 5](path, entry);
-} 
+}

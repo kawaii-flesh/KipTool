@@ -16,3 +16,5 @@ source/script/.vs
 source/script/builtin.c
 
 source/script/builtin.h
+tools/lz
+tools/bin2c
