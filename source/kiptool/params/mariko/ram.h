@@ -1,67 +1,59 @@
 #pragma once
+
+#include "../customize.h"
 #include "../param.h"
 
-const FixedValues mRAMMHzValues = {41,
-                                   {{1600000, "SYK-LOH eb1"},
-                                    {1734400, "ECO ST3 eb2"},
-                                    {1862400, "ECO ST2 eb2"},
-                                    {1900800},
-                                    {1939200},
-                                    {1977600},
-                                    {1996800, "ECO ST1 eb2"},
-                                    {2016000},
-                                    {2054400},
-                                    {
-                                        2092800,
-                                    },
-                                    {2131200, "ST1 eb3"},
-                                    {2169600},
-                                    {2208000},
-                                    {2246400},
-                                    {2265600, "ST2 eb3"},
-                                    {2284800},
-                                    {2300000},
-                                    {2323200},
-                                    {2361600},
-                                    {2400000, "ST3 eb3"},
-                                    {2438400},
-                                    {2476800},
-                                    {2500000},
-                                    {2515200},
-                                    {2534400, "SPR1 eb4"},
-                                    {2553600},
-                                    {2592000},
-                                    {2630400},
-                                    {2665600, "SPR2 eb4"},
-                                    {2668800},
-                                    {2707200},
-                                    {2745600},
-                                    {2800000, "SPR3 eb4"},
-                                    {2784000},
-                                    {2822400},
-                                    {2860800},
-                                    {2899200},
-                                    {2934400, "LOH-C4C eb5"},
-                                    {2937600},
-                                    {2976000},
-                                    {3000000}}};
-const Param mRAMMHz = {"RAM MHz", NULL, NULL, 32, 3, 2265600, EFixedValues, &mRAMMHzValues};
+const FixedValues marikoEmcMaxClockFV = {.valuesCount = 11,
+                                         .values = {{.value = 1600000, .label = "S-LOH"},
+                                                    {.value = 1734400, .label = "E ST3"},
+                                                    {.value = 1862400, .label = "E ST2"},
+                                                    {.value = 1996800, .label = "E ST1"},
+                                                    {.value = 2131200, .label = "D ST1"},
+                                                    {.value = 2265600, .label = "D ST2"},
+                                                    {.value = 2400000, .label = "D ST3"},
+                                                    {.value = 2534400, .label = "S ST1"},
+                                                    {.value = 2665600, .label = "S ST2"},
+                                                    {.value = 2800000, .label = "S ST3"},
+                                                    {.value = 2934400, .label = "L-C4C"}}};
+const FixedLimits marikoEmcMaxClockFL = {.min = 1333000, .max = 2733000, .stepSize = 38400};
+const Param marikoEmcMaxClock = {
+    .name = "EMC Max Clock",
+    .measure = "mHz",
+    .description = NULL,
+    .offset = getOffset(custTable.marikoEmcMaxClock),
+    .length = 4,
+    .defaultValue = custTable.marikoEmcMaxClock,
+    .limitsCount = 2,
+    .limits = {{.type = EFixedValues, .values = &marikoEmcMaxClockFV}, {.type = EFixedLimits, .values = &marikoEmcMaxClockFL}}};
 
-const Param mRAMVddq = {"RAM Vddq", "mV",   NULL,         36,
-                        3,          650000, EFixedLimits, {350000, 750000, 10000}};
-// const Param mEMCDVBMode = {
-//     "EMC DVB Mode",
-//     "mV",
-//     NULL,
-//     56,
-//     3,
-//     defaultValue,
-//     labeled = false,
-//     37,
-//     {{250},  {275},  {300},  {325},  {350},  {375},  {400}, {425}, {450}, {475},
-//      {500},  {525},  {550},  {575},  {600},  {625},  {650}, {675}, {700}, {725},
-//      {750},  {775},  {800},  {825},  {850},  {875},  {900}, {925}, {950}, {975},
-//      {1000}, {1025}, {1050}, {1075}, {1100}, {1125}, {1150}}};
+    const FixedValues marikoEmcVddqVoltFV = {
+    .valuesCount = 3, .values = {{.value = 550000, .label = "ECO"}, {.value = 650000}, {.value = 750000, .label = "SRT"}}};
+const FixedLimits marikoEmcVddqVoltFL = {.min = 300000, .max = 800000, .stepSize = 100000};
+const Param marikoEmcVddqVolt = {
+    .name = "EMC VDDq Volt",
+    .measure = "mV",
+    .description = NULL,
+    .offset = getOffset(custTable.marikoEmcVddqVolt),
+    .length = 4,
+    .defaultValue = custTable.marikoEmcVddqVolt,
+    .limitsCount = 2,
+    .limits = {{.type = EFixedValues, .values = &marikoEmcVddqVoltFV}, {.type = EFixedLimits, .values = &marikoEmcVddqVoltFL}}};
 
-const Param *mRAMParams[] = {&mRAMMHz, &mRAMVddq};
-const unsigned int mRAMParamsCount = 2;
+const FixedValues marikoEmcDvbShiftFV = {.valuesCount = 4,
+                                         .values = {{.value = 3, .label = "AUTO"},
+                                                    {.value = 2, .label = "AUTO ECO ST1"},
+                                                    {.value = 1, .label = "AUTO ECO ST2"},
+                                                    {.value = 0, .label = "AUTO ECO ST3"}}};
+const FixedLimits marikoEmcDvbShiftFL = {.min = 300, .max = 1150, .stepSize = 10, .measure = "mV"};  // TODO ? Step size
+const Param marikoEmcDvbShift = {
+    .name = "EMC DVB Shift",
+    .measure = NULL,
+    .description = NULL,
+    .offset = getOffset(custTable.marikoEmcDvbShift),
+    .length = 4,
+    .defaultValue = custTable.marikoEmcDvbShift,
+    .limitsCount = 2,
+    .limits = {{.type = EFixedValues, .values = &marikoEmcDvbShiftFV}, {.type = EFixedLimits, .values = &marikoEmcDvbShiftFL}}};
+
+const unsigned int mRAMParamsCount = 3;
+const Param *mRAMParams[] = {&marikoEmcMaxClock,&marikoEmcVddqVolt,&marikoEmcDvbShift};

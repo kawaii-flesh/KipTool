@@ -15,14 +15,19 @@ typedef struct {
 } Value;
 
 typedef struct {
+    const enum LimitsType type;
+    const void *values;
+} Limit;
+
+typedef struct {
     const char *name;
     const char *measure;
     const char *description;
     const unsigned int offset;
     const unsigned int length;
     const unsigned int defaultValue;
-    const enum LimitsType limitsType;
-    const void *limits;
+    const unsigned int limitsCount;
+    const Limit limits[];
 } Param;
 
 typedef struct {
@@ -38,6 +43,7 @@ typedef struct {
     const unsigned int min;
     const unsigned int max;
     const unsigned int stepSize;
+    const char *measure;
 } FixedLimits;
 
 typedef struct {

@@ -1,49 +1,40 @@
 #pragma once
+
+#include "../customize.h"
 #include "../param.h"
 
-const Param mdCPUv = {"dCPUv", "mV", NULL, 12348, 3, 0, EFixedLimits, {700, 890, 5}};
+const FixedValues marikoCpuMaxVoltFV = {.valuesCount = 4,
+                                        .values = {{.value = 1150, .label = "ECO"},
+                                                   {.value = 1180, .label = "STAGE 1"},
+                                                   {.value = 1210, .label = "STAGE 2"},
+                                                   {.value = 1250, .label = "STAGE 3"}}};
+const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1280, .stepSize = 5};
+const Param marikoCpuMaxVolt = {
+    .name = "CPU Max Volt",
+    .measure = "mV",
+    .description = NULL,
+    .offset = getOffset(custTable.marikoCpuMaxVolt),
+    .length = 4,
+    .defaultValue = custTable.marikoCpuMaxVolt,
+    .limitsCount = 2,
+    .limits = {{.type = EFixedValues, .values = &marikoCpuMaxVoltFV}, {.type = EFixedLimits, .values = &marikoCpuMaxVoltFL}}};
 
-const Param mCPUMinimalVoltage = {"CPU Minimal Voltage",  "mV", NULL, 48, 3, 0, EMaxByParam,
-                                  {250000, &mdCPUv, 5000}};
+const FixedValues marikoCpuUVFV = {.valuesCount = 4,
+                                   .values = {{.value = 0},
+                                              {.value = 1, .label = "ECO ST1"},
+                                              {.value = 2},
+                                              {.value = 3, .label = "ECO ST2"},
+                                              {.value = 4},
+                                              {.value = 5, .label = "ECO ST3"},
+                                              {.value = 6}}};
+const Param marikoCpuUV = {.name = "CPU UV",
+                           .measure = NULL,
+                           .description = NULL,
+                           .offset = getOffset(custTable.marikoCpuUV),
+                           .length = 4,
+                           .defaultValue = custTable.marikoCpuUV,
+                           .limitsCount = 1,
+                           .limits = {{.type = EFixedValues, .values = &marikoCpuUVFV}}};
 
-const Param mCPUMaximumVoltage = {"CPU Maximum Voltage", "mV", NULL, 28, 3, 0, EMinByParam,
-                                  {&mdCPUv, 1270, 10}};
-
-const Param mCPUBoostClock = {"CPU Boost Clock",       "MHz", NULL, 12, 3, 0, EFixedLimits,
-                              {1785000, 3009000, 1000}};
-
-const FixedValues mLowMHzUndervoltValues = {6,
-                                            {{0, "Base undervolting"},
-                                             {1, "Level 1"},
-                                             {2, "Level 2"},
-                                             {3, "Level 3"},
-                                             {4, "Level 4"},
-                                             {5, "Level 5"}}};
-const Param mLowMHzUndervolt = {"Low MHz Undervolt",    NULL, NULL, 40, 1, 0, EFixedValues,
-                                &mLowMHzUndervoltValues};
-
-const FixedValues mHighMHzUndervoltValues = {8,
-                                             {{0, "Base undervolting"},
-                                              {1, "Level 1"},
-                                              {2, "Level 2"},
-                                              {3, "Level 3"},
-                                              {4, "Level 4"},
-                                              {5, "Level 5"},
-                                              {6, "Level 6"},
-                                              {7, "Level 7"}}};
-const Param mHighMHzUndervolt = {"High MHz Undervolt",    NULL, NULL, 12340, 1, 0, EFixedValues,
-                                 &mHighMHzUndervoltValues};
-
-const FixedValues mSpeedShiftValues = {5,
-                                       {{0, "Default"},
-                                        {50, "Sport"},
-                                        {100, "ECO Stage 1"},
-                                        {125, "ECO Stage 2"},
-                                        {150, "ECO Stage 3"}}};
-const Param mSpeedShift = {"Speed Shift",     NULL, NULL, 12336, 1, 0, EFixedValues,
-                           &mSpeedShiftValues};
-
-const Param *mCPUParams[] = {
-    &mCPUMinimalVoltage, &mdCPUv,         &mCPUMaximumVoltage, &mLowMHzUndervolt,
-    &mHighMHzUndervolt,  &mCPUBoostClock, &mSpeedShift};
-const unsigned int mCPUParamsCount = 7;
+const unsigned int mCPUParamsCount = 2;
+const Param *mCPUParams[] = {&marikoCpuMaxVolt, &marikoCpuUV};
