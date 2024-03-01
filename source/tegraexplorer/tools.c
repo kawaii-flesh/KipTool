@@ -4,12 +4,9 @@
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
 #include <libs/fatfs/ff.h>
-#include "../keys/keys.h"
-#include "../keys/nca.h"
 #include <storage/nx_sd.h>
 #include "../fs/fsutils.h"
 #include <utils/util.h>
-#include "../storage/mountmanager.h"
 #include "../err.h"
 #include <utils/sprintf.h>
 #include <mem/heap.h>
@@ -18,87 +15,7 @@
 #include <string.h>
 #include "../fs/fscopy.h"
 #include "../utils/utils.h"
-
-extern sdmmc_storage_t sd_storage;
-extern bool is_sd_inited;
-
-MenuEntry_t FatAndEmu[] = {
-	{.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Back to main menu"},
-	{.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Fat32 + EmuMMC"},
-	{.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Only Fat32"}
-};
-
-void FormatSD(){
-	gfx_clearscreen();
-	disconnectMMC();
-	DWORD plist[] = {0,0,0,0};
-	bool emummc = 0;
-	int res;
-
-	if (!is_sd_inited || sd_get_card_removed())
-		return;
-
-	gfx_printf("\nDo you want to partition for an emummc?\n");
-	res = MakeHorizontalMenu(FatAndEmu, ARR_LEN(FatAndEmu), 3, COLOR_DEFAULT, 0);
-	
-	if (!res)
-		return;
-
-	emummc = !(res - 1);
-	
-	SETCOLOR(COLOR_RED, COLOR_DEFAULT);
-
-	plist[0] = sd_storage.csd.capacity;
-	if (emummc){
-		if (plist[0] < 83886080){
-            gfx_printf("\n\nYou seem to be running this on a 32GB or smaller SD\nNot enough free space for emummc!");
-			hidWait();
-			return;
-        }
-		plist[0] -= 61145088;
-		u32 allignedSectors = plist[0] - plist[0] % 2048;
-		plist[1] = 61145088 + plist[0] % 2048;
-		plist[0] = allignedSectors;
-	}
-
-	gfx_printf("\n\nAre you sure you want to format your sd?\nThis will delete everything on your SD card!\nThis action is irreversible!\n\n");
-	WaitFor(1500);
-
-	gfx_printf("%kAre you sure?   ", COLOR_WHITE);
-	if (!MakeYesNoHorzMenu(3, COLOR_DEFAULT)){
-		return;
-	}
-
-	RESETCOLOR;
-
-	gfx_printf("\n\nStarting Partitioning & Formatting\n");
-
-	for (int i = 0; i < 2; i++){
-		gfx_printf("Part %d: %dKiB\n", i + 1, plist[i] / 2);
-	}
-
-	u8 *work = malloc(TConf.FSBuffSize);
-	res = f_fdisk_mod(0, plist, work);
-
-	if (!res){
-		res = f_mkfs("sd:", FM_FAT32, 32768, work, TConf.FSBuffSize);
-	}
-
-	sd_unmount();
-
-	if (res){
-		DrawError(newErrCode(res));
-		gfx_clearscreen();
-		gfx_printf("Something went wrong\nPress any key to exit");
-	}
-	else {
-		sd_mount();
-		gfx_printf("\nDone!\nPress any key to exit");
-	}
-
-	free(work);
-	hidWait();
-}
+#include <display/di.h>
 
 extern bool sd_mounted;
 

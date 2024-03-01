@@ -2,6 +2,7 @@
 
 #include "../customize.h"
 #include "../param.h"
+#include "../table.h"
 
 const FixedValues eristaCpuMaxVoltFV = {.valuesCount = 4,
                                         .values = {{.value = 1200, .label = "ECO"},
@@ -9,8 +10,14 @@ const FixedValues eristaCpuMaxVoltFV = {.valuesCount = 4,
                                                    {.value = 1300, .label = "STAGE 2"},
                                                    {.value = 1350, .label = "STAGE 3"}}};
 const FixedLimits eristaCpuMaxVoltFL = {.min = 1180, .max = 1350, .stepSize = 5};
+// ERISTA CPU VMAX MODE
+// 1200 ECO
+// 1250-1350 STAGE 1-3
+// MANUAL 1180-1350 STEP 5mV
 const Param eristaCpuMaxVolt = {
-    .name = "CPU Max Volt",
+    .name = "CPU VMAX MODE",
+    .category = CPU,
+    .platform = ERISTA,
     .measure = "mV",
     .description = NULL,
     .offset = getOffset(custTable.eristaCpuMaxVolt),
@@ -21,3 +28,5 @@ const Param eristaCpuMaxVolt = {
 
 const unsigned int eCPUParamsCount = 1;
 const Param *eCPUParams[] = {&eristaCpuMaxVolt};
+const unsigned int eCPUTablesCount = 0;
+const Table *eCPUTables[] = {};

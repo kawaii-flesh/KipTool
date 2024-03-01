@@ -2,6 +2,7 @@
 
 #include "../customize.h"
 #include "../param.h"
+#include "../table.h"
 
 const FixedValues eristaEmcMaxClockFV = {.valuesCount = 4,
                                          .values = {{.value = 1868800, .label = "E"},
@@ -9,9 +10,17 @@ const FixedValues eristaEmcMaxClockFV = {.valuesCount = 4,
                                                     {.value = 2131200, .label = "STAGE 1"},
                                                     {.value = 2265600, .label = "STAGE 2"}}};
 const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSize = 38400};
+// 4IFIR MODE / RAM VDD MODE
+// E 1866 1868800 / 1150'000
+// D 2000 1996800 / 1250'000
+// S 2133 2131200 / 1350'000
+// S 2266 2265600 / 1350'000
+// MANUAL 1600000-2366000 STEP 38400KHz
 const Param eristaEmcMaxClock = {
     .name = "EMC Max Clock",
-    .measure = "mV",
+    .category = RAM,
+    .platform = ERISTA,
+    .measure = "MHz",
     .description = NULL,
     .offset = getOffset(custTable.eristaEmcMaxClock),
     .length = 4,
@@ -21,3 +30,5 @@ const Param eristaEmcMaxClock = {
 
 const unsigned int eRAMParamsCount = 1;
 const Param *eRAMParams[] = {&eristaEmcMaxClock};
+const unsigned int eRAMTablesCount = 0;
+const Table *eRAMTables[] = {};

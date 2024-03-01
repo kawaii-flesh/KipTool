@@ -4,8 +4,12 @@
 #include "../params/param.h"
 #include "../params/table.h"
 
-bool compareU8Arrays(u8 *a, u8 *b, unsigned int size);
+bool compareU8Arrays(const u8 *a, const u8 *b, const unsigned int size);
 
-unsigned int u8ArrayToUnsignedInt(u8 *array, unsigned int arraySize);
+unsigned int u8ArrayToUnsignedInt(const u8 *array, const unsigned int length);
 
-unsigned int searchBytesArray(u8 *array, unsigned int size, FIL *file);
+unsigned int getParamValueFromBuffer(const u8 *buffer, const Param *param);
+
+unsigned int getParamValueByTable(const u8 *buffer, const Param *param, const Table *table);
+
+unsigned int searchBytesArray(const u8 *array, const unsigned int size, FIL *file);

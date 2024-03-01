@@ -37,7 +37,6 @@ void set_default_configuration()
 	h_cfg.autoboot = 0;
 	h_cfg.autoboot_list = 0;
 	h_cfg.bootwait = 3;
-	h_cfg.se_keygen_done = 0;
 	h_cfg.backlight = 100;
 	h_cfg.autohosoff = 0;
 	h_cfg.autonogc = 1;
@@ -45,7 +44,6 @@ void set_default_configuration()
 	h_cfg.bootprotect = 0;
 	h_cfg.errors = 0;
 	h_cfg.sept_run = 0;
-	h_cfg.aes_slots_new = false;
 	h_cfg.rcm_patched = fuse_check_patched_rcm();
 	h_cfg.emummc_force_disable = false;
 	h_cfg.t210b01 = hw_get_chip_id() == GP_HIDREV_MAJOR_T210B01;

@@ -168,7 +168,7 @@ int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
         if (selected > lastIndex && !pageTurn) {
             while (selected < vec->count && entries[selected].optionUnion & SKIPHIDEBITS) ++selected;
-            if (selected >= nextPageFirstIndex | selected >= vec->count) {
+            if (selected >= nextPageFirstIndex || selected >= vec->count) {
                 selected = currentPageFirstIndex;
                 while (selected < vec->count - 1 && entries[selected].optionUnion & SKIPHIDEBITS) ++selected;
             }

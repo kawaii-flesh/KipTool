@@ -359,12 +359,6 @@ void hw_init()
 	// Initialize pin configuration.
 	_config_gpios(nx_hoag);
 
-#ifdef DEBUG_UART_PORT
-	clock_enable_uart(DEBUG_UART_PORT);
-	uart_init(DEBUG_UART_PORT, DEBUG_UART_BAUDRATE);
-	uart_invert(DEBUG_UART_PORT, DEBUG_UART_INVERT, UART_INVERT_TXD);
-#endif
-
 	// Enable Dynamic Voltage and Frequency Scaling device clock.
 	clock_enable_cl_dvfs();
 

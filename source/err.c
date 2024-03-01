@@ -24,7 +24,6 @@ const char *TEErrors[] = {
     [TE_EXCEPTION_PREF_ABORT - 1] = "E Pref abort",
     [TE_EXCEPTION_DATA_ABORT - 1] = "E Data abort",
     [TE_ERR_SAME_LOC - 1] = "Same copy location",
-    [TE_ERR_KEYDUMP_FAIL - 1] = "Keydump failed",
     [TE_ERR_PARTITION_NOT_FOUND - 1] = "Failed to find partition",
     [TE_ERR_PATH_IN_PATH - 1] = "Can't move/copy folder into itself",
     [TE_ERR_EMMC_READ_FAIL - 1] = "Emmc/Emummc read failed",

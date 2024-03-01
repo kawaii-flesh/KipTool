@@ -35,7 +35,7 @@ BIN2CDIR := ./tools/bin2c
 VPATH = $(dir ./$(SOURCEDIR)/) $(dir $(wildcard ./$(SOURCEDIR)/*/)) $(dir $(wildcard ./$(SOURCEDIR)/*/*/))
 VPATH += $(dir $(wildcard ./$(BDKDIR)/)) $(dir $(wildcard ./$(BDKDIR)/*/)) $(dir $(wildcard ./$(BDKDIR)/*/*/))
 
-OBJS =	$(BUILDDIR)/$(TARGET)/script/builtin.c $(patsubst $(SOURCEDIR)/%.S, $(BUILDDIR)/$(TARGET)/%.o, \
+OBJS =	$(patsubst $(SOURCEDIR)/%.S, $(BUILDDIR)/$(TARGET)/%.o, \
 		$(patsubst $(SOURCEDIR)/%.c, $(BUILDDIR)/$(TARGET)/%.o, \
 		$(call rwildcard, $(SOURCEDIR), *.S *.c)))
 OBJS +=	$(patsubst $(BDKDIR)/%.S, $(BUILDDIR)/$(TARGET)/%.o, \
@@ -112,18 +112,3 @@ $(BUILDDIR)/$(TARGET)/%.o: $(BDKDIR)/%.c
 $(BUILDDIR)/$(TARGET)/%.o: $(BDKDIR)/%.S
 	@mkdir -p "$(@D)"
 	$(CC) $(CFLAGS) -c $< -o $@
-
-$(BUILDDIR)/$(TARGET)/script/builtin.o: $(BUILDDIR)/$(TARGET)/script/builtin.c
-	@mkdir -p "$(@D)"
-	$(CC) $(CFLAGS) $(BDKINC) -c $< -o $@
-    
-$(BUILDDIR)/$(TARGET)/script/builtin.c: scripts/*.te
-	@mkdir -p "$(@D)"
-	@mkdir -p "$(BUILDDIR)/$(TARGET)/scripts"
-ifeq ($(OS),Windows_NT)
-	@py ts-minifier.py --such-meme -d "$(BUILDDIR)/$(TARGET)/scripts" $(wildcard scripts/*.te)
-	@py te2c.py "$(BUILDDIR)/$(TARGET)/script/builtin" "$(BUILDDIR)/$(TARGET)/scripts"
-else
-	@python3 ts-minifier.py --such-meme -d "$(BUILDDIR)/$(TARGET)/scripts" $(wildcard scripts/*.te)
-	@python3 te2c.py "$(BUILDDIR)/$(TARGET)/script/builtin" "$(BUILDDIR)/$(TARGET)/scripts"
-endif

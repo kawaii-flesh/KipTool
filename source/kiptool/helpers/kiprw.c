@@ -4,7 +4,7 @@
 
 #include "../params/param.h"
 
-bool compareU8Arrays(u8 *a, u8 *b, unsigned int size) {
+bool compareU8Arrays(const u8 *a, const u8 *b, const unsigned int size) {
     bool isEqual = true;
     for (int i = 0; i < size; ++i) {
         isEqual = a[i] == b[i];
@@ -13,7 +13,7 @@ bool compareU8Arrays(u8 *a, u8 *b, unsigned int size) {
     return isEqual;
 }
 
-unsigned int u8ArrayToUnsignedInt(u8 *array, unsigned int length) {
+unsigned int u8ArrayToUnsignedInt(const u8 *array, const unsigned int length) {
     unsigned int num = 0;
     for (unsigned int i = length - 1; i != -1; --i) {
         num <<= 8;
@@ -22,45 +22,13 @@ unsigned int u8ArrayToUnsignedInt(u8 *array, unsigned int length) {
     return num;
 }
 
-// unsigned int getParamValueFromFile(FIL *file, unsigned int baseOffset, const Param *param) {
-//     unsigned int paramLength = param->length;
-//     u8 *valueBytes = calloc(paramLength, 1);
-//     unsigned int bytesReaded = 0;
-//     f_lseek(file, baseOffset + param->offset);
-//     f_read(file, valueBytes, paramLength, &bytesReaded);
-//     return u8ArrayToUnsignedInt(valueBytes, paramLength);
-// }
+unsigned int getParamValueFromBuffer(const u8 *buffer, const Param *param) { return u8ArrayToUnsignedInt(buffer + param->offset, param->length); }
 
-unsigned int getParamValueFromBuffer(u8 *buffer, const Param *param) {
-    return u8ArrayToUnsignedInt(buffer + param->offset, param->length);
-}
-
-unsigned int getParamValueByTable(u8 *buffer, const Param *param, const Table *table) {
+unsigned int getParamValueByTable(const u8 *buffer, const Param *param, const Table *table) {
     return u8ArrayToUnsignedInt(buffer + param->offset * table->increment + table->baseOffset, param->length);
 }
 
-// unsigned int getParamValueFromFileByTable(FIL *file, unsigned int baseOffset, const Param *param,
-//                                           const Table *table, const unsigned int tableMode) {
-//     unsigned int paramLength = param->length;
-//     u8 *valueBytes = calloc(paramLength, 1);
-//     unsigned int bytesReaded = 0;
-//     f_lseek(file, baseOffset + table->baseOffsets[tableMode] +
-//                       (param->offset * table->increments[tableMode]));
-//     f_read(file, valueBytes, paramLength, &bytesReaded);
-//     return u8ArrayToUnsignedInt(valueBytes, paramLength);
-// }
-
-// unsigned int getParamValueFromFileByFixedTable(FIL *file, unsigned int baseOffset,
-//                                                const Param *param, const FixedTable *table) {
-//     unsigned int paramLength = param->length;
-//     u8 *valueBytes = calloc(paramLength, 1);
-//     unsigned int bytesReaded = 0;
-//     f_lseek(file, baseOffset + table->baseOffset + (param->offset * table->increment));
-//     f_read(file, valueBytes, paramLength, &bytesReaded);
-//     return u8ArrayToUnsignedInt(valueBytes, paramLength);
-// }
-
-unsigned int searchBytesArray(u8 *array, unsigned int size, FIL *file) {
+unsigned int searchBytesArray(const u8 *array, const unsigned int size, FIL *file) {
     const unsigned int BUFF_SIZE = 2048;
     unsigned int offset = 0;
     unsigned int fileOffset = 0;

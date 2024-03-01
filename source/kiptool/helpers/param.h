@@ -1,9 +1,12 @@
 #pragma once
-#include "../params/param.h"
 #include <stdbool.h>
 
-void getDisplayValue(const Param *param, char *displayBuff, unsigned int value);
+#include "../params/param.h"
 
 void addDefaultPostfix(const Param *param, char *displayBuff, unsigned int value);
 
+void addLabel(const Param *param, const Value *value, char *displayBuff);
+
 bool addLabelToFixedValue(const Param *param, char *displayBuff, unsigned int value);
+
+void getDisplayValue(const Param *param, char *displayBuff, unsigned int value);

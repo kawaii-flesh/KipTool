@@ -2,6 +2,7 @@
 
 #include <power/bq24193.h>
 #include <power/max17050.h>
+#include <soc/hw_init.h>
 #include <soc/t210.h>
 
 bool isMarikoHWType() {
@@ -11,7 +12,7 @@ bool isMarikoHWType() {
 }
 
 unsigned int getBatteryValue() {
-    unsigned int battery = 0;
+    int battery = 0;
     max17050_get_property(MAX17050_RepSOC, &battery);
     return battery >> 8;
 }

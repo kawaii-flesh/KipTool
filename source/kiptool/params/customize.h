@@ -5,9 +5,9 @@
 #define CUST \
     { 'C', 'U', 'S', 'T' }
 
-#define DvfsTableEntryCount 32;
-#define DvfsTableEntryLimit DvfsTableEntryCount - 1;
-#define getOffset(param) (const void *)&param - (const void *)custTable.cust
+#define DvfsTableEntryCount 32
+#define DvfsTableEntryLimit DvfsTableEntryCount - 1
+#define getOffset(param) (int)((const void *)&param - (const void *)custTable.cust)
 
 typedef struct cvb_coefficients {
     s32 c0;
@@ -16,55 +16,55 @@ typedef struct cvb_coefficients {
     s32 c3;
     s32 c4;
     s32 c5;
-} cvb_coefficients;
+} cvb_coefficients;  // 24
 
 typedef struct cvb_entry_t {
-    u64 freq;
-    cvb_coefficients cvb_dfll_param;
-    cvb_coefficients cvb_pll_param;
-} cvb_entry_t;
+    u64 freq;                         // 8
+    cvb_coefficients cvb_dfll_param;  // 24
+    cvb_coefficients cvb_pll_param;   // 24
+} cvb_entry_t;                        // 56
 
 typedef struct {
-    u8 cust[4];
-    u32 custRev;
-    u32 mtcConf;
-    u32 commonCpuBoostClock;
-    u32 commonEmcMemVolt;
-    u32 eristaCpuMaxVolt;
-    u32 eristaEmcMaxClock;
-    u32 marikoCpuMaxVolt;
-    u32 marikoEmcMaxClock;
-    u32 marikoEmcVddqVolt;
-    u32 marikoCpuUV;
-    u32 marikoGpuUV;
-    u32 CPUv;
-    u32 GPUv;
-    u32 marikoEmcDvbShift;
-    u32 ramTimingPresetOne;
-    u32 ramTimingPresetTwo;
-    u32 ramTimingPresetThree;
-    u32 ramTimingPresetFour;
-    u32 ramTimingPresetFive;
-    u32 ramTimingPresetSix;
-    u32 ramTimingPresetSeven;
-    u32 marikoGpuVoltArray[24];
-    cvb_entry_t eristaCpuDvfsTable[31];
-    cvb_entry_t marikoCpuDvfsTable[31];
-    cvb_entry_t marikoCpuDvfsTableSLT[31];
-    cvb_entry_t eristaGpuDvfsTable[31];
-    cvb_entry_t marikoGpuDvfsTable[31];
-    cvb_entry_t marikoGpuDvfsTableSLT[31];
-    cvb_entry_t marikoGpuDvfsTableHiOPT[31];
-    u32 SpeedShift;
-    u32 marikoCpuHUV;
-    u32 hGPUv;
-    u32 dCPUv;
-    u32 eBAL;
-    u32 ramTimingPresetEight;
-    u32 eBAS;
-    u32 pMEH[24];
-    u32 sMEH[24];
-    u32 SHAITAN[14];
+    u8 cust[4];                                                // 0        CUST
+    u32 custRev;                                               // 4        KIP version
+    u32 mtcConf;                                               // 8        MTC_MAGIC
+    u32 commonCpuBoostClock;                                   // 12       MARIKO - CPU
+    u32 commonEmcMemVolt;                                      // 16       COMMON - RAM
+    u32 eristaCpuMaxVolt;                                      // 20       ERISTA - CPU
+    u32 eristaEmcMaxClock;                                     // 24       ERISTA - RAM
+    u32 marikoCpuMaxVolt;                                      // 28       MARIKO - CPU
+    u32 marikoEmcMaxClock;                                     // 32       MARIKO - RAM
+    u32 marikoEmcVddqVolt;                                     // 36       ARIKO - RAM
+    u32 marikoCpuUV;                                           // 40       MARIKO - CPU
+    u32 marikoGpuUV;                                           // 44       MARIKO - GPU
+    u32 CPUv;                                                  // 48       MARIKO - CPU
+    u32 GPUv;                                                  // 52       COMMON - GPU
+    u32 marikoEmcDvbShift;                                     // 56       MARIKO - RAM
+    u32 ramTimingPresetOne;                                    // 60       COMMON - RAM
+    u32 ramTimingPresetTwo;                                    // 64       COMMON - RAM
+    u32 ramTimingPresetThree;                                  // 68       COMMON - RAM
+    u32 ramTimingPresetFour;                                   // 72       COMMON - RAM
+    u32 ramTimingPresetFive;                                   // 76       COMMON - RAM
+    u32 ramTimingPresetSix;                                    // 80       COMMON - RAM
+    u32 ramTimingPresetSeven;                                  // 84       COMMON - RAM
+    u32 marikoGpuVoltArray[24];                                // 88       MARIKO - GPU
+    cvb_entry_t eristaCpuDvfsTable[DvfsTableEntryLimit];       // 184      ERISTA - CPU
+    cvb_entry_t marikoCpuDvfsTable[DvfsTableEntryLimit];       // 1920     MARIKO - CPU
+    cvb_entry_t marikoCpuDvfsTableSLT[DvfsTableEntryLimit];    // 3656     MARIKO - CPU
+    cvb_entry_t eristaGpuDvfsTable[DvfsTableEntryLimit];       // 5392     ERISTA - GPU
+    cvb_entry_t marikoGpuDvfsTable[DvfsTableEntryLimit];       // 7128     MARIKO - GPU
+    cvb_entry_t marikoGpuDvfsTableSLT[DvfsTableEntryLimit];    // 8864     MARIKO - GPU
+    cvb_entry_t marikoGpuDvfsTableHiOPT[DvfsTableEntryLimit];  // 10600    MARIKO - GPU
+    u32 SpeedShift;                                            // 12336    MARIKO - CPU
+    u32 marikoCpuHUV;                                          // 12340    MARIKO - CPU
+    u32 hGPUv;                                                 // 12344    MARIKO - GPU
+    u32 dCPUv;                                                 // 12348    MARIKO - CPU
+    u32 eBAL;                                                  // 12352    COMMON - RAM
+    u32 ramTimingPresetEight;                                  // 12356    COMMON - RAM
+    u32 eBAS;                                                  // 12360    COMMON - RAM
+    u32 pMEH[24];                                              // 12364    COMMON - RAM
+    u32 sMEH[24];                                              // 12460    COMMON - RAM
+    u32 SHAITAN[14];                                           // 12556    SOON
 } CustomizeTable;
 
 const CustomizeTable custTable = {
@@ -730,20 +730,25 @@ const CustomizeTable custTable = {
     // EBA-SHIFT // 0 DEFAULT // 1 ECO ST1 // 2 SYK-LOH // 3 RESERVED // 4 RESERVED // 5 LOH-C4C
     .eBAS = 0,  // TRADE MAX FREQ FOR EFFICIENCY // FREQUENCY << PRIORITY >> EFFICIENCY
 
-    // PRIMARY MICRO-ENHANCE LOGIC			 	         // 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2 1333>1065>800
+    // PRIMARY MICRO-ENHANCE LOGIC			 	         // 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2
+    // 1333>1065>800
     // 0-2
-    // 3 eBAW Shift 0-4		    // 4 eBAR Shift 0-4      // 5 RTW Shift 0-8	      // 6 WTR Shift 0-8 	    // 7 WTP Shift
+    // 3 eBAW Shift 0-4		    // 4 eBAR Shift 0-4      // 5 RTW Shift 0-8	      // 6 WTR Shift 0-8 	    // 7 WTP
+    // Shift
     // 0-8
-    // 8 RCD Reduct 0-4 	    // 9 RP Reduct 0-4       // 10 RAS Shift 0-16	  // 11 SRPD 0-3	 		// 12 E-Enhance P
+    // 8 RCD Reduct 0-4 	    // 9 RP Reduct 0-4       // 10 RAS Shift 0-16	  // 11 SRPD 0-3
+    // // 12 E-Enhance P
     // 0-1
     // 13 DR Debug 0-4		    // 14 GameChanger 0-24	 // 15 Eri-Bump 0-1
     .pMEH = {0, 2, 0, 2, 2, 4, 4, 4, 0, 0, 8, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
     // DEF = 0  2  0  2  2  4  4  4  0  0  8  0  0  0  0  1 >> RESERVED >>
     // NUM = 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
-    // SECONDARY MICRO-ENHANCE LOGIC (SAFE) 		 // 0 ARB-Boost 1-9  // 1 ARB-BCD 0-4   // 2 ARB-BRP 0-4   // 3 ARB-RTR 0-4  // 4
+    // SECONDARY MICRO-ENHANCE LOGIC (SAFE) 		 // 0 ARB-Boost 1-9  // 1 ARB-BCD 0-4   // 2 ARB-BRP 0-4   // 3 ARB-RTR
+    // 0-4  // 4
     // ARB-RTW 0-4
-    // 5 ARB-WTR 0-4  		  // 6 eZQ Override 0-7  // 7 trDVFS 0-1     // 8 E-Boost 0-1   // 9 SSC Logic 0-1 // 10 Latent 0-8  //
+    // 5 ARB-WTR 0-4  		  // 5 ARB-WTR 0-4   // 7 trDVFS 0-1     // 8 E-Boost 0-1   // 9 SSC Logic 0-1 // 10 Latent 0-8
+    // //
     // 11 CP-THM 0-4
     .sMEH = {4, 2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     // DEF = 4  2  2  2  2  2  0  1  1  1  0  2 >> RESERVED >>

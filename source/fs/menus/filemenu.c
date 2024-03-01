@@ -10,12 +10,7 @@
 #include "../../gfx/gfxutils.h"
 #include "../../gfx/menu.h"
 #include "../../hid/hid.h"
-#include "../../keys/nca.h"
 #include "../../kiptool/kiptoolMenu.h"
-#include "../../script/eval.h"
-#include "../../script/garbageCollector.h"
-#include "../../script/parser.h"
-#include "../../storage/emummc.h"
 #include "../../tegraexplorer/tconf.h"
 #include "../../utils/utils.h"
 #include "../fsutils.h"
@@ -32,7 +27,6 @@ MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_RED), .name = "Delete file"},
     {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "View hex"},
     {.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Launch Payload"},
-    {.optionUnion = COLORTORGB(COLOR_YELLOW), .name = "Launch Script"},
     {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nKip tool"},
 };
 
@@ -70,46 +64,6 @@ void DeleteFile(char *path, FSEntry_t entry) {
     int res = f_unlink(thing);
     if (res) DrawError(newErrCode(res));
     free(thing);
-}
-
-void RunScriptString(char *str, u32 size) {
-    TConf.scriptCWD = "sd:/";
-    gfx_clearscreen();
-    ParserRet_t ret = parseScript(str, size);
-    setStaticVars(&ret.staticVarHolder);
-    initRuntimeVars();
-    eval(ret.main.operations.data, ret.main.operations.count, 0);
-    exitRuntimeVars();
-    exitStaticVars(&ret.staticVarHolder);
-    exitFunction(ret.main.operations.data, ret.main.operations.count);
-    vecFree(ret.staticVarHolder);
-    vecFree(ret.main.operations);
-}
-
-void RunScript(char *path, FSEntry_t entry) {
-    char *thing = CombinePaths(path, entry.name);
-    u32 size;
-    char *script = sd_file_read(thing, &size);
-    free(thing);
-    TConf.scriptCWD = path;
-
-    if (!script) return;
-
-    if (((entry.size >= 16 && entry.sizeDef == 1) || entry.sizeDef >= 2) && !TConf.minervaEnabled)
-        return;
-
-    gfx_clearscreen();
-
-    ParserRet_t ret = parseScript(script, size);
-    free(script);
-    setStaticVars(&ret.staticVarHolder);
-    initRuntimeVars();
-    eval(ret.main.operations.data, ret.main.operations.count, 1);
-    exitRuntimeVars();
-    exitStaticVars(&ret.staticVarHolder);
-    exitFunction(ret.main.operations.data, ret.main.operations.count);
-    vecFree(ret.staticVarHolder);
-    vecFree(ret.main.operations);
 }
 
 void RenameFile(char *path, FSEntry_t entry) {
@@ -176,8 +130,20 @@ void HexView(char *path, FSEntry_t entry) {
     free(filePath);
 }
 
+    // {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- File menu --"},
+    // {.optionUnion = COLORTORGB(COLOR_GREEN) | SKIPBIT},   // For the file name and size
+    // {.optionUnion = COLORTORGB(COLOR_VIOLET) | SKIPBIT},  // For the file Attribs
+    // {.optionUnion = HIDEBIT},
+    // {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "<- Back"},
+    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nCopy to clipboard"},
+    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Move to clipboard"},
+    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Rename file\n"},
+    // {.optionUnion = COLORTORGB(COLOR_RED), .name = "Delete file"},
+    // {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "View hex"},
+    // {.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Launch Payload"},
+    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nKip tool"},
 fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile,
-                                HexView,       LaunchPayload, RunScript,  KipTool};
+                                HexView,       LaunchPayload,  KipTool};
 
 void FileMenu(char *path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;
@@ -189,8 +155,7 @@ void FileMenu(char *path, FSEntry_t entry) {
     FileMenuEntries[2].name = attribs;
 
     FileMenuEntries[10].hide = !StrEndsWith(entry.name, ".bin");
-    FileMenuEntries[11].hide = !StrEndsWith(entry.name, ".te");
-    FileMenuEntries[12].hide = !StrEndsWith(entry.name, ".kip");
+    FileMenuEntries[11].hide = !StrEndsWith(entry.name, ".kip");
 
     Vector_t ent = vecFromArray(FileMenuEntries, ARR_LEN(FileMenuEntries), sizeof(MenuEntry_t));
     gfx_boxGrey(384, 200, 384 + 512, 200 + 320, 0x33);

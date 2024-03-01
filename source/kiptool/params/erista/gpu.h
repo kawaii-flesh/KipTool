@@ -6,5 +6,5 @@
 
 const unsigned int eGPUParamsCount = 0;
 const Param *eGPUParams[] = {};
-const unsigned int eGPUModeTablesCount = 0;
-const ModeTable *eGPUModeTables[] = {};
+const unsigned int eGPUTablesCount = 0;
+const Table *eGPUTables[] = {};

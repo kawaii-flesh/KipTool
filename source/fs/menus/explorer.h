@@ -1,6 +1,6 @@
 #pragma once
-#include "../../utils/vector.h"
 #include "../../gfx/menu.h"
+#include "../../utils/vector.h"
 #include "../fstypes.h"
 
 void FileExplorer(char *path);

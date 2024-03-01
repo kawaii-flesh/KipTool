@@ -14,7 +14,6 @@ enum {
     TE_EXCEPTION_PREF_ABORT,
     TE_EXCEPTION_DATA_ABORT,
     TE_ERR_SAME_LOC,
-    TE_ERR_KEYDUMP_FAIL,
     TE_ERR_PARTITION_NOT_FOUND,
     TE_ERR_PATH_IN_PATH,
     TE_ERR_EMMC_READ_FAIL,
@@ -26,5 +25,6 @@ enum {
     TE_WARN_FILE_TOO_SMALL_FOR_DEST,
 };
 
-#define newErrCode(err) (ErrCode_t) {err, __LINE__, __FILE__}
+#define newErrCode(err) \
+    (ErrCode_t) { err, __LINE__, __FILE__ }
 void DrawError(ErrCode_t err);

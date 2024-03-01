@@ -19,34 +19,32 @@
 #ifndef _GFX_H_
 #define _GFX_H_
 
-#include <utils/types.h>
 #include <stdarg.h>
+#include <utils/types.h>
 
-#define EPRINTF(text) gfx_printf("%k"text"%k\n", 0xFFFF0000, 0xFFCCCCCC)
-#define EPRINTFARGS(text, args...) gfx_printf("%k"text"%k\n", 0xFFFF0000, args, 0xFFCCCCCC)
-#define WPRINTF(text) gfx_printf("%k"text"%k\n", 0xFFFFDD00, 0xFFCCCCCC)
-#define WPRINTFARGS(text, args...) gfx_printf("%k"text"%k\n", 0xFFFFDD00, args, 0xFFCCCCCC)
+#define EPRINTF(text) gfx_printf("%k" text "%k\n", 0xFFFF0000, 0xFFCCCCCC)
+#define EPRINTFARGS(text, args...) gfx_printf("%k" text "%k\n", 0xFFFF0000, args, 0xFFCCCCCC)
+#define WPRINTF(text) gfx_printf("%k" text "%k\n", 0xFFFFDD00, 0xFFCCCCCC)
+#define WPRINTFARGS(text, args...) gfx_printf("%k" text "%k\n", 0xFFFFDD00, args, 0xFFCCCCCC)
 
-typedef struct _gfx_ctxt_t
-{
-	u32 *fb;
-	u32 width;
-	u32 height;
-	u32 stride;
+typedef struct _gfx_ctxt_t {
+    u32 *fb;
+    u32 width;
+    u32 height;
+    u32 stride;
 } gfx_ctxt_t;
 
-typedef struct _gfx_con_t
-{
-	gfx_ctxt_t *gfx_ctxt;
-	u32 fntsz;
-	u32 x;
-	u32 y;
-	u32 savedx;
-	u32 savedy;
-	u32 fgcol;
-	int fillbg;
-	u32 bgcol;
-	bool mute;
+typedef struct _gfx_con_t {
+    gfx_ctxt_t *gfx_ctxt;
+    u32 fntsz;
+    u32 x;
+    u32 y;
+    u32 savedx;
+    u32 savedy;
+    u32 fgcol;
+    int fillbg;
+    u32 bgcol;
+    bool mute;
 } gfx_con_t;
 
 extern gfx_ctxt_t gfx_ctxt;

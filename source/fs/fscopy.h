@@ -1,5 +1,6 @@
 #pragma once
 #include <utils/types.h>
+
 #include "../err.h"
 
 #define COPY_MODE_CANCEL BIT(0)

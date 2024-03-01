@@ -865,7 +865,6 @@ void jc_init_hw()
 	jc_l.uart = UART_C;
 	jc_r.uart = UART_B;
 
-#if !defined(DEBUG_UART_PORT) || !(DEBUG_UART_PORT)
 	if (fuse_read_hw_type() == FUSE_NX_HW_TYPE_HOAG)
 		return;
 
@@ -899,7 +898,6 @@ void jc_init_hw()
 	gpio_config(GPIO_PORT_D, GPIO_PIN_1, GPIO_MODE_GPIO);
 
 	jc_init_done = true;
-#endif
 }
 
 jc_gamepad_rpt_t *joycon_poll()

@@ -53,11 +53,11 @@ void getDisplayValue(const Param *param, char *displayBuff, unsigned int value) 
                 }
         } else if (limit.type == EFixedLimits) {
             const FixedLimits *fixedLimits = (const FixedLimits *)limit.values;
-                if ((fixedLimits->min <= value || value <= fixedLimits->max) && value % fixedLimits->stepSize == 0) {
-                    if (fixedLimits->measure != NULL) strcpy(displayBuff + strlen(displayBuff), fixedLimits->measure);
-                    founded = true;
-                    break;
-                }
+            if ((fixedLimits->min <= value || value <= fixedLimits->max) && value % fixedLimits->stepSize == 0) {
+                if (fixedLimits->measure != NULL) strcpy(displayBuff + strlen(displayBuff), fixedLimits->measure);
+                founded = true;
+                break;
+            }
         }
     }
     if (!founded) {
