@@ -86,7 +86,5 @@ const Param marikoEmcDvbShift = {
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &marikoEmcDvbShiftFV}, {.type = EFixedLimits, .values = &marikoEmcDvbShiftFL}}};
 
-const unsigned int mRAMParamsCount = 3;
-const Param *mRAMParams[] = {&marikoEmcMaxClock, &marikoEmcVddqVolt, &marikoEmcDvbShift};
-const unsigned int mRAMTablesCount = 0;
-const Table *mRAMTables[] = {};
+const Params mRAMParams = {.count = 3, .params = {&marikoEmcMaxClock, &marikoEmcVddqVolt, &marikoEmcDvbShift}};
+const Tables mRAMTables = {};

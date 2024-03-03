@@ -23,7 +23,7 @@ KTVERSION := \"$(KTVERSION_MAJOR).$(KTVERSION_MINOR).$(KTVERSION_BUGFX)\"
 
 ################################################################################
 
-TARGET := TegraExplorer
+TARGET := KipTool
 BUILDDIR := build
 OUTPUTDIR := output
 SOURCEDIR = source

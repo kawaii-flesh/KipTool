@@ -27,7 +27,7 @@ MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_RED), .name = "Delete file"},
     {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "View hex"},
     {.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Launch Payload"},
-    {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nKip tool"},
+    {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "\nKip tool"},
 };
 
 void UnimplementedException(char *path, FSEntry_t entry) {
@@ -130,18 +130,6 @@ void HexView(char *path, FSEntry_t entry) {
     free(filePath);
 }
 
-    // {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- File menu --"},
-    // {.optionUnion = COLORTORGB(COLOR_GREEN) | SKIPBIT},   // For the file name and size
-    // {.optionUnion = COLORTORGB(COLOR_VIOLET) | SKIPBIT},  // For the file Attribs
-    // {.optionUnion = HIDEBIT},
-    // {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "<- Back"},
-    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nCopy to clipboard"},
-    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Move to clipboard"},
-    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Rename file\n"},
-    // {.optionUnion = COLORTORGB(COLOR_RED), .name = "Delete file"},
-    // {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "View hex"},
-    // {.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Launch Payload"},
-    // {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "\nKip tool"},
 fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile,
                                 HexView,       LaunchPayload,  KipTool};
 

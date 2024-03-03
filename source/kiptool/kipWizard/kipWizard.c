@@ -24,11 +24,10 @@
 #include "../params/mariko/gpu.h"
 #include "../params/mariko/ram.h"
 
-
 void printTable(const u8 *buff, const Table *table, char *displayBuff) {
     for (unsigned int i = 0; i < table->paramsCount; ++i) {
         const Param *param = table->params[i];
-        const unsigned int paramValue = getParamValueByTable(buff, param, table);
+        const unsigned int paramValue = getParamValueFromBuffer(buff, param);
         getDisplayValue(param, displayBuff, paramValue);
         gfx_printf("%s: %s\n", param->name, displayBuff);
     }
@@ -51,49 +50,25 @@ void printParamByValue(unsigned int value, const Param *param, char *displayBuff
     gfx_printf("%s: %s\n", param->name, displayBuff);
 }
 
-void printCPUParams(const u8 *buff, char *displayBuff, enum Platform platform) {
-    gfx_clearscreenKT(platform);
-    gfx_printf("--------CPU--------\n");
-    for (unsigned int i = 0; i < cCPUParamsCount; ++i) printParamByParam(buff, cCPUParams[i], displayBuff);
-    for (unsigned int i = 0; i < cCPUTablesCount; ++i) printTable(buff, cCPUTables[i], displayBuff);
-    if (platform == MARIKO || platform == COMMON) {
-        for (unsigned int i = 0; i < mCPUParamsCount; ++i) printParamByParam(buff, mCPUParams[i], displayBuff);
-        for (unsigned int i = 0; i < mCPUTablesCount; ++i) printTable(buff, mCPUTables[i], displayBuff);
-    }
-    if (platform == ERISTA || platform == COMMON) {
-        for (unsigned int i = 0; i < eCPUParamsCount; ++i) printParamByParam(buff, eCPUParams[i], displayBuff);
-        for (unsigned int i = 0; i < eCPUTablesCount; ++i) printTable(buff, eCPUTables[i], displayBuff);
-    }
+void printCPUParams(const u8 *buff, enum Platform platform) {
+    gfx_clearscreenKT();
+    const Params *allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
+    const Tables *allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
+    newParamsMenu(buff, "--------CPU--------", allParams, 2, allTables, 2);
 }
 
-void printGPUParams(const u8 *buff, char *displayBuff, enum Platform platform) {
-    gfx_clearscreenKT(platform);
-    gfx_printf("--------GPU--------\n");
-    for (unsigned int i = 0; i < cGPUParamsCount; ++i) printParamByParam(buff, cGPUParams[i], displayBuff);
-    for (unsigned int i = 0; i < cGPUTablesCount; ++i) printTable(buff, cGPUTables[i], displayBuff);
-    if (platform == MARIKO || platform == COMMON) {
-        for (unsigned int i = 0; i < mGPUParamsCount; ++i) printParamByParam(buff, mGPUParams[i], displayBuff);
-        for (unsigned int i = 0; i < mGPUTablesCount; ++i) printTable(buff, mGPUTables[i], displayBuff);
-    }
-    if (platform == ERISTA || platform == COMMON) {
-        for (unsigned int i = 0; i < eGPUParamsCount; ++i) printParamByParam(buff, eGPUParams[i], displayBuff);
-        for (unsigned int i = 0; i < eGPUTablesCount; ++i) printTable(buff, eGPUTables[i], displayBuff);
-    }
+void printGPUParams(const u8 *buff, enum Platform platform) {
+    gfx_clearscreenKT();
+    const Params *allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
+    const Tables *allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
+    newParamsMenu(buff, "--------GPU--------", allParams, 2, allTables, 2);
 }
 
-void printRAMParams(const u8 *buff, char *displayBuff, enum Platform platform) {
-    gfx_clearscreenKT(platform);
-    gfx_printf("--------RAM--------\n");
-    for (unsigned int i = 0; i < cRAMParamsCount; ++i) printParamByParam(buff, cRAMParams[i], displayBuff);
-    for (unsigned int i = 0; i < cRAMTablesCount; ++i) printTable(buff, cRAMTables[i], displayBuff);
-    if (platform == MARIKO || platform == COMMON) {
-        for (unsigned int i = 0; i < mRAMParamsCount; ++i) printParamByParam(buff, mRAMParams[i], displayBuff);
-        for (unsigned int i = 0; i < mRAMTablesCount; ++i) printTable(buff, mRAMTables[i], displayBuff);
-    }
-    if (platform == ERISTA || platform == COMMON) {
-        for (unsigned int i = 0; i < eRAMParamsCount; ++i) printParamByParam(buff, eRAMParams[i], displayBuff);
-        for (unsigned int i = 0; i < eRAMTablesCount; ++i) printTable(buff, eRAMTables[i], displayBuff);
-    }
+void printRAMParams(const u8 *buff, enum Platform platform) {
+    gfx_clearscreenKT();
+    const Params *allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
+    const Tables *allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
+    newParamsMenu(buff, "--------RAM--------", allParams, 2, allTables, 2);
 }
 
 int kipWizard(char *path, FSEntry_t entry) {
@@ -102,9 +77,10 @@ int kipWizard(char *path, FSEntry_t entry) {
     FIL kipFile;
     int res;
     Input_t *input = hidRead();
-    const enum Platform platform = COMMON;  // DEBUG
+    const enum Platform platform = isMarikoHWType() ? MARIKO : ERISTA;  // DEBUG
 
     gfx_clearscreenKT();
+    gfx_printf("Loading CUST table ...");
 
     if ((res = f_open(&kipFile, filePath, FA_READ | FA_OPEN_EXISTING))) {
         DrawError(newErrCode(res));
@@ -112,59 +88,42 @@ int kipWizard(char *path, FSEntry_t entry) {
     }
 
     u8 cust[] = CUST;
-    const unsigned int baseOffset = searchBytesArray(cust, 4, &kipFile);
-    const unsigned int custSecionSize = sizeof(CustomizeTable);
-    u8 *custSection = calloc(custSecionSize, 1);
+    const int baseOffset = searchBytesArray(cust, 4, &kipFile);
+    if (baseOffset == -1) {
+        gfx_printf("CUST section was not found! Press B to exit");
+        while (!(hidRead()->buttons & JoyB))
+            ;
+        return -1;
+    }
+    const unsigned int custTableSize = sizeof(CustomizeTable);
+    u8 *custTable = calloc(custTableSize, 1);
     unsigned int bytesReaded;
     f_lseek(&kipFile, baseOffset);
-    f_read(&kipFile, custSection, custSecionSize, &bytesReaded);
-    unsigned int kipVersion = getParamValueFromBuffer(custSection, &gKipVersion);
+    f_read(&kipFile, custTable, custTableSize, &bytesReaded);
+    unsigned int kipVersion = getParamValueFromBuffer(custTable, &gKipVersion);
+    unsigned int startIndex = 0;
     if (kipVersion == CURRENT_VERSION) {
+        gfx_clearscreenKT();
         char *displayBuff = calloc(1024, 1);
-        // printParamByValue(kipVersion, &gKipVersion, displayBuff);
-        int currentPage = 0;
-        int lastPage = 2;
-        u32 lastPress = 0;
-        u32 holdTimer = 300;
-        u32 lastTopUpdate = 0;
-        u32 topUpdateTimer = 10000;
-        const void (*pageFunctions[])(const u8 *, char *, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
-        pageFunctions[currentPage](custSection, displayBuff, platform);
+        ParamsMenuEntry entries[] = {
+            {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = "-- Kip Wizard --"},
+            {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ELabel, .entry = "CPU Params"},
+            {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ELabel, .entry = "GPU Params"},
+            {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ELabel, .entry = "RAM Params"}};
+        void (*functions[])(const u8 *, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
         while (1) {
-            if ((lastTopUpdate + topUpdateTimer) < get_tmr_ms()) {
-                gfx_printTopInfoKT();
-                lastTopUpdate = get_tmr_ms();
-            }
-            while (1) {
-                hidRead();
-                if ((lastTopUpdate + topUpdateTimer) < get_tmr_ms()) {
-                    gfx_printTopInfoKT();
-                    lastTopUpdate = get_tmr_ms();
-                }
-                if (input->buttons) {
-                    if ((lastPress + holdTimer) < get_tmr_ms()) {
-                        lastPress = get_tmr_ms();
-                        break;
-                    }
-                }
-            }
-
-            if (input->buttons & (JoyLRight)) {
-                ++currentPage;
-                if (currentPage > lastPage) currentPage = 0;
-                pageFunctions[currentPage](custSection, displayBuff, platform);
-            } else if (input->buttons & (JoyLLeft)) {
-                --currentPage;
-                if (currentPage < 0) currentPage = lastPage;
-                pageFunctions[currentPage](custSection, displayBuff, platform);
-            } else if (input->buttons & (BtnPow | JoyB))
+            int res = newMenuKT(entries, custTable, 4, startIndex);
+            startIndex = res + 1;
+            if (res == -1)
                 break;
+            else if (res <= 2)
+                functions[res](custTable, platform);
         }
 
         f_close(&kipFile);
         free(filePath);
         free(displayBuff);
-        free(custSection);
+        free(custTable);
         return 0;
     }
     gfx_printf("Kip version %d is unsupported. Supported version is %d", kipVersion, CURRENT_VERSION);

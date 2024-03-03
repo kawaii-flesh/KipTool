@@ -59,10 +59,12 @@ void HandleSD(){
 
 void ViewCredits(){
     gfx_clearscreen();
-    gfx_printf("\nTegraexplorer v%d.%d.%d\nBy SuchMemeManySkill\n\nBased on Lockpick_RCM & Hekate, from shchmue & CTCaer\n\n\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF);
+    gfx_printf("\nTegraexplorer v%d.%d.%d\nBy SuchMemeManySkill\Based on Lockpick_RCM & Hekate, from shchmue & CTCaern\n\nKip Tool v%d.%d.%d by kawaii-flesh\n\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, KT_VER_MJ, KT_VER_MN, KT_VER_BF);
 
     if (hidRead()->r)
         gfx_printf("%k\"I'm not even sure if it works\" - meme", COLOR_ORANGE);
+    else if(hidRead()->l)
+        gfx_printf("%k\"And you don't seem to understand ...\"", COLOR_BLUE);
 
     hidWait();
 }

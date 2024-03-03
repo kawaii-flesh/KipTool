@@ -60,3 +60,8 @@ typedef struct {
     const Param *max;
     const unsigned int stepSize;
 } MinAndMaxByParam;
+
+typedef struct Params {
+    unsigned int count;
+    Param *params[];
+} Params;

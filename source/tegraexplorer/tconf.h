@@ -14,12 +14,9 @@ typedef struct {
             u16 curExplorerLoc : 2;
             u16 heldExplorerCopyLoc : 2;
             u16 explorerCopyMode : 4;
-            u16 currentMMCConnected : 2;
-            u16 connectedMMCMounted : 1;
         };
         u16 optionUnion;
     };
-    const char *pkg1ID;
 } TConf_t;
 
 extern TConf_t TConf;

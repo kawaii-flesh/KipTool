@@ -26,7 +26,5 @@ const Param eristaCpuMaxVolt = {
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &eristaCpuMaxVoltFV}, {.type = EFixedLimits, .values = &eristaCpuMaxVoltFL}}};
 
-const unsigned int eCPUParamsCount = 1;
-const Param *eCPUParams[] = {&eristaCpuMaxVolt};
-const unsigned int eCPUTablesCount = 0;
-const Table *eCPUTables[] = {};
+const Params eCPUParams = {.count = 1, .params = {&eristaCpuMaxVolt}};
+const Tables eCPUTables = {};

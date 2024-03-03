@@ -10,6 +10,4 @@ unsigned int u8ArrayToUnsignedInt(const u8 *array, const unsigned int length);
 
 unsigned int getParamValueFromBuffer(const u8 *buffer, const Param *param);
 
-unsigned int getParamValueByTable(const u8 *buffer, const Param *param, const Table *table);
-
-unsigned int searchBytesArray(const u8 *array, const unsigned int size, FIL *file);
+int searchBytesArray(const u8 *array, const unsigned int size, FIL *file);

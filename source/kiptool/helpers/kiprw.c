@@ -24,11 +24,8 @@ unsigned int u8ArrayToUnsignedInt(const u8 *array, const unsigned int length) {
 
 unsigned int getParamValueFromBuffer(const u8 *buffer, const Param *param) { return u8ArrayToUnsignedInt(buffer + param->offset, param->length); }
 
-unsigned int getParamValueByTable(const u8 *buffer, const Param *param, const Table *table) {
-    return u8ArrayToUnsignedInt(buffer + param->offset * table->increment + table->baseOffset, param->length);
-}
 
-unsigned int searchBytesArray(const u8 *array, const unsigned int size, FIL *file) {
+int searchBytesArray(const u8 *array, const unsigned int size, FIL *file) {
     const unsigned int BUFF_SIZE = 2048;
     unsigned int offset = 0;
     unsigned int fileOffset = 0;

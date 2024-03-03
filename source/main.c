@@ -239,11 +239,9 @@ void ipl_main() {
     bpmp_clk_rate_set(BPMP_CLK_DEFAULT_BOOST);
     minerva_change_freq(FREQ_800);
 
-    TConf.pkg1ID = "Unk";
-
     _show_errors();
     gfx_clearscreen();
-	gfx_printf("Waiting for the joycons to be ready");
+	gfx_printf("Waiting for the JoyCons to be ready ...");
 	while(!hidConnected());
 
     EnterMainMenu();

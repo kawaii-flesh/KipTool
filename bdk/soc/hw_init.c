@@ -20,9 +20,6 @@
 #include <soc/hw_init.h>
 #include <display/di.h>
 #include <input/joycon.h>
-#include <input/touch.h>
-#include <sec/se.h>
-#include <sec/se_t210.h>
 #include <soc/bpmp.h>
 #include <soc/clock.h>
 #include <soc/fuse.h>
@@ -251,32 +248,6 @@ static void _mbist_workaround()
 	CLOCK(CLK_RST_CONTROLLER_CLK_SOURCE_NVENC)  = (CLOCK(CLK_RST_CONTROLLER_CLK_SOURCE_NVENC) & 0x1FFFFFFF) | 0x80000000;  // Set clock source to PLLP_OUT.
 }
 
-static void _config_se_brom()
-{
-	// Enable Fuse visibility.
-	clock_enable_fuse(true);
-
-	// Try to set SBK from fuses. If patched, skip.
-	fuse_set_sbk();
-
-	// Lock SSK (although it's not set and unused anyways).
-	// se_key_acc_ctrl(15, SE_KEY_TBL_DIS_KEYREAD_FLAG);
-
-	// This memset needs to happen here, else TZRAM will behave weirdly later on.
-	memset((void *)TZRAM_BASE, 0, SZ_64K);
-	PMC(APBDEV_PMC_CRYPTO_OP) = PMC_CRYPTO_OP_SE_ENABLE;
-	SE(SE_INT_STATUS_REG) = 0x1F; // Clear all SE interrupts.
-
-	// Save reset reason.
-	hw_rst_status = PMC(APBDEV_PMC_SCRATCH200);
-	hw_rst_reason = PMC(APBDEV_PMC_RST_STATUS) & PMC_RST_STATUS_MASK;
-
-	// Clear the boot reason to avoid problems later.
-	PMC(APBDEV_PMC_SCRATCH200) = 0x0;
-	PMC(APBDEV_PMC_RST_STATUS) = 0x0;
-	APB_MISC(APB_MISC_PP_STRAPPING_OPT_A) = (APB_MISC(APB_MISC_PP_STRAPPING_OPT_A) & 0xF0) | (7 << 10);
-}
-
 static void _config_regulators(bool tegra_t210)
 {
 	// Set RTC/AO domain to POR voltage.
@@ -331,8 +302,6 @@ void hw_init()
 	bool tegra_t210 = hw_get_chip_id() == GP_HIDREV_MAJOR_T210;
 	bool nx_hoag = fuse_read_hw_type() == FUSE_NX_HW_TYPE_HOAG;
 
-	// Bootrom stuff we skipped by going through rcm.
-	_config_se_brom();
 	//FUSE(FUSE_PRIVATEKEYDISABLE) = 0x11;
 	SYSREG(AHB_AHB_SPARE_REG) &= 0xFFFFFF9F; // Unset APB2JTAG_OVERRIDE_EN and OBS_OVERRIDE_EN.
 	PMC(APBDEV_PMC_SCRATCH49) = PMC(APBDEV_PMC_SCRATCH49) & 0xFFFFFFFC;

@@ -28,7 +28,5 @@ const Param eristaEmcMaxClock = {
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &eristaEmcMaxClockFV}, {.type = EFixedLimits, .values = &eristaEmcMaxClockFL}}};
 
-const unsigned int eRAMParamsCount = 1;
-const Param *eRAMParams[] = {&eristaEmcMaxClock};
-const unsigned int eRAMTablesCount = 0;
-const Table *eRAMTables[] = {};
+const Params eRAMParams = {.count = 1, .params = {&eristaEmcMaxClock}};
+const Tables eRAMTables = {};

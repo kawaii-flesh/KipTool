@@ -178,7 +178,6 @@ const Param dCPUv = {.name = "CPU MIN-HIGH LOGIC",
                      .limitsCount = 2,
                      .limits = {{.type = EFixedValues, .values = &dCPUvFV}, {.type = EFixedLimits, .values = &dCPUvFL}}};
 
-const unsigned int mCPUParamsCount = 7;
-const Param *mCPUParams[] = {&commonCpuBoostClock, &SpeedShift, &CPUv, &marikoCpuHUV, &marikoCpuMaxVolt, &marikoCpuUV, &dCPUv};
-const unsigned int mCPUTablesCount = 0;
-const Table *mCPUTables[] = {};
+const Params mCPUParams = {
+    .count = 7, .params = {&commonCpuBoostClock, &SpeedShift, &CPUv, &marikoCpuHUV, &marikoCpuMaxVolt, &marikoCpuUV, &dCPUv}};
+const Tables mCPUTables = {};

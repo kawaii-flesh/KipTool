@@ -45,274 +45,299 @@ const Param marikoGpuUV = {.name = "GPU ECO LOGIC ",
                            .limitsCount = 1,
                            .limits = {{.type = EFixedValues, .values = &marikoGpuUVFV}}};
 
-const FixedOneValue marikoGpuVoltArray192mhzFOV = {.value = custTable.marikoGpuVoltArray[0]};
+const FixedLimits marikoGpuVoltArray192mhzFL = {
+    .min = custTable.marikoGpuVoltArray[0] - 75, .max = custTable.marikoGpuVoltArray[0] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray192mhz = {.name = "192mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 0,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[0]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[0],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray192mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray230mhzFOV = {.value = custTable.marikoGpuVoltArray[1]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray192mhzFL}}};
+const FixedLimits marikoGpuVoltArray230mhzFL = {
+    .min = custTable.marikoGpuVoltArray[1] - 75, .max = custTable.marikoGpuVoltArray[1] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray230mhz = {.name = "230mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 1,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[1]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[1],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray230mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray307mhzFOV = {.value = custTable.marikoGpuVoltArray[2]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray230mhzFL}}};
+const FixedLimits marikoGpuVoltArray307mhzFL = {
+    .min = custTable.marikoGpuVoltArray[2] - 75, .max = custTable.marikoGpuVoltArray[2] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray307mhz = {.name = "307mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 2,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[2]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[2],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray307mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray384mhzFOV = {.value = custTable.marikoGpuVoltArray[3]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray307mhzFL}}};
+const FixedLimits marikoGpuVoltArray384mhzFL = {
+    .min = custTable.marikoGpuVoltArray[3] - 75, .max = custTable.marikoGpuVoltArray[3] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray384mhz = {.name = "384mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 3,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[3]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[3],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray384mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray460mhzFOV = {.value = custTable.marikoGpuVoltArray[4]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray384mhzFL}}};
+const FixedLimits marikoGpuVoltArray460mhzFL = {
+    .min = custTable.marikoGpuVoltArray[4] - 75, .max = custTable.marikoGpuVoltArray[4] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray460mhz = {.name = "460mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 4,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[4]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[4],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray460mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray537mhzFOV = {.value = custTable.marikoGpuVoltArray[5]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray460mhzFL}}};
+const FixedLimits marikoGpuVoltArray537mhzFL = {
+    .min = custTable.marikoGpuVoltArray[5] - 75, .max = custTable.marikoGpuVoltArray[5] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray537mhz = {.name = "537mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 5,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[5]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[5],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray537mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray614mhzFOV = {.value = custTable.marikoGpuVoltArray[6]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray537mhzFL}}};
+const FixedLimits marikoGpuVoltArray614mhzFL = {
+    .min = custTable.marikoGpuVoltArray[6] - 75, .max = custTable.marikoGpuVoltArray[6] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray614mhz = {.name = "614mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 6,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[6]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[6],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray614mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray691mhzFOV = {.value = custTable.marikoGpuVoltArray[7]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray614mhzFL}}};
+const FixedLimits marikoGpuVoltArray691mhzFL = {
+    .min = custTable.marikoGpuVoltArray[7] - 75, .max = custTable.marikoGpuVoltArray[7] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray691mhz = {.name = "691mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 7,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[7]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[7],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray691mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray768mhzFOV = {.value = custTable.marikoGpuVoltArray[8]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray691mhzFL}}};
+const FixedLimits marikoGpuVoltArray768mhzFL = {
+    .min = custTable.marikoGpuVoltArray[8] - 75, .max = custTable.marikoGpuVoltArray[8] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray768mhz = {.name = "768mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 8,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[8]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[8],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray768mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray844mhzFOV = {.value = custTable.marikoGpuVoltArray[9]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray768mhzFL}}};
+const FixedLimits marikoGpuVoltArray844mhzFL = {
+    .min = custTable.marikoGpuVoltArray[9] - 75, .max = custTable.marikoGpuVoltArray[9] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray844mhz = {.name = "844mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 9,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[9]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[9],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray844mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray921mhzFOV = {.value = custTable.marikoGpuVoltArray[10]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray844mhzFL}}};
+const FixedLimits marikoGpuVoltArray921mhzFL = {
+    .min = custTable.marikoGpuVoltArray[10] - 75, .max = custTable.marikoGpuVoltArray[10] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray921mhz = {.name = "921mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 10,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[10]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[10],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray921mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray998mhzFOV = {.value = custTable.marikoGpuVoltArray[11]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray921mhzFL}}};
+const FixedLimits marikoGpuVoltArray998mhzFL = {
+    .min = custTable.marikoGpuVoltArray[11] - 75, .max = custTable.marikoGpuVoltArray[11] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray998mhz = {.name = "998mhz",
                                         .category = GPU,
                                         .platform = MARIKO,
                                         .measure = "mV",
                                         .description = NULL,
-                                        .offset = 11,
+                                        .offset = getOffset(custTable.marikoGpuVoltArray[11]),
                                         .length = 4,
                                         .defaultValue = custTable.marikoGpuVoltArray[11],
                                         .limitsCount = 1,
-                                        .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray998mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1075mhzFOV = {.value = custTable.marikoGpuVoltArray[12]};
+                                        .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray998mhzFL}}};
+const FixedLimits marikoGpuVoltArray1075mhzFL = {
+    .min = custTable.marikoGpuVoltArray[12] - 75, .max = custTable.marikoGpuVoltArray[12] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1075mhz = {.name = "1075mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 12,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[12]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[12],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1075mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1152mhzFOV = {.value = custTable.marikoGpuVoltArray[13]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1075mhzFL}}};
+const FixedLimits marikoGpuVoltArray1152mhzFL = {
+    .min = custTable.marikoGpuVoltArray[13] - 75, .max = custTable.marikoGpuVoltArray[13] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1152mhz = {.name = "1152mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 13,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[13]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[13],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1152mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1228mhzFOV = {.value = custTable.marikoGpuVoltArray[14]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1152mhzFL}}};
+const FixedLimits marikoGpuVoltArray1228mhzFL = {
+    .min = custTable.marikoGpuVoltArray[14] - 75, .max = custTable.marikoGpuVoltArray[14] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1228mhz = {.name = "1228mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 14,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[14]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[14],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1228mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1305mhzFOV = {.value = custTable.marikoGpuVoltArray[15]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1228mhzFL}}};
+const FixedLimits marikoGpuVoltArray1305mhzFL = {
+    .min = custTable.marikoGpuVoltArray[15] - 75, .max = custTable.marikoGpuVoltArray[15] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1305mhz = {.name = "1305mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 15,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[15]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[15],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1305mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1344mhzFOV = {.value = custTable.marikoGpuVoltArray[16]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1305mhzFL}}};
+const FixedLimits marikoGpuVoltArray1344mhzFL = {
+    .min = custTable.marikoGpuVoltArray[16] - 75, .max = custTable.marikoGpuVoltArray[16] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1344mhz = {.name = "1344mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 16,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[16]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[16],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1344mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1382mhzFOV = {.value = custTable.marikoGpuVoltArray[17]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1344mhzFL}}};
+const FixedLimits marikoGpuVoltArray1382mhzFL = {
+    .min = custTable.marikoGpuVoltArray[17] - 75, .max = custTable.marikoGpuVoltArray[17] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1382mhz = {.name = "1382mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 17,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[17]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[17],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1382mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1420mhzFOV = {.value = custTable.marikoGpuVoltArray[18]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1382mhzFL}}};
+const FixedLimits marikoGpuVoltArray1420mhzFL = {
+    .min = custTable.marikoGpuVoltArray[18] - 75, .max = custTable.marikoGpuVoltArray[18] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1420mhz = {.name = "1420mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 18,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[18]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[18],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1420mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1459mhzFOV = {.value = custTable.marikoGpuVoltArray[19]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1420mhzFL}}};
+const FixedLimits marikoGpuVoltArray1459mhzFL = {
+    .min = custTable.marikoGpuVoltArray[19] - 75, .max = custTable.marikoGpuVoltArray[19] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1459mhz = {.name = "1459mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 19,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[19]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[19],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1459mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1497mhzFOV = {.value = custTable.marikoGpuVoltArray[20]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1459mhzFL}}};
+const FixedLimits marikoGpuVoltArray1497mhzFL = {
+    .min = custTable.marikoGpuVoltArray[20] - 75, .max = custTable.marikoGpuVoltArray[20] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1497mhz = {.name = "1497mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 20,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[20]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[20],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1497mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1536mhzFOV = {.value = custTable.marikoGpuVoltArray[21]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1497mhzFL}}};
+const FixedLimits marikoGpuVoltArray1536mhzFL = {
+    .min = custTable.marikoGpuVoltArray[21] - 75, .max = custTable.marikoGpuVoltArray[21] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1536mhz = {.name = "1536mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 21,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[21]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[21],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1536mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1574mhzFOV = {.value = custTable.marikoGpuVoltArray[22]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1536mhzFL}}};
+const FixedLimits marikoGpuVoltArray1574mhzFL = {
+    .min = custTable.marikoGpuVoltArray[22] - 75, .max = custTable.marikoGpuVoltArray[22] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1574mhz = {.name = "1574mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 22,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[22]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[22],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1574mhzFOV}}};
-const FixedOneValue marikoGpuVoltArray1612mhzFOV = {.value = custTable.marikoGpuVoltArray[23]};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1574mhzFL}}};
+const FixedLimits marikoGpuVoltArray1612mhzFL = {
+    .min = custTable.marikoGpuVoltArray[23] - 75, .max = custTable.marikoGpuVoltArray[23] + 75, .stepSize = 5};
 const Param marikoGpuVoltArray1612mhz = {.name = "1612mhz",
                                          .category = GPU,
                                          .platform = MARIKO,
                                          .measure = "mV",
                                          .description = NULL,
-                                         .offset = 23,
+                                         .offset = getOffset(custTable.marikoGpuVoltArray[23]),
                                          .length = 4,
                                          .defaultValue = custTable.marikoGpuVoltArray[23],
                                          .limitsCount = 1,
-                                         .limits = {{.type = EFixedOneValue, .values = &marikoGpuVoltArray1612mhzFOV}}};
+                                         .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1612mhzFL}}};
 
 const Table marikoGpuVoltArray = {
+    .name = "GPU Volt Table",
+    .description = NULL,
     .baseOffset = getOffset(custTable.marikoGpuVoltArray),
-    .increment = 4,
     .paramsCount = 24,
     .params = {&marikoGpuVoltArray192mhz,  &marikoGpuVoltArray230mhz,  &marikoGpuVoltArray307mhz,  &marikoGpuVoltArray384mhz,
                &marikoGpuVoltArray460mhz,  &marikoGpuVoltArray537mhz,  &marikoGpuVoltArray614mhz,  &marikoGpuVoltArray691mhz,
@@ -338,7 +363,5 @@ const Param hGPUv = {.name = "GPU OVER MODE",
                      .limitsCount = 2,
                      .limits = {{.type = EFixedValues, .values = &hGPUvFV}, {.type = EFixedLimits, .values = &hGPUvFL}}};
 
-const unsigned int mGPUParamsCount = 3;
-const Param *mGPUParams[] = {&GPUv, &marikoGpuUV, &hGPUv};
-const unsigned int mGPUTablesCount = 1;
-const Table *mGPUTables[] = {&marikoGpuVoltArray};
+const Params mGPUParams = {.count = 3, .params = {&GPUv, &marikoGpuUV, &hGPUv}};
+const Tables mGPUTables = {.count = 1, .tables = {&marikoGpuVoltArray}};
