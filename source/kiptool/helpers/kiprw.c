@@ -22,8 +22,9 @@ unsigned int u8ArrayToUnsignedInt(const u8 *array, const unsigned int length) {
     return num;
 }
 
-unsigned int getParamValueFromBuffer(const u8 *buffer, const Param *param) { return u8ArrayToUnsignedInt(buffer + param->offset, param->length); }
-
+unsigned int getParamValueFromBuffer(const u8 *buffer, const Param *param) {
+    return u8ArrayToUnsignedInt(buffer + param->offset, param->length);
+}
 
 int searchBytesArray(const u8 *array, const unsigned int size, FIL *file) {
     const unsigned int BUFF_SIZE = 2048;

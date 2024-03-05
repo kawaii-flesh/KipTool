@@ -10,6 +10,7 @@
 #include "../../gfx/gfx.h"
 #include "../../hid/hid.h"
 #include "../helpers/gfx.h"
+#include "../helpers/hw.h"
 #include "../helpers/kiprw.h"
 #include "../helpers/param.h"
 #include "../params/common/cpu.h"
@@ -32,12 +33,6 @@ void printTable(const u8 *buff, const Table *table, char *displayBuff) {
         gfx_printf("%s: %s\n", param->name, displayBuff);
     }
 }
-
-// void printModeTable(const u8 *buff, const ModeTable *table, char *displayBuff) {
-//     const unsigned int mode = getParamValueFromBuffer(buff, table->tableModeParam);
-//     const Table *currentTable = table->tables[mode];
-//     printTable(buff, currentTable, displayBuff);
-// }
 
 void printParamByParam(const u8 *buff, const Param *param, char *displayBuff) {
     unsigned int paramValue = getParamValueFromBuffer(buff, param);
@@ -77,10 +72,18 @@ int kipWizard(char *path, FSEntry_t entry) {
     FIL kipFile;
     int res;
     Input_t *input = hidRead();
-    const enum Platform platform = isMarikoHWType() ? MARIKO : ERISTA;  // DEBUG
+    if (input->l) {
+        if (input->r)
+            setHWType(MARIKO);
+        else if (input->zr)
+            setHWType(ERISTA);
+        else if (input->zl)
+            setHWType(COMMON);
+    }
 
     gfx_clearscreenKT();
     gfx_printf("Loading CUST table ...");
+    confirmationDialog("Hello, User?", ENO);
 
     if ((res = f_open(&kipFile, filePath, FA_READ | FA_OPEN_EXISTING))) {
         DrawError(newErrCode(res));
@@ -117,7 +120,7 @@ int kipWizard(char *path, FSEntry_t entry) {
             if (res == -1)
                 break;
             else if (res <= 2)
-                functions[res](custTable, platform);
+                functions[res](custTable, getHWType());
         }
 
         f_close(&kipFile);

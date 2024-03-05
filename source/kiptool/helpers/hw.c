@@ -5,11 +5,12 @@
 #include <soc/hw_init.h>
 #include <soc/t210.h>
 
-bool isMarikoHWType() {
-    static int isMariko = -1;
-    if (isMariko == -1) isMariko = hw_get_chip_id() == GP_HIDREV_MAJOR_T210B01;
-    return isMariko;
+static enum Platform _platform = UNKNOWN;
+enum Platform getHWType() {
+    if (_platform == UNKNOWN) _platform = hw_get_chip_id() == GP_HIDREV_MAJOR_T210B01 ? MARIKO : ERISTA;
+    return _platform;
 }
+void setHWType(enum Platform platform) { _platform = platform; }
 
 unsigned int getBatteryValue() {
     int battery = 0;

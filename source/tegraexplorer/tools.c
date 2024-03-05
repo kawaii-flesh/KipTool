@@ -1,33 +1,34 @@
 #include "tools.h"
+
+#include <display/di.h>
+#include <libs/fatfs/ff.h>
+#include <mem/heap.h>
+#include <storage/nx_sd.h>
+#include <string.h>
+#include <utils/sprintf.h>
+#include <utils/util.h>
+
+#include "../err.h"
+#include "../fs/fscopy.h"
+#include "../fs/fsutils.h"
+#include "../fs/readers/folderReader.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gfxutils.h"
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
-#include <libs/fatfs/ff.h>
-#include <storage/nx_sd.h>
-#include "../fs/fsutils.h"
-#include <utils/util.h>
-#include "../err.h"
-#include <utils/sprintf.h>
-#include <mem/heap.h>
 #include "../tegraexplorer/tconf.h"
-#include "../fs/readers/folderReader.h"
-#include <string.h>
-#include "../fs/fscopy.h"
 #include "../utils/utils.h"
-#include <display/di.h>
 
 extern bool sd_mounted;
 
-void TakeScreenshot(){
+void TakeScreenshot() {
     static u32 timer = 0;
 
-    if (!TConf.minervaEnabled || !sd_mounted)
-		return;
+    if (!TConf.minervaEnabled || !sd_mounted) return;
 
     if (timer + 3 < get_tmr_s())
         timer = get_tmr_s();
-    else 
+    else
         return;
 
     char *name, *path;
@@ -45,36 +46,34 @@ void TakeScreenshot(){
     u32 *fb = malloc(0x384000);
     u32 *fb_ptr = gfx_ctxt.fb;
 
-    for (int x = 1279; x >= 0; x--)
-	{
-		for (int y = 719; y >= 0; y--)
-			fb[y * 1280 + x] = *fb_ptr++;
-	}
+    for (int x = 1279; x >= 0; x--) {
+        for (int y = 719; y >= 0; y--) fb[y * 1280 + x] = *fb_ptr++;
+    }
 
     memcpy(bitmap + 0x36, fb, 0x384000);
     bmp_t *bmp = (bmp_t *)bitmap;
 
-	bmp->magic    = 0x4D42;
-	bmp->size     = file_size;
-	bmp->rsvd     = 0;
-	bmp->data_off = 0x36;
-	bmp->hdr_size = 40;
-	bmp->width    = 1280;
-	bmp->height   = 720;
-	bmp->planes   = 1;
-	bmp->pxl_bits = 32;
-	bmp->comp     = 0;
-	bmp->img_size = 0x384000;
-	bmp->res_h    = 2834;
-	bmp->res_v    = 2834;
-	bmp->rsvd2    = 0;
+    bmp->magic = 0x4D42;
+    bmp->size = file_size;
+    bmp->rsvd = 0;
+    bmp->data_off = 0x36;
+    bmp->hdr_size = 40;
+    bmp->width = 1280;
+    bmp->height = 720;
+    bmp->planes = 1;
+    bmp->pxl_bits = 32;
+    bmp->comp = 0;
+    bmp->img_size = 0x384000;
+    bmp->res_h = 2834;
+    bmp->res_v = 2834;
+    bmp->rsvd2 = 0;
 
     sd_save_to_file(bitmap, file_size, path);
     free(bitmap);
     free(fb);
-	free(path);
+    free(path);
 
     display_backlight_brightness(255, 1000);
-	msleep(100);
-	display_backlight_brightness(100, 1000);
+    msleep(100);
+    display_backlight_brightness(100, 1000);
 }

@@ -205,7 +205,7 @@ static inline void _show_errors() {
 void ipl_main() {
     // Do initial HW configuration. This is compatible with consecutive reruns without a reset.
     hw_init();
-	hidInit();
+    hidInit();
 
     // Pivot the stack so we have enough space.
     pivot_stack(IPL_STACK_TOP);
@@ -241,8 +241,9 @@ void ipl_main() {
 
     _show_errors();
     gfx_clearscreen();
-	gfx_printf("Waiting for the JoyCons to be ready ...");
-	while(!hidConnected());
+    gfx_printf("Waiting for the JoyCons to be ready ...");
+    while (!hidConnected())
+        ;
 
     EnterMainMenu();
 

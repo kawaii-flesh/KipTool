@@ -22,6 +22,8 @@ typedef struct ParamsMenuEntry {
     u8 icon;
 } ParamsMenuEntry;
 
+enum ConfirmationDialogResult { EYES, ENO, ENOT_SELECTED };
+
 void gfx_printTopInfoKT();
 
 void gfx_clearscreenKT();
@@ -29,3 +31,4 @@ int newMenuKT(ParamsMenuEntry entries[], const u8 *custTable, const unsigned int
 void newParamsMenu(const u8 *custTable, const char *sectionTitle, const Params *params[], const unsigned int paramsArraysCount,
                    const Tables *tables[], unsigned int tablesArraysCount);
 void printParamEntry(ParamsMenuEntry entry, const u8 *custTable, u32 maxLen, u8 highlighted, u32 bg);
+enum ConfirmationDialogResult confirmationDialog(const char *message, const enum ConfirmationDialogResult defaultValue);

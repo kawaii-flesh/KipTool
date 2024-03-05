@@ -120,7 +120,7 @@ const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1280, .stepSize = 5}
 // 1180-1250 STAGE 1-3
 // MANUAL 1130-1280 STEP 5mV
 const Param marikoCpuMaxVolt = {
-    .name = "CPU VMAX MODE ",
+    .name = "CPU VMAX MODE",
     .category = CPU,
     .platform = MARIKO,
     .measure = "mV",

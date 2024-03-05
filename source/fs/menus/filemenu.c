@@ -30,9 +30,7 @@ MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "\nKip tool"},
 };
 
-void UnimplementedException(char *path, FSEntry_t entry) {
-    DrawError(newErrCode(TE_ERR_UNIMPLEMENTED));
-}
+void UnimplementedException(char *path, FSEntry_t entry) { DrawError(newErrCode(TE_ERR_UNIMPLEMENTED)); }
 
 extern int launch_payload(char *path);
 
@@ -130,8 +128,7 @@ void HexView(char *path, FSEntry_t entry) {
     free(filePath);
 }
 
-fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile,
-                                HexView,       LaunchPayload,  KipTool};
+fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, HexView, LaunchPayload, KipTool};
 
 void FileMenu(char *path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;
@@ -150,7 +147,7 @@ void FileMenu(char *path, FSEntry_t entry) {
     gfx_con_setpos(384 + 16, 200 + 16);
     int res = newMenu(&ent, 0, 30, 19, ENABLEB | ALWAYSREDRAW | USELIGHTGREY, ent.count);
 
-    if (res <= 4) return;
+    if (res <= 4 || res == -1) return;
 
     FileMenuPaths[res - 5](path, entry);
 }

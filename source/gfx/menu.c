@@ -57,10 +57,9 @@ int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
     // Maybe add a check here so you don't read OOB by providing a too high startindex?
 
-    u32 lastPress = 0x666 + get_tmr_ms();
+    u32 lastPress = 1000 + get_tmr_ms();
     u32 holdTimer = 300;
     int totalPageCount = ((vec->count - 1) / screenLenY) + 1;
-
     while (1) {
         int currentPage = (selected / screenLenY) + 1;
         u32 lastDraw = get_tmr_ms();
@@ -124,7 +123,7 @@ int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 op
             if (hidRead()->a)
                 return selected;
             else if (input->b && options & ENABLEB)
-                return 0;
+                return -1;
             else if (input->down || input->rDown) {  // Rdown should probs not trigger a page change. Same for RUp
                 ++selected;
                 break;
@@ -166,17 +165,17 @@ int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
         lastPress = get_tmr_ms();
 
-        if (selected > lastIndex && !pageTurn) {
-            while (selected < vec->count && entries[selected].optionUnion & SKIPHIDEBITS) ++selected;
-            if (selected >= nextPageFirstIndex || selected >= vec->count) {
-                selected = currentPageFirstIndex;
-                while (selected < vec->count - 1 && entries[selected].optionUnion & SKIPHIDEBITS) ++selected;
-            }
-        } else if (selected < lastIndex && !pageTurn) {
+        if (selected < lastIndex && !pageTurn || selected == vec->count - 1) {
             while (selected > currentPageFirstIndex - 1 && entries[selected].optionUnion & SKIPHIDEBITS) --selected;
             if (selected < currentPageFirstIndex) {
                 selected = totalPageCount == 1 ? vec->count - 1 : MIN(nextPageFirstIndex - 1, vec->count - 1);
                 while (selected != 0 && entries[selected].optionUnion & SKIPHIDEBITS) --selected;
+            }
+        } else if (selected > lastIndex && !pageTurn) {
+            while (selected < vec->count && entries[selected].optionUnion & SKIPHIDEBITS) ++selected;
+            if (selected >= nextPageFirstIndex || selected >= vec->count) {
+                selected = currentPageFirstIndex;
+                while (selected < vec->count - 1 && entries[selected].optionUnion & SKIPHIDEBITS) ++selected;
             }
         }
 

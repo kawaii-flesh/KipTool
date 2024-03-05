@@ -15,6 +15,5 @@ void drawKipToolMenu(char *path, FSEntry_t entry) {
     gfx_boxGrey(384, 200, 384 + 512, 200 + 320, 0x33);
     gfx_con_setpos(384 + 16, 200 + 16);
     int res = newMenu(&ent, 0, 30, 19, ENABLEB | ALWAYSREDRAW | USELIGHTGREY, ent.count);
-
-    if (res < 3) kipToolMenuPaths[res](path, entry);
+    if (res < 3 && res != -1) kipToolMenuPaths[res](path, entry);
 }

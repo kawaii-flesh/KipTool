@@ -2,7 +2,7 @@
 
 enum LimitsType { EFixedLimits, EFixedOneValue, EFixedValues, EMinByParam, EMaxByParam, EMinAndMaxByParam };
 enum Category { GENERAL, CPU, GPU, RAM };
-enum Platform { COMMON, MARIKO, ERISTA };
+enum Platform { COMMON, MARIKO, ERISTA, UNKNOWN };
 
 typedef struct {
     const unsigned int value;
