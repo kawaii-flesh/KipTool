@@ -63,8 +63,6 @@ void gfx_putc(char c);
 void gfx_puts(const char *s);
 void gfx_printf(const char *fmt, ...);
 void gfx_vprintf(const char *fmt, va_list ap);
-void gfx_hexdump(u32 base, const u8 *buf, u32 len);
-void gfx_hexdiff(u32 base, const u8 *buf1, const u8 *buf2, u32 len);
 void gfx_puts_limit(const char *s, u32 limit);
 void gfx_puts_small(const char *s);
 void gfx_putc_small(char c);

@@ -38,8 +38,6 @@
 #include <power/regulator_5v.h>
 #include <storage/nx_sd.h>
 #include <storage/sdmmc.h>
-#include <thermal/fan.h>
-#include <thermal/tmp451.h>
 #include <utils/util.h>
 
 extern boot_cfg_t b_cfg;

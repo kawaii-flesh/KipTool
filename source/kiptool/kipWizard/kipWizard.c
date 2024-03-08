@@ -83,7 +83,6 @@ int kipWizard(char *path, FSEntry_t entry) {
 
     gfx_clearscreenKT();
     gfx_printf("Loading CUST table ...");
-    confirmationDialog("Hello, User?", ENO);
 
     if ((res = f_open(&kipFile, filePath, FA_READ | FA_OPEN_EXISTING))) {
         DrawError(newErrCode(res));
@@ -106,16 +105,15 @@ int kipWizard(char *path, FSEntry_t entry) {
     unsigned int kipVersion = getParamValueFromBuffer(custTable, &gKipVersion);
     unsigned int startIndex = 0;
     if (kipVersion == CURRENT_VERSION) {
-        gfx_clearscreenKT();
         char *displayBuff = calloc(1024, 1);
-        ParamsMenuEntry entries[] = {
-            {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = "-- Kip Wizard --"},
-            {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ELabel, .entry = "CPU Params"},
-            {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ELabel, .entry = "GPU Params"},
-            {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ELabel, .entry = "RAM Params"}};
+        MenuEntry entries[] = {{.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = "-- Kip Wizard --"},
+                               {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ELabel, .entry = "CPU Params"},
+                               {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ELabel, .entry = "GPU Params"},
+                               {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ELabel, .entry = "RAM Params"}};
         void (*functions[])(const u8 *, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
         while (1) {
-            int res = newMenuKT(entries, custTable, 4, startIndex);
+            gfx_clearscreenKT();
+            int res = newMenuKT(entries, 4, startIndex, NULL, printEntry);
             startIndex = res + 1;
             if (res == -1)
                 break;

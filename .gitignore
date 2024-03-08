@@ -11,3 +11,4 @@ loader/payload_01.h
 
 tools/lz
 tools/bin2c
+source/format.sh

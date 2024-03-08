@@ -4,9 +4,9 @@
 #include "../params/param.h"
 #include "../params/table.h"
 
-enum MenuEntryType { ELabel, EParam, ETable };
+enum MenuEntryType { ELabel, EParam, ETable, EValue, ELimits };
 
-typedef struct ParamsMenuEntry {
+typedef struct MenuEntry {
     union {
         struct {
             u32 B : 8;
@@ -20,15 +20,25 @@ typedef struct ParamsMenuEntry {
     enum MenuEntryType type;
     void *entry;
     u8 icon;
-} ParamsMenuEntry;
+} MenuEntry;
 
 enum ConfirmationDialogResult { EYES, ENO, ENOT_SELECTED };
+
+enum ManualValueStatus { EMVS_GOOD, EMVS_EXIT, EMVS_ITS_NOT_FIXEDLIMITS, EMVS_INVALID_VALUE };
+typedef struct ManualValueResult {
+    unsigned int value;
+    enum ManualValueStatus status;
+} ManualValueResult;
 
 void gfx_printTopInfoKT();
 
 void gfx_clearscreenKT();
-int newMenuKT(ParamsMenuEntry entries[], const u8 *custTable, const unsigned int entriesCount, unsigned int startIndex);
+void printEntry(MenuEntry *entry, u32 maxLen, u8 highlighted, u32 bg, void *additionalData);
+int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, void *additionalData,
+              void (*printMenuEntryFunc)(MenuEntry *entry, u32 maxLen, u8 highlighted, u32 bg, void *data));
+void printParamEntry(MenuEntry *entry, u32 maxLen, u8 highlighted, u32 bg, u8 *custTable);
+void newTableMenu(const u8 *custTable, const Table *table);
 void newParamsMenu(const u8 *custTable, const char *sectionTitle, const Params *params[], const unsigned int paramsArraysCount,
                    const Tables *tables[], unsigned int tablesArraysCount);
-void printParamEntry(ParamsMenuEntry entry, const u8 *custTable, u32 maxLen, u8 highlighted, u32 bg);
 enum ConfirmationDialogResult confirmationDialog(const char *message, const enum ConfirmationDialogResult defaultValue);
+ManualValueResult manualValueDialog(const Param *param, int defaultValue);

@@ -25,7 +25,6 @@ MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Move to clipboard"},
     {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "Rename file\n"},
     {.optionUnion = COLORTORGB(COLOR_RED), .name = "Delete file"},
-    {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "View hex"},
     {.optionUnion = COLORTORGB(COLOR_ORANGE), .name = "Launch Payload"},
     {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "\nKip tool"},
 };
@@ -83,52 +82,7 @@ void RenameFile(char *path, FSEntry_t entry) {
     free(renameTo);
 }
 
-// This is from the original TE and it's bad but uhh i'm too lazy to fix it
-void HexView(char *path, FSEntry_t entry) {
-    char *filePath = CombinePaths(path, entry.name);
-
-    FIL in;
-    u8 *print;
-    u32 size;
-    QWORD offset = 0;
-    int res;
-    Input_t *input = hidRead();
-
-    while (input->buttons & (BtnPow | JoyB)) hidRead();
-
-    gfx_clearscreen();
-    print = calloc(2048, 1);
-
-    if ((res = f_open(&in, filePath, FA_READ | FA_OPEN_EXISTING))) {
-        DrawError(newErrCode(res));
-        return;
-    }
-
-    while (1) {
-        f_lseek(&in, offset * 32);
-
-        if ((res = f_read(&in, print, 2048, &size))) {
-            DrawError(newErrCode(res));
-            return;
-        }
-
-        gfx_con_setpos(0, 31);
-        gfx_hexdump(offset * 32, print, ((size + 31) / 32) * 32);
-
-        input = hidRead();
-
-        if (!(input->buttons)) input = hidWait();
-
-        if (input->down && 2048 == size) offset += 2;
-        if (input->up && offset > 0) offset -= 2;
-        if (input->buttons & (BtnPow | JoyB)) break;
-    }
-    f_close(&in);
-    free(print);
-    free(filePath);
-}
-
-fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, HexView, LaunchPayload, KipTool};
+fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, LaunchPayload, KipTool};
 
 void FileMenu(char *path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;
@@ -139,8 +93,8 @@ void FileMenu(char *path, FSEntry_t entry) {
     free(attribList);
     FileMenuEntries[2].name = attribs;
 
-    FileMenuEntries[10].hide = !StrEndsWith(entry.name, ".bin");
-    FileMenuEntries[11].hide = !StrEndsWith(entry.name, ".kip");
+    FileMenuEntries[9].hide = !StrEndsWith(entry.name, ".bin");
+    FileMenuEntries[10].hide = !StrEndsWith(entry.name, ".kip");
 
     Vector_t ent = vecFromArray(FileMenuEntries, ARR_LEN(FileMenuEntries), sizeof(MenuEntry_t));
     gfx_boxGrey(384, 200, 384 + 512, 200 + 320, 0x33);
