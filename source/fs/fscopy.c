@@ -11,11 +11,11 @@
 #include "fsutils.h"
 #include "readers/folderReader.h"
 
-ErrCode_t FileCopy(const char *locin, const char *locout, u8 options) {
+ErrCode_t FileCopy(const char* locin, const char* locout, u8 options) {
     FIL in, out;
     FILINFO in_info;
     u64 sizeRemaining, toCopy;
-    u8 *buff;
+    u8* buff;
     u32 x, y;
     ErrCode_t err = newErrCode(0);
     int res = 0;
@@ -93,7 +93,7 @@ void BoxRestOfScreen() {
     gfx_boxGrey(tempX, tempY, YLEFT, tempY + 16, 0x1B);
 }
 
-ErrCode_t FolderCopy(const char *locin, const char *locout) {
+ErrCode_t FolderCopy(const char* locin, const char* locout) {
     if (TConf.explorerCopyMode >= CMODE_CopyFolder) {
         if (strstr(locout, locin) != NULL) return newErrCode(TE_ERR_PATH_IN_PATH);
     }
@@ -102,7 +102,7 @@ ErrCode_t FolderCopy(const char *locin, const char *locout) {
         return newErrCode(TE_ERR_SAME_LOC);
     }
 
-    char *dstPath = CombinePaths(locout, strrchr(locin, '/') + 1);
+    char* dstPath = CombinePaths(locout, strrchr(locin, '/') + 1);
     int res = 0;
     ErrCode_t ret = newErrCode(0);
     u32 x, y;
@@ -112,18 +112,18 @@ ErrCode_t FolderCopy(const char *locin, const char *locout) {
     if (res) {
         ret = newErrCode(res);
     } else {
-        vecDefArray(FSEntry_t *, fs, fileVec);
+        vecDefArray(FSEntry_t*, fs, fileVec);
         f_mkdir(dstPath);
 
         for (int i = 0; i < fileVec.count && !ret.err; i++) {
-            char *temp = CombinePaths(locin, fs[i].name);
+            char* temp = CombinePaths(locin, fs[i].name);
             if (fs[i].isDir) {
                 ret = FolderCopy(temp, dstPath);
             } else {
                 gfx_puts_limit(fs[i].name, (YLEFT - x) / 16 - 10);
                 BoxRestOfScreen();
 
-                char *tempDst = CombinePaths(dstPath, fs[i].name);
+                char* tempDst = CombinePaths(dstPath, fs[i].name);
                 ret = FileCopy(temp, tempDst, COPY_MODE_PRINT);
                 free(tempDst);
 
@@ -148,7 +148,7 @@ ErrCode_t FolderCopy(const char *locin, const char *locout) {
     return ret;
 }
 
-ErrCode_t FolderDelete(const char *path) {
+ErrCode_t FolderDelete(const char* path) {
     int res = 0;
     ErrCode_t ret = newErrCode(0);
     u32 x, y;
@@ -158,10 +158,10 @@ ErrCode_t FolderDelete(const char *path) {
     if (res) {
         ret = newErrCode(res);
     } else {
-        vecDefArray(FSEntry_t *, fs, fileVec);
+        vecDefArray(FSEntry_t*, fs, fileVec);
 
         for (int i = 0; i < fileVec.count && !ret.err; i++) {
-            char *temp = CombinePaths(path, fs[i].name);
+            char* temp = CombinePaths(path, fs[i].name);
             if (fs[i].isDir) {
                 ret = FolderDelete(temp);
             } else {

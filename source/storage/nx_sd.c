@@ -44,7 +44,7 @@ void sd_error_count_increment(u8 type) {
     }
 }
 
-u16 *sd_get_error_count() { return sd_errors; }
+u16* sd_get_error_count() { return sd_errors; }
 
 bool sd_get_card_removed() {
     if (!sdmmc_get_sd_inserted()) return true;
@@ -155,14 +155,14 @@ static void _sd_deinit() {
 void sd_unmount() { _sd_deinit(); }
 void sd_end() { _sd_deinit(); }
 
-void *sd_file_read(const char *path, u32 *fsize) {
+void* sd_file_read(const char* path, u32* fsize) {
     FIL fp;
     if (f_open(&fp, path, FA_READ) != FR_OK) return NULL;
 
     u32 size = f_size(&fp);
     if (fsize) *fsize = size;
 
-    char *buf = malloc(size + 1);
+    char* buf = malloc(size + 1);
     buf[size] = '\0';
 
     if (f_read(&fp, buf, size, NULL) != FR_OK) {
@@ -177,7 +177,7 @@ void *sd_file_read(const char *path, u32 *fsize) {
     return buf;
 }
 
-int sd_save_to_file(void *buf, u32 size, const char *filename) {
+int sd_save_to_file(void* buf, u32 size, const char* filename) {
     FIL fp;
     u32 res = 0;
     res = f_open(&fp, filename, FA_CREATE_ALWAYS | FA_WRITE);

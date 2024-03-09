@@ -75,7 +75,7 @@ void ViewCredits() {
 
 extern bool sd_mounted;
 extern bool is_sd_inited;
-extern int launch_payload(char *path);
+extern int launch_payload(char* path);
 
 void RebootToAMS() { launch_payload("sd:/atmosphere/reboot_payload.bin"); }
 

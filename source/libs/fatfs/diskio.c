@@ -32,7 +32,8 @@
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
-DSTATUS disk_status(BYTE pdrv /* Physical drive number to identify the drive */
+DSTATUS
+disk_status(BYTE pdrv /* Physical drive number to identify the drive */
 ) {
     return 0;
 }
@@ -40,7 +41,8 @@ DSTATUS disk_status(BYTE pdrv /* Physical drive number to identify the drive */
 /*-----------------------------------------------------------------------*/
 /* Inidialize a Drive                                                    */
 /*-----------------------------------------------------------------------*/
-DSTATUS disk_initialize(BYTE pdrv /* Physical drive number to identify the drive */
+DSTATUS
+disk_initialize(BYTE pdrv /* Physical drive number to identify the drive */
 ) {
     return 0;
 }
@@ -48,10 +50,11 @@ DSTATUS disk_initialize(BYTE pdrv /* Physical drive number to identify the drive
 /*-----------------------------------------------------------------------*/
 /* Read Sector(s)                                                        */
 /*-----------------------------------------------------------------------*/
-DRESULT disk_read(BYTE pdrv,    /* Physical drive number to identify the drive */
-                  BYTE *buff,   /* Data buffer to store read data */
-                  DWORD sector, /* Start sector in LBA */
-                  UINT count    /* Number of sectors to read */
+DRESULT
+disk_read(BYTE pdrv,    /* Physical drive number to identify the drive */
+          BYTE* buff,   /* Data buffer to store read data */
+          DWORD sector, /* Start sector in LBA */
+          UINT count    /* Number of sectors to read */
 ) {
     switch (pdrv) {
         case DRIVE_SD:
@@ -64,14 +67,15 @@ DRESULT disk_read(BYTE pdrv,    /* Physical drive number to identify the drive *
 /*-----------------------------------------------------------------------*/
 /* Write Sector(s)                                                       */
 /*-----------------------------------------------------------------------*/
-DRESULT disk_write(BYTE pdrv,        /* Physical drive number to identify the drive */
-                   const BYTE *buff, /* Data to be written */
-                   DWORD sector,     /* Start sector in LBA */
-                   UINT count        /* Number of sectors to write */
+DRESULT
+disk_write(BYTE pdrv,        /* Physical drive number to identify the drive */
+           const BYTE* buff, /* Data to be written */
+           DWORD sector,     /* Start sector in LBA */
+           UINT count        /* Number of sectors to write */
 ) {
     switch (pdrv) {
         case DRIVE_SD:
-            return sdmmc_storage_write(&sd_storage, sector, count, (void *)buff) ? RES_OK : RES_ERROR;
+            return sdmmc_storage_write(&sd_storage, sector, count, (void*)buff) ? RES_OK : RES_ERROR;
     }
 
     return RES_ERROR;
@@ -81,11 +85,12 @@ DRESULT disk_write(BYTE pdrv,        /* Physical drive number to identify the dr
 /* Miscellaneous Functions                                               */
 /*-----------------------------------------------------------------------*/
 static u32 part_rsvd_size = 0;
-DRESULT disk_ioctl(BYTE pdrv, /* Physical drive nmuber (0..) */
-                   BYTE cmd,  /* Control code */
-                   void *buff /* Buffer to send/receive control data */
+DRESULT
+disk_ioctl(BYTE pdrv, /* Physical drive nmuber (0..) */
+           BYTE cmd,  /* Control code */
+           void* buff /* Buffer to send/receive control data */
 ) {
-    DWORD *buf = (DWORD *)buff;
+    DWORD* buf = (DWORD*)buff;
 
     if (pdrv == DRIVE_SD) {
         switch (cmd) {

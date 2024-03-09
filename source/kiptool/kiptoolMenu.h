@@ -8,9 +8,9 @@ MenuEntry_t kipToolMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Kip Wizard"},
 };
 
-const int (*kipToolMenuPaths[])(char *, FSEntry_t) = {[KTWizard] = kipWizard};
+const int (*kipToolMenuPaths[])(char*, FSEntry_t) = {[KTWizard] = kipWizard};
 
-void drawKipToolMenu(char *path, FSEntry_t entry) {
+void drawKipToolMenu(char* path, FSEntry_t entry) {
     Vector_t ent = vecFromArray(kipToolMenuEntries, ARR_LEN(kipToolMenuEntries), sizeof(MenuEntry_t));
     gfx_boxGrey(384, 200, 384 + 512, 200 + 320, 0x33);
     gfx_con_setpos(384 + 16, 200 + 16);

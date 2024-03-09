@@ -8,20 +8,20 @@
 #include "../utils/utils.h"
 #include "readers/folderReader.h"
 
-char *CombinePaths(const char *current, const char *add) {
-    char *ret;
+char* CombinePaths(const char* current, const char* add) {
+    char* ret;
 
     size_t size = strlen(current) + strlen(add) + 2;
-    ret = (char *)malloc(size);
+    ret = (char*)malloc(size);
 
     s_printf(ret, (current[strlen(current) - 1] == '/') ? "%s%s" : "%s/%s", current, add);
 
     return ret;
 }
 
-char *EscapeFolder(const char *current) {
-    char *ret;
-    char *temp;
+char* EscapeFolder(const char* current) {
+    char* ret;
+    char* temp;
 
     ret = CpyStr(current);
     temp = strrchr(ret, '/');
@@ -33,7 +33,7 @@ char *EscapeFolder(const char *current) {
     return ret;
 }
 
-FSEntry_t GetFileInfo(const char *path) {
+FSEntry_t GetFileInfo(const char* path) {
     FILINFO fno;
     f_stat(path, &fno);
     FSEntry_t entry = {.optionUnion = fno.fattrib, .name = strrchr(path, '/') + 1};
@@ -41,14 +41,14 @@ FSEntry_t GetFileInfo(const char *path) {
     return entry;
 }
 
-char *GetFileAttribs(FSEntry_t entry) {
-    char *ret = CpyStr("RHSVDA");
+char* GetFileAttribs(FSEntry_t entry) {
+    char* ret = CpyStr("RHSVDA");
     MaskIn(ret, entry.optionUnion, '-');
     return ret;
 }
 
 // Returns 1 if a file exists, 0 if it does not
-bool FileExists(const char *path) {
+bool FileExists(const char* path) {
     FRESULT fr;
     FILINFO fno;
 

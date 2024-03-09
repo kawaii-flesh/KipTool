@@ -7,7 +7,7 @@
 
 #define DvfsTableEntryCount 32
 #define DvfsTableEntryLimit DvfsTableEntryCount - 1
-#define getOffset(param) (int)((const void *)&param - (const void *)custTable.cust)
+#define getOffset(param) (int)((const void*)&param - (const void*)custTable.cust)
 
 typedef struct cvb_coefficients {
     s32 c0;

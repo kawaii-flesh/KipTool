@@ -18,8 +18,8 @@ void hidInit() { jc_init_hw(); }
 
 extern hekate_config h_cfg;
 
-Input_t *hidRead() {
-    jc_gamepad_rpt_t *controller = joycon_poll();
+Input_t* hidRead() {
+    jc_gamepad_rpt_t* controller = joycon_poll();
 
     inputs.buttons = 0;
     u8 left_connected = 0;
@@ -72,8 +72,8 @@ Input_t *hidRead() {
     return &inputs;
 }
 
-Input_t *hidWaitMask(u32 mask) {
-    Input_t *in = hidRead();
+Input_t* hidWaitMask(u32 mask) {
+    Input_t* in = hidRead();
 
     while (in->buttons & mask) hidRead();
 
@@ -84,8 +84,8 @@ Input_t *hidWaitMask(u32 mask) {
     return in;
 }
 
-Input_t *hidWait() {
-    Input_t *in = hidRead();
+Input_t* hidWait() {
+    Input_t* in = hidRead();
 
     while (in->buttons) hidRead();
 
@@ -94,6 +94,6 @@ Input_t *hidWait() {
 }
 
 bool hidConnected() {
-    jc_gamepad_rpt_t *controller = joycon_poll();
+    jc_gamepad_rpt_t* controller = joycon_poll();
     return (controller->conn_l && controller->conn_r) ? 1 : 0;
 }

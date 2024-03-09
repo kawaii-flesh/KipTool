@@ -4,7 +4,7 @@
 #include "gfx/gfxutils.h"
 #include "hid/hid.h"
 
-const char *TEErrors[] = {
+const char* TEErrors[] = {
     "I/O ERROR",
     "NO DISK",
     "NOT READY",
@@ -33,7 +33,7 @@ const char *TEErrors[] = {
     [TE_ERR_FILE_TOO_BIG_FOR_DEST - 1] = "File is too big for dest",
 };
 
-const char *GetErrStr(u32 err) {
+const char* GetErrStr(u32 err) {
     --err;  // obv error codes cannot be 0
     if (err >= 0 && err < ARRAY_SIZE(TEErrors)) return TEErrors[err];
 

@@ -3,8 +3,8 @@
 
 #include "fstypes.h"
 
-FSEntry_t GetFileInfo(const char *path);
-char *EscapeFolder(const char *current);
-char *CombinePaths(const char *current, const char *add);
-char *GetFileAttribs(FSEntry_t entry);
-bool FileExists(const char *path);
+FSEntry_t GetFileInfo(const char* path);
+char* EscapeFolder(const char* current);
+char* CombinePaths(const char* current, const char* add);
+char* GetFileAttribs(FSEntry_t entry);
+bool FileExists(const char* path);

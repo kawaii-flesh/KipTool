@@ -3,10 +3,10 @@
 
 #include "../params/param.h"
 
-void addDefaultPostfix(const Param *param, char *displayBuff, unsigned int value);
+void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value);
 
-void addLabel(const Param *param, const Value *value, char *displayBuff);
+void addLabel(const Param* param, const Value* value, char* displayBuff);
 
-bool addLabelToFixedValue(const Param *param, char *displayBuff, unsigned int value);
+bool addLabelToFixedValue(const Param* param, char* displayBuff, unsigned int value);
 
-void getDisplayValue(const Param *param, char *displayBuff, unsigned int value);
+void getDisplayValue(const Param* param, char* displayBuff, unsigned int value);

@@ -11,7 +11,7 @@
 #include "gfx.h"
 #include "gfxutils.h"
 
-const char *sizeDefs[] = {"B ", "KB", "MB", "GB"};
+const char* sizeDefs[] = {"B ", "KB", "MB", "GB"};
 
 void _printEntry(MenuEntry_t entry, u32 maxLen, u8 highlighted, u32 bg) {
     if (entry.hide) return;
@@ -37,8 +37,8 @@ void _printEntry(MenuEntry_t entry, u32 maxLen, u8 highlighted, u32 bg) {
     gfx_putc('\n');
 }
 
-int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 options, int entryCount) {
-    vecPDefArray(MenuEntry_t *, entries, vec);
+int newMenu(Vector_t* vec, int startIndex, int screenLenX, int screenLenY, u8 options, int entryCount) {
+    vecPDefArray(MenuEntry_t*, entries, vec);
     int selected = startIndex;
 
     while (entries[selected].skip || entries[selected].hide) {
@@ -53,7 +53,7 @@ int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 op
     u32 bgColor = (options & USELIGHTGREY) ? COLOR_DARKGREY : COLOR_DEFAULT;
 
     bool redrawScreen = true;
-    Input_t *input = hidRead();
+    Input_t* input = hidRead();
 
     // Maybe add a check here so you don't read OOB by providing a too high startindex?
 
@@ -165,7 +165,7 @@ int newMenu(Vector_t *vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
         lastPress = get_tmr_ms();
 
-        if (selected < lastIndex && !pageTurn || selected == vec->count - 1) {
+        if ((selected < lastIndex && !pageTurn) || selected == vec->count - 1) {
             while (selected > currentPageFirstIndex - 1 && entries[selected].optionUnion & SKIPHIDEBITS) --selected;
             if (selected < currentPageFirstIndex) {
                 selected = totalPageCount == 1 ? vec->count - 1 : MIN(nextPageFirstIndex - 1, vec->count - 1);

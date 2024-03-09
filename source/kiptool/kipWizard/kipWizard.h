@@ -6,4 +6,4 @@
 #include "../params/param.h"
 #include "../params/table.h"
 
-int kipWizard(char *path, FSEntry_t entry);
+int kipWizard(char* path, FSEntry_t entry);

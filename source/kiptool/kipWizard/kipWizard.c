@@ -8,8 +8,12 @@
 #include "../../err.h"
 #include "../../fs/fsutils.h"
 #include "../../gfx/gfx.h"
+#include "../../gfx/gfxutils.h"
+#include "../../gfx/menu.h"
 #include "../../hid/hid.h"
-#include "../helpers/gfx.h"
+#include "../gfx/gfx.h"
+#include "../gfx/menus/ktMenu.h"
+#include "../gfx/menus/paramsMenu.h"
 #include "../helpers/hw.h"
 #include "../helpers/kiprw.h"
 #include "../helpers/param.h"
@@ -25,53 +29,68 @@
 #include "../params/mariko/gpu.h"
 #include "../params/mariko/ram.h"
 
-void printTable(const u8 *buff, const Table *table, char *displayBuff) {
+void printTable(const u8* buff, const Table* table, char* displayBuff) {
     for (unsigned int i = 0; i < table->paramsCount; ++i) {
-        const Param *param = table->params[i];
+        const Param* param = table->params[i];
         const unsigned int paramValue = getParamValueFromBuffer(buff, param);
         getDisplayValue(param, displayBuff, paramValue);
         gfx_printf("%s: %s\n", param->name, displayBuff);
     }
 }
 
-void printParamByParam(const u8 *buff, const Param *param, char *displayBuff) {
+void printParamByParam(const u8* buff, const Param* param, char* displayBuff) {
     unsigned int paramValue = getParamValueFromBuffer(buff, param);
     getDisplayValue(param, displayBuff, paramValue);
     gfx_printf("%s: %s\n", param->name, displayBuff);
 }
 
-void printParamByValue(unsigned int value, const Param *param, char *displayBuff) {
+void printParamByValue(unsigned int value, const Param* param, char* displayBuff) {
     getDisplayValue(param, displayBuff, value);
     gfx_printf("%s: %s\n", param->name, displayBuff);
 }
 
-void printCPUParams(const u8 *buff, enum Platform platform) {
+const Params* allCPUParams[] = {&cCPUParams, &mCPUParams, &eCPUParams};
+const Tables* allCPUTables[] = {&cCPUTables, &mCPUTables, &eCPUTables};
+void printCPUParams(const u8* buff, enum Platform platform) {
     gfx_clearscreenKT();
-    const Params *allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
-    const Tables *allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
-    newParamsMenu(buff, "--------CPU--------", allParams, 2, allTables, 2);
+    const Params* allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
+    const Tables* allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
+    if (platform == COMMON)
+        newParamsMenu(buff, "--------CPU--------", allCPUParams, 3, allCPUTables, 3);
+    else
+        newParamsMenu(buff, "--------CPU--------", allParams, 2, allTables, 2);
 }
 
-void printGPUParams(const u8 *buff, enum Platform platform) {
+const Params* allGPUParams[] = {&cGPUParams, &mGPUParams, &eGPUParams};
+const Tables* allGPUTables[] = {&cGPUTables, &mGPUTables, &eGPUTables};
+void printGPUParams(const u8* buff, enum Platform platform) {
     gfx_clearscreenKT();
-    const Params *allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
-    const Tables *allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
-    newParamsMenu(buff, "--------GPU--------", allParams, 2, allTables, 2);
+    const Params* allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
+    const Tables* allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
+    if (platform == COMMON)
+        newParamsMenu(buff, "--------GPU--------", allGPUParams, 3, allGPUTables, 3);
+    else
+        newParamsMenu(buff, "--------GPU--------", allParams, 2, allTables, 2);
 }
 
-void printRAMParams(const u8 *buff, enum Platform platform) {
+const Params* allRAMParams[] = {&cRAMParams, &mRAMParams, &eRAMParams};
+const Tables* allRAMTables[] = {&cRAMTables, &mRAMTables, &eRAMTables};
+void printRAMParams(const u8* buff, enum Platform platform) {
     gfx_clearscreenKT();
-    const Params *allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
-    const Tables *allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
-    newParamsMenu(buff, "--------RAM--------", allParams, 2, allTables, 2);
+    const Params* allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
+    const Tables* allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
+    if (platform == COMMON)
+        newParamsMenu(buff, "--------RAM--------", allRAMParams, 3, allRAMTables, 32);
+    else
+        newParamsMenu(buff, "--------RAM--------", allParams, 2, allTables, 2);
 }
 
-int kipWizard(char *path, FSEntry_t entry) {
-    char *filePath = CombinePaths(path, entry.name);
+int kipWizard(char* path, FSEntry_t entry) {
+    char* filePath = CombinePaths(path, entry.name);
 
     FIL kipFile;
     int res;
-    Input_t *input = hidRead();
+    Input_t* input = hidRead();
     if (input->l) {
         if (input->r)
             setHWType(MARIKO);
@@ -98,19 +117,19 @@ int kipWizard(char *path, FSEntry_t entry) {
         return -1;
     }
     const unsigned int custTableSize = sizeof(CustomizeTable);
-    u8 *custTable = calloc(custTableSize, 1);
+    u8* custTable = calloc(custTableSize, 1);
     unsigned int bytesReaded;
     f_lseek(&kipFile, baseOffset);
     f_read(&kipFile, custTable, custTableSize, &bytesReaded);
     unsigned int kipVersion = getParamValueFromBuffer(custTable, &gKipVersion);
     unsigned int startIndex = 0;
     if (kipVersion == CURRENT_VERSION) {
-        char *displayBuff = calloc(1024, 1);
+        char* displayBuff = calloc(1024, 1);
         MenuEntry entries[] = {{.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = "-- Kip Wizard --"},
                                {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ELabel, .entry = "CPU Params"},
                                {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ELabel, .entry = "GPU Params"},
                                {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ELabel, .entry = "RAM Params"}};
-        void (*functions[])(const u8 *, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
+        void (*functions[])(const u8*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
         while (1) {
             gfx_clearscreenKT();
             int res = newMenuKT(entries, 4, startIndex, NULL, printEntry);

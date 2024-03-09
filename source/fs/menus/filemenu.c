@@ -29,27 +29,27 @@ MenuEntry_t FileMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_WHITE), .name = "\nKip tool"},
 };
 
-void UnimplementedException(char *path, FSEntry_t entry) { DrawError(newErrCode(TE_ERR_UNIMPLEMENTED)); }
+void UnimplementedException(char* path, FSEntry_t entry) { DrawError(newErrCode(TE_ERR_UNIMPLEMENTED)); }
 
-extern int launch_payload(char *path);
+extern int launch_payload(char* path);
 
-void LaunchPayload(char *path, FSEntry_t entry) { launch_payload(CombinePaths(path, entry.name)); }
+void LaunchPayload(char* path, FSEntry_t entry) { launch_payload(CombinePaths(path, entry.name)); }
 
-void KipTool(char *path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
+void KipTool(char* path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
 
-void CopyClipboard(char *path, FSEntry_t entry) {
-    char *thing = CombinePaths(path, entry.name);
+void CopyClipboard(char* path, FSEntry_t entry) {
+    char* thing = CombinePaths(path, entry.name);
     SetCopyParams(thing, CMODE_Copy);
     free(thing);
 }
 
-void MoveClipboard(char *path, FSEntry_t entry) {
-    char *thing = CombinePaths(path, entry.name);
+void MoveClipboard(char* path, FSEntry_t entry) {
+    char* thing = CombinePaths(path, entry.name);
     SetCopyParams(thing, CMODE_Move);
     free(thing);
 }
 
-void DeleteFile(char *path, FSEntry_t entry) {
+void DeleteFile(char* path, FSEntry_t entry) {
     gfx_con_setpos(384 + 16, 200 + 16 + 10 * 16);
     SETCOLOR(COLOR_RED, COLOR_DARKGREY);
     gfx_printf("Are you sure?      ");
@@ -57,20 +57,20 @@ void DeleteFile(char *path, FSEntry_t entry) {
     WaitFor(500);
     if (!MakeYesNoHorzMenu(3, COLOR_DARKGREY)) return;
 
-    char *thing = CombinePaths(path, entry.name);
+    char* thing = CombinePaths(path, entry.name);
     int res = f_unlink(thing);
     if (res) DrawError(newErrCode(res));
     free(thing);
 }
 
-void RenameFile(char *path, FSEntry_t entry) {
+void RenameFile(char* path, FSEntry_t entry) {
     gfx_clearscreen();
-    char *renameTo = ShowKeyboard(entry.name, false);
+    char* renameTo = ShowKeyboard(entry.name, false);
     if (renameTo == NULL || !(*renameTo))  // smol memory leak but eh
         return;
 
-    char *src = CombinePaths(path, entry.name);
-    char *dst = CombinePaths(path, renameTo);
+    char* src = CombinePaths(path, entry.name);
+    char* dst = CombinePaths(path, renameTo);
 
     int res = f_rename(src, dst);
     if (res) {
@@ -84,11 +84,11 @@ void RenameFile(char *path, FSEntry_t entry) {
 
 fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, LaunchPayload, KipTool};
 
-void FileMenu(char *path, FSEntry_t entry) {
+void FileMenu(char* path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;
     FileMenuEntries[0].sizeUnion = entry.sizeUnion;
     char attribs[16];
-    char *attribList = GetFileAttribs(entry);
+    char* attribList = GetFileAttribs(entry);
     s_printf(attribs, "Attribs:%s\n", attribList);
     free(attribList);
     FileMenuEntries[2].name = attribs;

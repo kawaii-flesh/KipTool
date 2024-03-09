@@ -42,16 +42,16 @@ void TakeScreenshot() {
     free(name);
 
     const u32 file_size = 0x384000 + 0x36;
-    u8 *bitmap = malloc(file_size);
-    u32 *fb = malloc(0x384000);
-    u32 *fb_ptr = gfx_ctxt.fb;
+    u8* bitmap = malloc(file_size);
+    u32* fb = malloc(0x384000);
+    u32* fb_ptr = gfx_ctxt.fb;
 
     for (int x = 1279; x >= 0; x--) {
         for (int y = 719; y >= 0; y--) fb[y * 1280 + x] = *fb_ptr++;
     }
 
     memcpy(bitmap + 0x36, fb, 0x384000);
-    bmp_t *bmp = (bmp_t *)bitmap;
+    bmp_t* bmp = (bmp_t*)bitmap;
 
     bmp->magic = 0x4D42;
     bmp->size = file_size;

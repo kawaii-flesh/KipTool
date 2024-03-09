@@ -55,7 +55,7 @@
 hekate_config h_cfg;
 boot_cfg_t __attribute__((section("._boot_cfg"))) b_cfg;
 
-volatile nyx_storage_t *nyx_str = (nyx_storage_t *)NYX_STORAGE_ADDR;
+volatile nyx_storage_t* nyx_str = (nyx_storage_t*)NYX_STORAGE_ADDR;
 
 // This is a safe and unused DRAM region for our payloads.
 #define RELOC_META_OFF 0x7C
@@ -68,12 +68,12 @@ volatile nyx_storage_t *nyx_str = (nyx_storage_t *)NYX_STORAGE_ADDR;
 #define CBFS_DRAM_EN_ADDR 0x4003e000
 #define CBFS_DRAM_MAGIC 0x4452414D  // "DRAM"
 
-static void *coreboot_addr;
+static void* coreboot_addr;
 
 void reloc_patcher(u32 payload_dst, u32 payload_src, u32 payload_size) {
-    memcpy((u8 *)payload_src, (u8 *)IPL_LOAD_ADDR, PATCHED_RELOC_SZ);
+    memcpy((u8*)payload_src, (u8*)IPL_LOAD_ADDR, PATCHED_RELOC_SZ);
 
-    volatile reloc_meta_t *relocator = (reloc_meta_t *)(payload_src + RELOC_META_OFF);
+    volatile reloc_meta_t* relocator = (reloc_meta_t*)(payload_src + RELOC_META_OFF);
 
     relocator->start = payload_dst - ALIGN(PATCHED_RELOC_SZ, 0x10);
     relocator->stack = PATCHED_RELOC_STACK;
@@ -81,12 +81,12 @@ void reloc_patcher(u32 payload_dst, u32 payload_src, u32 payload_size) {
     relocator->ep = payload_dst;
 
     if (payload_size == 0x7000) {
-        memcpy((u8 *)(payload_src + ALIGN(PATCHED_RELOC_SZ, 0x10)), coreboot_addr, 0x7000);  // Bootblock
-        *(vu32 *)CBFS_DRAM_EN_ADDR = CBFS_DRAM_MAGIC;
+        memcpy((u8*)(payload_src + ALIGN(PATCHED_RELOC_SZ, 0x10)), coreboot_addr, 0x7000);  // Bootblock
+        *(vu32*)CBFS_DRAM_EN_ADDR = CBFS_DRAM_MAGIC;
     }
 }
 
-int launch_payload(char *path) {
+int launch_payload(char* path) {
     gfx_clear_grey(0x1B);
     gfx_con_setpos(0, 0);
     if (!path) return 1;
@@ -101,13 +101,13 @@ int launch_payload(char *path) {
         }
 
         // Read and copy the payload to our chosen address
-        void *buf;
+        void* buf;
         u32 size = f_size(&fp);
 
         if (size < 0x30000)
-            buf = (void *)RCM_PAYLOAD_ADDR;
+            buf = (void*)RCM_PAYLOAD_ADDR;
         else {
-            coreboot_addr = (void *)(COREBOOT_END_ADDR - size);
+            coreboot_addr = (void*)(COREBOOT_END_ADDR - size);
             buf = coreboot_addr;
         }
 
@@ -125,7 +125,7 @@ int launch_payload(char *path) {
         if (size < 0x30000) {
             reloc_patcher(PATCHED_RELOC_ENTRY, EXT_PAYLOAD_ADDR, ALIGN(size, 0x10));
 
-            hw_reinit_workaround(false, byte_swap_32(*(u32 *)(buf + size - sizeof(u32))));
+            hw_reinit_workaround(false, byte_swap_32(*(u32*)(buf + size - sizeof(u32))));
         } else {
             reloc_patcher(PATCHED_RELOC_ENTRY, EXT_PAYLOAD_ADDR, 0x7000);
             hw_reinit_workaround(true, 0);
@@ -134,7 +134,7 @@ int launch_payload(char *path) {
         // Some cards (Sandisk U1), do not like a fast power cycle. Wait min 100ms.
         sdmmc_storage_init_wait_sd();
 
-        void (*ext_payload_ptr)() = (void *)EXT_PAYLOAD_ADDR;
+        void (*ext_payload_ptr)() = (void*)EXT_PAYLOAD_ADDR;
 
         // Launch our payload.
         (*ext_payload_ptr)();
@@ -155,9 +155,9 @@ extern void pivot_stack(u32 stack_top);
 #define EXCP_LR_ADDR 0x4003FFF4
 
 static inline void _show_errors() {
-    u32 *excp_enabled = (u32 *)EXCP_EN_ADDR;
-    u32 *excp_type = (u32 *)EXCP_TYPE_ADDR;
-    u32 *excp_lr = (u32 *)EXCP_LR_ADDR;
+    u32* excp_enabled = (u32*)EXCP_EN_ADDR;
+    u32* excp_type = (u32*)EXCP_TYPE_ADDR;
+    u32* excp_lr = (u32*)EXCP_LR_ADDR;
 
     if (*excp_enabled == EXCP_MAGIC) h_cfg.errors |= ERR_EXCEPTION;
 
@@ -227,7 +227,7 @@ void ipl_main() {
 
     display_init();
 
-    u32 *fb = display_init_framebuffer_pitch();
+    u32* fb = display_init_framebuffer_pitch();
     gfx_init_ctxt(fb, 720, 1280, 720);
 
     gfx_con_init();

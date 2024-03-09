@@ -34,7 +34,7 @@ int MakeYesNoHorzMenu(int spacesBetween, u32 bg) {
     return MakeHorizontalMenu(YesNoEntries, ARR_LEN(YesNoEntries), spacesBetween, bg, 0);
 }
 
-int MakeHorizontalMenu(MenuEntry_t *entries, int len, int spacesBetween, u32 bg, int startPos) {
+int MakeHorizontalMenu(MenuEntry_t* entries, int len, int spacesBetween, u32 bg, int startPos) {
     u32 initialX = 0, initialY = 0;
     u32 highlight = startPos;
     gfx_con_getpos(&initialX, &initialY);
@@ -46,7 +46,7 @@ int MakeHorizontalMenu(MenuEntry_t *entries, int len, int spacesBetween, u32 bg,
             gfx_con.y -= spacesBetween * 16;
         }
         gfx_con_setpos(initialX, initialY);
-        Input_t *input = hidWait();
+        Input_t* input = hidWait();
         if (input->a)
             return highlight;
         else if (input->b)

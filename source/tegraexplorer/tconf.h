@@ -7,7 +7,7 @@ enum { CMODE_None = 0, CMODE_Copy, CMODE_Move, CMODE_CopyFolder, CMODE_MoveFolde
 
 typedef struct {
     u32 FSBuffSize;
-    char *srcCopy;
+    char* srcCopy;
     union {
         struct {
             u16 minervaEnabled : 1;
@@ -22,4 +22,4 @@ typedef struct {
 extern TConf_t TConf;
 
 void ResetCopyParams();
-void SetCopyParams(const char *path, u8 mode);
+void SetCopyParams(const char* path, u8 mode);

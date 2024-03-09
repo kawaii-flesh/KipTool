@@ -15,7 +15,7 @@
 
 extern hekate_config h_cfg;
 
-extern int launch_payload(char *path);
+extern int launch_payload(char* path);
 
 void ALWAYS_INLINE power_off() { power_set_state(POWER_OFF_RESET); }
 
@@ -28,15 +28,15 @@ void RebootToPayloadOrRcm() {
     reboot_rcm();
 }
 
-char *CpyStr(const char *in) {
+char* CpyStr(const char* in) {
     int len = strlen(in);
-    char *out = malloc(len + 1);
+    char* out = malloc(len + 1);
     out[len] = 0;
     memcpy(out, in, len);
     return out;
 }
 
-void MaskIn(char *mod, u32 bitstream, char mask) {
+void MaskIn(char* mod, u32 bitstream, char mask) {
     u32 len = strlen(mod);
     for (int i = 0; i < len; i++) {
         if (!(bitstream & 1)) *mod = mask;
@@ -47,7 +47,7 @@ void MaskIn(char *mod, u32 bitstream, char mask) {
 }
 
 // non-zero is yes, zero is no
-bool StrEndsWith(char *begin, char *end) {
+bool StrEndsWith(char* begin, char* end) {
     begin = strrchr(begin, *end);
     if (begin != NULL) return !strcmp(begin, end);
 
@@ -60,15 +60,15 @@ void WaitFor(u32 ms) {
         ;
 }
 
-char *lines[] = {
+char* lines[] = {
     "1234567890*",  // 0 - 10
     "qwertyuiop~",  // 11 - 21
     "asdfghjkl.+",  // 22 - 32
     "^zxcvbnm_<>"   // 33 - 43
 };
 
-char *ShowKeyboard(const char *toEdit, u8 alwaysRet) {
-    char *ret = CpyStr(toEdit);
+char* ShowKeyboard(const char* toEdit, u8 alwaysRet) {
+    char* ret = CpyStr(toEdit);
     int pos = 0;
     int posOnWord = 0;
     bool shift = 0;
@@ -100,7 +100,7 @@ char *ShowKeyboard(const char *toEdit, u8 alwaysRet) {
             }
         }
 
-        Input_t *input = hidWait();
+        Input_t* input = hidWait();
         if (input->buttons & (JoyA | JoyLB | JoyRB)) {
             if (pos == 42 || input->l) {
                 if (posOnWord > 0) posOnWord--;
@@ -121,7 +121,7 @@ char *ShowKeyboard(const char *toEdit, u8 alwaysRet) {
                 u32 wordLen = strlen(ret);
                 if (wordLen >= 79) continue;
 
-                char *copy = calloc(wordLen + 2, 1);
+                char* copy = calloc(wordLen + 2, 1);
                 memcpy(copy, ret, wordLen);
                 copy[wordLen] = 'a';
                 free(ret);

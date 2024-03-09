@@ -73,7 +73,7 @@ typedef struct _inputs {
 } Input_t;
 
 void hidInit();
-Input_t *hidRead();
-Input_t *hidWait();
-Input_t *hidWaitMask(u32 mask);
+Input_t* hidRead();
+Input_t* hidWait();
+Input_t* hidWaitMask(u32 mask);
 bool hidConnected();

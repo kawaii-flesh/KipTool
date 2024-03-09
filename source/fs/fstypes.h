@@ -2,7 +2,7 @@
 #include <utils/types.h>
 
 typedef struct {
-    char *name;
+    char* name;
     union {
         struct {
             u8 readOnly : 1;

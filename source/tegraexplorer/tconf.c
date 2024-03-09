@@ -11,7 +11,7 @@ void ResetCopyParams() {
     TConf.explorerCopyMode = CMODE_None;
 }
 
-void SetCopyParams(const char *path, u8 mode) {
+void SetCopyParams(const char* path, u8 mode) {
     ResetCopyParams();
     TConf.heldExplorerCopyLoc = TConf.curExplorerLoc;
     TConf.explorerCopyMode = mode;

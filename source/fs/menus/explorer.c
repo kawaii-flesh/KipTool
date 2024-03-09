@@ -31,8 +31,8 @@ MenuEntry_t MakeMenuOutFSEntry(FSEntry_t entry) {
     return out;
 }
 
-void FileExplorer(char *path) {
-    char *storedPath = CpyStr(path);
+void FileExplorer(char* path) {
+    char* storedPath = CpyStr(path);
     int res = 0;
 
     if (TConf.explorerCopyMode == CMODE_Move || TConf.explorerCopyMode == CMODE_MoveFolder) ResetCopyParams();
@@ -53,7 +53,7 @@ void FileExplorer(char *path) {
             return;
         }
 
-        vecDefArray(FSEntry_t *, fsEntries, fileVec);
+        vecDefArray(FSEntry_t*, fsEntries, fileVec);
 
         topEntries[0].name = storedPath;
         Vector_t entries = newVec(sizeof(MenuEntry_t), fileVec.count + ARR_LEN(topEntries));
@@ -73,12 +73,12 @@ void FileExplorer(char *path) {
         res = newMenu(&entries, res, 60, 42, ENABLEB | ENABLEPAGECOUNT, (int)fileVec.count);
         vecFree(entries);
 
-        char *oldPath = storedPath;
+        char* oldPath = storedPath;
 
         if (res == 2) {
             ErrCode_t err = {0};
-            char *filename = CpyStr(strrchr(TConf.srcCopy, '/') + 1);
-            char *dst = CombinePaths(storedPath, filename);
+            char* filename = CpyStr(strrchr(TConf.srcCopy, '/') + 1);
+            char* dst = CombinePaths(storedPath, filename);
 
             if (!strcmp(TConf.srcCopy, dst)) err = newErrCode(TE_ERR_SAME_LOC);
 

@@ -26,22 +26,22 @@ MenuEntry_t FolderMenuEntries[] = {{.optionUnion = COLORTORGB(COLOR_WHITE) | SKI
                                    {.optionUnion = COLORTORGB(COLOR_RED), .name = "Delete current folder"},
                                    {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "\nCreate folder"}};
 
-int UnimplementedFolderException(const char *path) {
+int UnimplementedFolderException(const char* path) {
     DrawError(newErrCode(TE_ERR_UNIMPLEMENTED));
     return 0;
 }
 
-int FolderCopyClipboard(const char *path) {
+int FolderCopyClipboard(const char* path) {
     SetCopyParams(path, CMODE_CopyFolder);
     return 0;
 }
 
-int FolderMoveClipboard(const char *path) {
+int FolderMoveClipboard(const char* path) {
     SetCopyParams(path, CMODE_MoveFolder);
     return 0;
 }
 
-int DeleteFolder(const char *path) {
+int DeleteFolder(const char* path) {
     gfx_con_setpos(384 + 16, 200 + 16 + 10 * 16);
     SETCOLOR(COLOR_RED, COLOR_DARKGREY);
     gfx_printf("Are you sure?        ");
@@ -60,15 +60,15 @@ int DeleteFolder(const char *path) {
     return 0;
 }
 
-int RenameFolder(const char *path) {
-    char *prev = EscapeFolder(path);
+int RenameFolder(const char* path) {
+    char* prev = EscapeFolder(path);
     gfx_clearscreen();
 
-    char *renameTo = ShowKeyboard(strrchr(path, '/') + 1, false);
+    char* renameTo = ShowKeyboard(strrchr(path, '/') + 1, false);
     if (renameTo == NULL || !(*renameTo))  // smol memory leak but eh
         return 0;
 
-    char *dst = CombinePaths(prev, renameTo);
+    char* dst = CombinePaths(prev, renameTo);
 
     int res = f_rename(path, dst);
     if (res) {
@@ -81,14 +81,14 @@ int RenameFolder(const char *path) {
     return 1;
 }
 
-int CreateFolder(const char *path) {
+int CreateFolder(const char* path) {
     gfx_clearscreen();
 
-    char *create = ShowKeyboard("New Folder", true);
+    char* create = ShowKeyboard("New Folder", true);
     if (create == NULL || !(*create))  // smol memory leak but eh
         return 0;
 
-    char *dst = CombinePaths(path, create);
+    char* dst = CombinePaths(path, create);
     f_mkdir(dst);
 
     free(dst);
@@ -98,12 +98,12 @@ int CreateFolder(const char *path) {
 
 folderMenuPath FolderMenuPaths[] = {FolderCopyClipboard, FolderMoveClipboard, RenameFolder, DeleteFolder, CreateFolder};
 
-int FolderMenu(const char *path) {
+int FolderMenu(const char* path) {
     FSEntry_t file = GetFileInfo(path);
     FolderMenuEntries[1].name = file.name;
 
     char attribs[16];
-    char *attribList = GetFileAttribs(file);
+    char* attribList = GetFileAttribs(file);
     s_printf(attribs, "Attribs:%s\n", attribList);
     free(attribList);
     FolderMenuEntries[2].name = attribs;
