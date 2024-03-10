@@ -7,6 +7,7 @@
 #include "../../../hid/hid.h"
 #include "../gfx.h"
 
+// TODO new lines inter
 enum ConfirmationDialogResult confirmationDialog(const char* message, const enum ConfirmationDialogResult defaultValue) {
     unsigned int selected = defaultValue == EYES ? 0 : 1;
     unsigned int holdTimer = 300;

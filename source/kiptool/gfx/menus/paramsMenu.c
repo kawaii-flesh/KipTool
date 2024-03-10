@@ -22,7 +22,7 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, u8* c
     if (entry->type == ELabel)
         gfx_puts_limit((const char*)entry->entry, maxLen);
     else if (entry->type == EParam) {
-        const char* displayBuff = calloc(1024, 1);
+        const char* displayBuff = malloc(1024);
         const Param* param = (const Param*)entry->entry;
         s_printf(displayBuff, "%s - ", param->name);
         getDisplayValue(param, displayBuff + strlen(displayBuff), getParamValueFromBuffer(custTable, param));
@@ -73,9 +73,8 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         if (selectedEntry.type == ETable) {
             const Table* table = selectedEntry.entry;
             newTableMenu(custTable, table);
-            continue;
-        }
-        newEditorMenu(custTable, selectedEntry.entry);
+        } else if (selectedEntry.type == EParam)
+            newEditorMenu(custTable, selectedEntry.entry);
         startIndex = res + 1;
     }
 }

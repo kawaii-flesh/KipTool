@@ -3,9 +3,10 @@
 #include <mem/heap.h>
 
 #include "../params/param.h"
+#include "../service/session.h"
 
-bool compareU8Arrays(const u8* a, const u8* b, const unsigned int size) {
-    bool isEqual = true;
+int compareU8Arrays(const u8* a, const u8* b, const unsigned int size) {
+    int isEqual = 1;
     for (int i = 0; i < size; ++i) {
         isEqual = a[i] == b[i];
         if (!isEqual) return isEqual;
@@ -13,18 +14,7 @@ bool compareU8Arrays(const u8* a, const u8* b, const unsigned int size) {
     return isEqual;
 }
 
-unsigned int u8ArrayToUnsignedInt(const u8* array, const unsigned int length) {
-    unsigned int num = 0;
-    for (unsigned int i = length - 1; i != -1; --i) {
-        num <<= 8;
-        num += array[i];
-    }
-    return num;
-}
-
-unsigned int getParamValueFromBuffer(const u8* buffer, const Param* param) {
-    return u8ArrayToUnsignedInt(buffer + param->offset, param->length);
-}
+unsigned int getParamValueFromBuffer(const u8* buffer, const Param* param) { return *(unsigned int*)(buffer + param->offset); }
 
 int searchBytesArray(const u8* array, const unsigned int size, FIL* file) {
     const unsigned int BUFF_SIZE = 2048;
@@ -55,4 +45,9 @@ int searchBytesArray(const u8* array, const unsigned int size, FIL* file) {
         }
         ++offset;
     }
+}
+
+void setParamValue(const u8* buffer, const Param* param, unsigned int value) {
+    *(unsigned int*)(buffer + param->offset) = value;
+    saveSession(buffer);
 }

@@ -30,8 +30,34 @@ bool addLabelToFixedValue(const Param* param, char* displayBuff, unsigned int va
     return false;
 }
 
+void doubleToStr(char* buffer, double value) {
+    unsigned int wholePart = (unsigned int)value;
+    double fractionPart = value - wholePart;
+
+    utoa(wholePart, buffer, 10);
+
+    if (fractionPart != 0.0) {
+        int len = strlen(buffer);
+        buffer[len] = '.';
+        len++;
+        fractionPart *= 10;
+        buffer[len] = (char)((int)(fractionPart + 0.1) + '0');
+        buffer[len + 1] = '\0';
+    }
+}
+
+void formatValue(char* displayBuff, const unsigned int value) {
+    if (value > 1500) {
+        double dValue = value;
+        dValue /= 1000.0;
+        doubleToStr(displayBuff, dValue);
+    } else
+        utoa(value, displayBuff, 10);
+    return;
+}
+
 void getDisplayValue(const Param* param, char* displayBuff, unsigned int value) {
-    utoa(value > 1500 ? value / 1000 : value, displayBuff, 10);
+    formatValue(displayBuff, value);
     if (param->measure != NULL) strcpy(displayBuff + strlen(displayBuff), param->measure);
     bool founded = false;
     for (unsigned limitIndex = 0; limitIndex < param->limitsCount; ++limitIndex) {

@@ -32,25 +32,21 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     }
 
     int min = fixedLimits->min;
-    if (min > 1500) min /= 1000;
     int max = fixedLimits->max;
-    if (max > 1500) max /= 1000;
     int stepSize = fixedLimits->stepSize;
-    if (stepSize > 1500) stepSize /= 1000;
     int currentValue = defaultValue;
     if (currentValue == -1) {
         currentValue = min + (max - min) / 2;
         if (currentValue % stepSize != 0) currentValue += currentValue % stepSize;
-    } else if (currentValue > 1500)
-        currentValue /= 1000;
+    }
     unsigned int holdTimer = 200;
     const unsigned int linesCount = 5;
-    const char template[] = "min=>%d %k%d%k %d<=max step=%d%s";
     const char help[] = "dec(<) inc(>) apply(A) back(B)";
-    const char* measure = param->measure != NULL ? param->measure : fixedLimits->measure != NULL ? fixedLimits->measure : NULL;
+    const char* measure = param->measure != NULL ? param->measure : fixedLimits->measure != NULL ? fixedLimits->measure : "";
     const unsigned int minMaxDif = numPlaces(max) - numPlaces(min);
-    unsigned int maxStringLen = 18 + numPlaces(min) + numPlaces(max) + numPlaces(max) + numPlaces(stepSize) +
-                                (measure != NULL ? strlen(measure) : 0) + minMaxDif;
+    unsigned int maxStringLen = 18 + numPlaces(min > 1500 ? min / 1000 : min) + numPlaces(max > 1500 ? max / 1000 : max) * 2 +
+                                numPlaces(stepSize > 1500 ? stepSize / 1000 : stepSize) +
+                                (measure != NULL ? strlen(measure) : 0) + minMaxDif + 6;
     unsigned int fontSize = gfx_con.fntsz;
     unsigned int boxWidth = (maxStringLen * fontSize) + fontSize * 2;
     unsigned int boxHeight = (linesCount * fontSize) + fontSize * 2;
@@ -61,8 +57,6 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     unsigned int boxXMid = boxX0Position + boxWidth / 2;
     unsigned int paramNameXPosition = boxXMid - (strlen(param->name) / 2) * fontSize;
     unsigned int helpXPosition = boxXMid - 15 * fontSize;
-    unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
-    unsigned int selectorX1Position = boxXMid + (maxStringLen / 2) * fontSize;
 
     unsigned int paramNameYPosition = boxY0Position + 1 * fontSize;
     unsigned int helpYPosition = boxY0Position + 3 * fontSize;
@@ -73,7 +67,6 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     const int mult = 10;
     bool redraw = true;
     bool fullRedraw = true;
-    bool redrawSelector = false;
     Input_t* input = hidRead();
     Input_t oldButtons = *input;
 
@@ -90,13 +83,28 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 gfx_puts(help);
                 fullRedraw = false;
             }
-            if (redrawSelector && !fullRedraw) {
-                gfx_box(selectorX0Position, selectorY0Position, selectorX1Position, selectorY0Position + fontSize, COLOR_GREY);
-                redrawSelector = false;
-            }
             redraw = false;
+            char* minStr = malloc(8);
+            formatValue(minStr, min);
+            char* currentStr = malloc(8);
+            formatValue(currentStr, currentValue);
+            char* maxStr = malloc(8);
+            formatValue(maxStr, max);
+            char* stepStr = malloc(8);
+            formatValue(stepStr, stepSize);
+            char* buff = calloc(256, 1);
+            s_printf(buff, "min=>%s %s %s<=max step=%s%s", minStr, currentStr, maxStr, stepStr, measure);
+            maxStringLen = strlen(buff);
+            unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
+            gfx_box(boxX0Position, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
             gfx_con_setpos(selectorX0Position, selectorY0Position);
-            gfx_printf(template, min, COLOR_ORANGE, currentValue, COLOR_WHITE, max, stepSize, measure);
+            gfx_printf("min=>%s %k%s%k %s<=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr,
+                       measure);
+            free(minStr);
+            free(currentStr);
+            free(maxStr);
+            free(stepStr);
+            free(buff);
         }
         while (!hidRead()->buttons || oldButtons.buttons == input->buttons) {
             if ((lastPress + holdTimer) < get_tmr_ms() && oldButtons.buttons == input->buttons)
@@ -160,8 +168,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 currentValue = min;
         }
         if (currentValue != lastResult) {
-            if (currentValue % stepSize != 0) currentValue += currentValue % stepSize;
-            redrawSelector = numPlaces(currentValue) != numPlaces(lastResult);
+            if (currentValue % stepSize != 0) currentValue += currentValue % stepSize;  // TODO adjust, wrong stepsize?
             lastResult = currentValue;
             redraw = true;
         }

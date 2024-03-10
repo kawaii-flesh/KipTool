@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../customize.h"
+#include "../defaultCustomize.h"
 #include "../param.h"
 #include "../table.h"
 
@@ -20,9 +20,9 @@ const Param eristaCpuMaxVolt = {
     .platform = ERISTA,
     .measure = "mV",
     .description = NULL,
-    .offset = getOffset(custTable.eristaCpuMaxVolt),
+    .offset = getOffset(defaultCustTable.eristaCpuMaxVolt),
     .length = 4,
-    .defaultValue = custTable.eristaCpuMaxVolt,
+    .defaultValue = defaultCustTable.eristaCpuMaxVolt,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &eristaCpuMaxVoltFV}, {.type = EFixedLimits, .values = &eristaCpuMaxVoltFL}}};
 

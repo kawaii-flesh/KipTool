@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../customize.h"
+#include "../defaultCustomize.h"
 #include "../param.h"
 #include "../table.h"
 
@@ -22,9 +22,9 @@ const Param eristaEmcMaxClock = {
     .platform = ERISTA,
     .measure = "MHz",
     .description = NULL,
-    .offset = getOffset(custTable.eristaEmcMaxClock),
+    .offset = getOffset(defaultCustTable.eristaEmcMaxClock),
     .length = 4,
-    .defaultValue = custTable.eristaEmcMaxClock,
+    .defaultValue = defaultCustTable.eristaEmcMaxClock,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &eristaEmcMaxClockFV}, {.type = EFixedLimits, .values = &eristaEmcMaxClockFL}}};
 

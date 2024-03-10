@@ -1,5 +1,7 @@
 #include "ktMenu.h"
 
+#include <utils/util.h>
+
 #include "../../../gfx/gfxutils.h"
 #include "../../../hid/hid.h"
 
@@ -20,7 +22,7 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
         if (selected >= entriesCount) selected = 0;
     }
     int lastIndex = selected;
-    gfx_con_setpos(0, 24);
+    gfx_con_setpos(16, 24);
     gfx_boxGrey(0, 16, 160, 31, 0x1B);
     u32 startX = 0, startY = 0;
     gfx_con_getpos(&startX, &startY);
@@ -91,7 +93,7 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
             if (hidRead()->a) {
                 int skipableBefore = 0;
                 int tmp = selected;
-                while (tmp != -1)
+                while (tmp != 0)
                     if (entries[--tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
                 return selected - skipableBefore;
             } else if (input->b)

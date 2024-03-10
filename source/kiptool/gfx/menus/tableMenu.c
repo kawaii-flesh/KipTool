@@ -1,9 +1,10 @@
 #include "tableMenu.h"
 
+#include <mem/heap.h>
+
 #include "editorMenu.h"
 #include "ktMenu.h"
 #include "paramsMenu.h"
-#include <mem/heap.h>
 
 void newTableMenu(const u8* custTable, const Table* table) {
     const unsigned int paramsCount = table->paramsCount;
@@ -19,13 +20,15 @@ void newTableMenu(const u8* custTable, const Table* table) {
         menuEntries[menuEntriesIndex].entry = table->params[paramI];
         ++menuEntriesIndex;
     }
-    int res = newMenuKT(menuEntries, totalEntriesCount, 0, custTable, printParamEntry);
-    if (res == -1) {
-        free(menuEntries);
-        return;
+    unsigned int startIndex = 0;
+    while (1) {
+        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, custTable, printParamEntry);
+        if (res == -1) {
+            free(menuEntries);
+            return;
+        }
+        const MenuEntry selectedEntry = menuEntries[res + 1];
+        startIndex = res + 1;
+        newEditorMenu(custTable, selectedEntry.entry);
     }
-    const MenuEntry selectedEntry = menuEntries[res + 1];
-    free(menuEntries);
-    newEditorMenu(custTable, selectedEntry.entry);
-    return;
 }

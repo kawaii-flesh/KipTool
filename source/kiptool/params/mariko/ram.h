@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../customize.h"
+#include "../defaultCustomize.h"
 #include "../param.h"
 #include "../table.h"
 
@@ -16,7 +16,7 @@ const FixedValues marikoEmcMaxClockFV = {.valuesCount = 11,
                                                     {.value = 2665600, .label = "S ST2"},
                                                     {.value = 2800000, .label = "S ST3"},
                                                     {.value = 2934400, .label = "L-C4C"}}};
-const FixedLimits marikoEmcMaxClockFL = {.min = 1333000, .max = 2733000, .stepSize = 38400};
+const FixedLimits marikoEmcMaxClockFL = {.min = 1344400, .max = 2733200, .stepSize = 22400};
 // 4IFIR MODE / eBAMATIC STAGE: 1-2-3
 // S-LOH 1600 / 1600000 / eBAL: 1 1 2
 // E ST3 1733 / 1734400 / eBAL: 1 2 2
@@ -36,9 +36,9 @@ const Param marikoEmcMaxClock = {
     .platform = MARIKO,
     .measure = "MHz",
     .description = NULL,
-    .offset = getOffset(custTable.marikoEmcMaxClock),
+    .offset = getOffset(defaultCustTable.marikoEmcMaxClock),
     .length = 4,
-    .defaultValue = custTable.marikoEmcMaxClock,
+    .defaultValue = defaultCustTable.marikoEmcMaxClock,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &marikoEmcMaxClockFV}, {.type = EFixedLimits, .values = &marikoEmcMaxClockFL}}};
 
@@ -56,9 +56,9 @@ const Param marikoEmcVddqVolt = {
     .platform = MARIKO,
     .measure = "mV",
     .description = NULL,
-    .offset = getOffset(custTable.marikoEmcVddqVolt),
+    .offset = getOffset(defaultCustTable.marikoEmcVddqVolt),
     .length = 4,
-    .defaultValue = custTable.marikoEmcVddqVolt,
+    .defaultValue = defaultCustTable.marikoEmcVddqVolt,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &marikoEmcVddqVoltFV}, {.type = EFixedLimits, .values = &marikoEmcVddqVoltFL}}};
 
@@ -80,9 +80,9 @@ const Param marikoEmcDvbShift = {
     .platform = MARIKO,
     .measure = NULL,
     .description = NULL,
-    .offset = getOffset(custTable.marikoEmcDvbShift),
+    .offset = getOffset(defaultCustTable.marikoEmcDvbShift),
     .length = 4,
-    .defaultValue = custTable.marikoEmcDvbShift,
+    .defaultValue = defaultCustTable.marikoEmcDvbShift,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &marikoEmcDvbShiftFV}, {.type = EFixedLimits, .values = &marikoEmcDvbShiftFL}}};
 

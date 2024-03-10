@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../customize.h"
+#include "../defaultCustomize.h"
 #include "../param.h"
 #include "../table.h"
 
@@ -23,9 +23,9 @@ const Param commonCpuBoostClock = {.name = "CPU LAUNCH CONTROL TARGET",
                                    .platform = MARIKO,
                                    .measure = "MHz",
                                    .description = NULL,
-                                   .offset = getOffset(custTable.commonCpuBoostClock),
+                                   .offset = getOffset(defaultCustTable.commonCpuBoostClock),
                                    .length = 4,
-                                   .defaultValue = custTable.commonCpuBoostClock,
+                                   .defaultValue = defaultCustTable.commonCpuBoostClock,
                                    .limitsCount = 2,
                                    .limits = {{.type = EFixedValues, .values = &commonCpuBoostClockFV},
                                               {.type = EFixedLimits, .values = &commonCpuBoostClockFL}}};
@@ -38,7 +38,7 @@ const FixedValues SpeedShiftFV = {.valuesCount = 5,
                                       {.value = 125, .label = "ECO ST2"},
                                       {.value = 150, .label = "ECO ST3"},
                                   }};
-const FixedLimits SpeedShiftFL = {.min = 1, .max = 200, .stepSize = 25};
+const FixedLimits SpeedShiftFL = {.min = 0, .max = 200, .stepSize = 25};
 // SPEEDSHIFT ECO LOGIC
 // 0 DEFAULT
 // 50 AUTO SRT
@@ -52,9 +52,9 @@ const Param SpeedShift = {
     .platform = MARIKO,
     .measure = NULL,
     .description = NULL,
-    .offset = getOffset(custTable.SpeedShift),
+    .offset = getOffset(defaultCustTable.SpeedShift),
     .length = 4,
-    .defaultValue = custTable.SpeedShift,
+    .defaultValue = defaultCustTable.SpeedShift,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &SpeedShiftFV}, {.type = EFixedLimits, .values = &SpeedShiftFL}}};
 
@@ -75,9 +75,9 @@ const Param CPUv = {.name = "CPU UNDER MODE",
                     .platform = MARIKO,
                     .measure = "mV",
                     .description = NULL,
-                    .offset = getOffset(custTable.CPUv),
+                    .offset = getOffset(defaultCustTable.CPUv),
                     .length = 4,
-                    .defaultValue = custTable.CPUv,
+                    .defaultValue = defaultCustTable.CPUv,
                     .limitsCount = 2,
                     .limits = {{.type = EFixedValues, .values = &CPUvFV}, {.type = EFixedLimits, .values = &CPUvFL}}};
 
@@ -103,9 +103,9 @@ const Param marikoCpuHUV = {.name = "MARIKO CPU-HI ECO LOGIC",
                             .platform = MARIKO,
                             .measure = NULL,
                             .description = NULL,
-                            .offset = getOffset(custTable.marikoCpuHUV),
+                            .offset = getOffset(defaultCustTable.marikoCpuHUV),
                             .length = 4,
-                            .defaultValue = custTable.marikoCpuHUV,
+                            .defaultValue = defaultCustTable.marikoCpuHUV,
                             .limitsCount = 2,
                             .limits = {{.type = EFixedValues, .values = &marikoCpuHUVFV}}};
 
@@ -125,9 +125,9 @@ const Param marikoCpuMaxVolt = {
     .platform = MARIKO,
     .measure = "mV",
     .description = NULL,
-    .offset = getOffset(custTable.marikoCpuMaxVolt),
+    .offset = getOffset(defaultCustTable.marikoCpuMaxVolt),
     .length = 4,
-    .defaultValue = custTable.marikoCpuMaxVolt,
+    .defaultValue = defaultCustTable.marikoCpuMaxVolt,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &marikoCpuMaxVoltFV}, {.type = EFixedLimits, .values = &marikoCpuMaxVoltFL}}};
 
@@ -150,9 +150,9 @@ const Param marikoCpuUV = {.name = "CPU-LOW ECO LOGIC",
                            .platform = MARIKO,
                            .measure = NULL,
                            .description = NULL,
-                           .offset = getOffset(custTable.marikoCpuUV),
+                           .offset = getOffset(defaultCustTable.marikoCpuUV),
                            .length = 4,
-                           .defaultValue = custTable.marikoCpuUV,
+                           .defaultValue = defaultCustTable.marikoCpuUV,
                            .limitsCount = 1,
                            .limits = {{.type = EFixedValues, .values = &marikoCpuUVFV}}};
 
@@ -172,9 +172,9 @@ const Param dCPUv = {.name = "CPU MIN-HIGH LOGIC",
                      .platform = MARIKO,
                      .measure = NULL,
                      .description = NULL,
-                     .offset = getOffset(custTable.dCPUv),
+                     .offset = getOffset(defaultCustTable.dCPUv),
                      .length = 4,
-                     .defaultValue = custTable.dCPUv,
+                     .defaultValue = defaultCustTable.dCPUv,
                      .limitsCount = 2,
                      .limits = {{.type = EFixedValues, .values = &dCPUvFV}, {.type = EFixedLimits, .values = &dCPUvFL}}};
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../customize.h"
+#include "../defaultCustomize.h"
 #include "../param.h"
 
 const FixedOneValue gKipVersionFOV = {19};
@@ -9,7 +9,7 @@ const Param gKipVersion = {.name = "Kip version",
                            .platform = COMMON,
                            .measure = NULL,
                            .description = NULL,
-                           .offset = getOffset(custTable.custRev),
+                           .offset = getOffset(defaultCustTable.custRev),
                            .length = 4,
                            .defaultValue = CURRENT_VERSION,
                            .limitsCount = 1,
