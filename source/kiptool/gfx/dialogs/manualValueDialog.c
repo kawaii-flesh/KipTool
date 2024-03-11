@@ -106,8 +106,8 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             free(stepStr);
             free(buff);
         }
-        while (!hidRead()->buttons || oldButtons.buttons == input->buttons) {
-            if ((lastPress + holdTimer) < get_tmr_ms() && oldButtons.buttons == input->buttons)
+        while (!hidRead()->buttons || oldButtons.buttons & input->buttons) {
+            if ((lastPress + holdTimer) < get_tmr_ms() && oldButtons.buttons & input->buttons)
                 break;
             else if (oldButtons.buttons != input->buttons)
                 oldButtons = *input;

@@ -26,7 +26,7 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
-    if (entry->type == ELabel)
+    if (entry->type == ELabel || entry->type == EReset)
         gfx_puts_limit((const char*)entry->entry, maxLen);
     else if (entry->type == EValue) {
         char* displayBuff = calloc(256, 1);
@@ -68,7 +68,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
     const unsigned int limitsCount = param->limitsCount;
     const FixedValues* fixedValues = NULL;
     const FixedLimits* fixedLimits = NULL;
-    unsigned int totalEntriesCount = 1;
+    unsigned int totalEntriesCount = 2;
     for (unsigned int i = 0; i < limitsCount; ++i)
         if (param->limits[i].type == EFixedLimits) {
             fixedLimits = param->limits[i].values;
@@ -108,7 +108,11 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                 menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
             } else
                 menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_YELLOW);
+            ++menuEntriesIndex;
         }
+        menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
+        menuEntries[menuEntriesIndex].type = EReset;
+        menuEntries[menuEntriesIndex].entry = "Reset to the default value";
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
         int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, printValueEntry);
@@ -122,7 +126,8 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         } else if (selectedEntry.type == EValue) {
             const Value* value = selectedEntry.entry;
             setParamValue(custTable, param, value->value);
-        }
+        } else if (selectedEntry.type == EReset)
+            setParamValue(custTable, param, param->defaultValue);
     }
     free(menuEntries);
     return;

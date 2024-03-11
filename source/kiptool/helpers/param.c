@@ -36,14 +36,12 @@ void doubleToStr(char* buffer, double value) {
 
     utoa(wholePart, buffer, 10);
 
-    if (fractionPart != 0.0) {
-        int len = strlen(buffer);
-        buffer[len] = '.';
-        len++;
-        fractionPart *= 10;
-        buffer[len] = (char)((int)(fractionPart + 0.1) + '0');
-        buffer[len + 1] = '\0';
-    }
+    int len = strlen(buffer);
+    buffer[len] = '.';
+    len++;
+    fractionPart *= 10;
+    buffer[len] = (char)((int)(fractionPart + 0.1) + '0');
+    buffer[len + 1] = '\0';
 }
 
 void formatValue(char* displayBuff, const unsigned int value) {

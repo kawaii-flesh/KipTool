@@ -7,7 +7,7 @@
 
 int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, const void* additionalData,
               void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* additionalData)) {
-    int screenLenX = 60;
+    int screenLenX = 70;
     int screenLenY = 42;
     int selected = startIndex;
 

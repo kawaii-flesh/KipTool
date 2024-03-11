@@ -67,6 +67,11 @@ void printRAMParams(const u8* custTable, enum Platform platform) {
         newParamsMenu(custTable, "--------RAM--------", allParams, 2, allTables, 2);
 }
 
+void memcpy_kt(u8* dst, u8* src, const unsigned int size) {
+    for(unsigned int i = 0; i < size; ++i)
+        dst[i] = src[i];
+}
+
 int kipWizard(char* path, FSEntry_t entry) {
     char* filePath = CombinePaths(path, entry.name);
 
@@ -106,15 +111,14 @@ int kipWizard(char* path, FSEntry_t entry) {
     unsigned int kipVersion = getParamValueFromBuffer(custTable, &gKipVersion);
     unsigned int startIndex = 0;
     if (kipVersion == CURRENT_VERSION) {
-        Session session;
         if (!isSessionExist())
             saveSession(custTable);
         else if (confirmationDialog("Load a session file?", EYES) == ENO)
             saveSession(custTable);
         else {
+            Session session;
             loadSession(&session);
-            free(custTable);
-            custTable = (u8*)&session.customizeTable;
+            memcpy_kt(custTable, &session.customizeTable, sizeof(CustomizeTable));
         }
 
         char* displayBuff = malloc(1024);
@@ -125,17 +129,22 @@ int kipWizard(char* path, FSEntry_t entry) {
             {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ELabel, .entry = "RAM Params"},
             {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = ""},
             {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ELabel, .entry = "Apply changes"},
-        };
+            {.optionUnion = COLORTORGB(COLOR_GREY), .type = ELabel, .entry = "Reset all parameters to default values"}};
         void (*functions[])(const u8*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
         while (1) {
             gfx_clearscreenKT();
-            int res = newMenuKT(entries, 6, startIndex, NULL, printEntry);
+            int res = newMenuKT(entries, 7, startIndex, NULL, printEntry);
             startIndex = res + 1;
             if (res == -1)
                 break;
             else if (res == 3) {
                 if (confirmationDialog("Apply changes?", EYES) == EYES) {
                     overwriteCUST(&kipFile, baseOffset, custTable);
+                }
+            } else if (res == 4) {
+                if (confirmationDialog("Reset all parameters?", ENO) == EYES) {
+                    memcpy_kt(custTable, &defaultCustTable, sizeof(CustomizeTable));
+                    saveSession(custTable);
                 }
             } else if (res <= 2)
                 functions[res](custTable, getHWType());

@@ -33,7 +33,7 @@ typedef struct {
     u32 eristaEmcMaxClock;                                     // 24       ERISTA - RAM
     u32 marikoCpuMaxVolt;                                      // 28       MARIKO - CPU
     u32 marikoEmcMaxClock;                                     // 32       MARIKO - RAM
-    u32 marikoEmcVddqVolt;                                     // 36       ARIKO - RAM
+    u32 marikoEmcVddqVolt;                                     // 36       MARIKO - RAM
     u32 marikoCpuUV;                                           // 40       MARIKO - CPU
     u32 marikoGpuUV;                                           // 44       MARIKO - GPU
     u32 CPUv;                                                  // 48       MARIKO - CPU
