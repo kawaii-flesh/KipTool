@@ -1,70 +1,76 @@
-# TegraExplorer
+# KipTool
 
-[![TegraExplorer builder](https://github.com/suchmememanyskill/TegraExplorer/workflows/TegraExplorer%20builder/badge.svg)](https://github.com/suchmememanyskill/TegraExplorer/actions)
-[![Downloads](https://img.shields.io/github/downloads/suchmememanyskill/TegraExplorer/total)](https://github.com/suchmememanyskill/TegraExplorer/releases)
-[![Version](https://img.shields.io/github/v/release/suchmememanyskill/tegraexplorer)](https://github.com/suchmememanyskill/TegraExplorer/releases)
-[![Donations](https://img.shields.io/badge/Support%20on-Ko--Fi-red)](https://ko-fi.com/suchmememanyskill)
+KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill/TegraExplorer) v4.1.1
 
-A payload-based file explorer for your switch!
+## Установка
+1. Поместить KipTool.bin в bootloader/payloads на вашей карте
+1. Загрузиться в Hekate
+1. Загрузить пейлоад: Payloads->KipTool.bin
 
-## Usage
-1. Get your favorite payload injector
-2. Inject TegraExplorer as a payload
+## Управление
 
-Navigate around the menus using the joycons.
-- A: Select
-- B: Back
-- Left Joystick up/down (Dpad or joystick): navigate menus up/down
-- Right Joystick up/down: fast menu navigation up/down
-- Capture (Minerva only): Take a screenshot
-- L3/R3 (Press joysticks in): Recalibrate centerpoint
+### Навигация в меню KipTool
+- A: Выбрать
+- B: Назад
+- Левый стик или кнопки крестовины верх/низ: вверх/вниз по меню
+- Левый стик или кнопки крестовины лево/право: перейти к первой/последней записи меню или переключение страниц
+- Правый стик верх/низ: быстрое перемещение по меню вверх/вниз по меню
+- Кнопка захвата: Сделать скриншот
 
-If you do not have your joycons connected:
-- Power -> A
-- Vol+ -> Left Joystick up
-- Vol- -> Left Joystick down
+### Навигация в окне редактирования значения параметра
+- A: Задать новое значение
+- B: Выйти без изменений
+- Левый стик или кнопки крестовины лево/право: изменить значение на +- шаг
+- Левый стик или кнопки крестовины верх/низ: изменить значение на +- шаг * 10
 
-## Functions
-- Navigate the SD card
-- Navigate the System partition of your sysmmc and emummc
-- Interact with files
-	- Deleting, copying, renaming and moving files
-	- Launching payloads files
-	- Viewing the hex data of a file
-	- Launching special [TegraScript](https://github.com/suchmememanyskill/TegraScript) files
-	- Renaming files
-- Interacting with folders
-	- Deleting, copying or renaming folders
-	- Creating folders
-- Dumping your current firmware to sd
-- Formatting the sd card
+### Навигация в окне подтверждения
+- A: Применить ответ
+- B: Выйти
+- Левый стик или кнопки крестовины лево/право: переключение между Yes и No
 
-*and more*
+## Использование редактора параметров
+1. Browse SD
+1. Найти ваш loader.kip файл
+1. Открыть меню файла
+1. Kip tool -> Kip Wizard
 
-## Support
+При первом запуске `Kip Tool`'а в корне вашей карты будет создана служебная директория `.kt`.
 
-For general CFW support, go to the [Nintendo Homebrew](https://discord.gg/C29hYvh) discord
+При первом запуске `Kip Wizard`'а в директории `.kt` будет создан файл сессии `session.bin`.
 
-For question specifically for TegraExplorer, go to [my discord](https://discord.gg/aH9rsuP)
+Файл сессии ничто иное, как дамп `CustomizeTable` из вашего `loader.kip` файла. Таким образом, изменения значений параметров сперва производятся в сессии, а затем их можно применить к вашему файлу `loader.kip`.
 
-## Credits
-Based on [Lockpick_RCM](https://github.com/shchmue/Lockpick_RCM), and thus also based on [Hekate](https://github.com/CTCaer/hekate)
+При повторном открытии `Kip Wizard`'а, если ранее был создан файл сессии, вам будет предложено загрузить его в качестве текущей сессии. При отказе файл сессии будет перезаписан значениями из вашего `loader.kip`.
 
-Awesome people who helped with this project:
-- [shchmue](https://github.com/shchmue)
-- [maddiethecafebabe](https://github.com/maddiethecafebabe/)
-- [bleck9999](https://github.com/bleck9999)
+В текущей реализации нет привязки файла сессии к конкретному `.kip` файлу. Поэтому файл сессии может быть перезаписан при открытии другого `.kip` файла. БУДЬТЕ ВНИМАТЕЛЬНЫ!
 
-Other awesome people:
-- PhazonicRidley
-- Dax
-- Huhen
-- Exelix
-- Emmo
-- Gengar
-- Einso
-- JeffV
+При загрузке `loader.kip` файла и сессии производится минимальная проверка на соответствие текущей поддерживаемой версии (число после дефиса в версии `Kip Tool`) `CustomizeTable`'а и наличие `CUST` паттерна, что предотвращает случайное открытие других [модулей](https://github.com/Atmosphere-NX/Atmosphere/tree/master/docs/components/modules) `atmosphere`'ы, если в нем конечно случайно нет `CUST` паттерна\)
 
-## Screenshots
+5. В главном меню выбрать необходимую `категорию`(`CPU`/`GPU`/`RAM`) параметров
+6. Выбрать необходимый `параметр`/`таблицу`
+7. Для выбранного параметра выбрать `фиксированное значение` или задать вручную, если это возможно через пункт `Manual value`
+8. После внесения изменений вернуться на главный экран `Kip Wizard`'а и с помощью 'Apply changes' применить изменения к текущему `.kip` файлу
 
-![Preview](/preview.png)
+## Цветовые обозначения
+### Параметр (в меню выбора параметра)
+- <font color="8040FF">Имеет дефолтное значение</font>
+- <font color="FF8C00">Имеет недефолтное значение</font>
+- <font color="FFFF40">Является таблицей</font>
+
+![Params menu](/screenshots/params_menu.bmp)
+
+### Значение (в меню редактирования параметра)
+- <font color="00DDFF">Является текущим значением</font>
+- <font color="8040FF">Является дефолтным значением</font>
+- <font color="FF8C00">Является недефолтным значением</font>
+- <font color="FFFF40">Пункт задания значения вручную</font>
+
+![Params menu](/screenshots/edit_param.bmp)
+
+## Скриншоты
+
+![Main menu](/screenshots/main_menu.bmp)
+
+![CPU Params](/screenshots/cpu_params.bmp)
+
+![Value editor](/screenshots/value_editor.bmp)
