@@ -53,17 +53,17 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 
 ## Цветовые обозначения
 ### Параметр (в меню выбора параметра)
-- <font color="8040FF">Имеет дефолтное значение</font>
-- <font color="FF8C00">Имеет недефолтное значение</font>
-- <font color="FFFF40">Является таблицей</font>
+-  ![#8040ff](https://placehold.co/15x15/8040ff/8040ff.png) - Имеет дефолтное значение
+- ![#ff8c00](https://placehold.co/15x15/ff8c00/ff8c00.png) - Имеет недефолтное значение
+- ![#ffff40](https://placehold.co/15x15/ffff40/ffff40.png) - Является таблицей
 
 ![Params menu](/screenshots/params_menu.bmp)
 
 ### Значение (в меню редактирования параметра)
-- <font color="00DDFF">Является текущим значением</font>
-- <font color="8040FF">Является дефолтным значением</font>
-- <font color="FF8C00">Является недефолтным значением</font>
-- <font color="FFFF40">Пункт задания значения вручную</font>
+- ![#00ddff](https://placehold.co/15x15/00ddff/00ddff.png) - Является текущим значением
+- ![#8040ff](https://placehold.co/15x15/8040ff/8040ff.png) - Является дефолтным значением
+- ![#ff8c00](https://placehold.co/15x15/ff8c00/ff8c00.png) - Является недефолтным значением
+- ![#ffff40](https://placehold.co/15x15/ffff40/ffff40.png) - Пункт задания значения вручную
 
 ![Params menu](/screenshots/edit_param.bmp)
 
