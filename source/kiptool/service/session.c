@@ -3,7 +3,7 @@
 #include "kiptool.h"
 
 // TODO errors check
-bool loadSession(Session* session) {
+bool loadSession(CustomizeTable* customizeTable) {
     FIL file;
     FRESULT res;
     res = f_open(&file, KTSESSION, FA_READ);
@@ -12,12 +12,12 @@ bool loadSession(Session* session) {
         return false;
     }
     unsigned int bytesRead;
-    f_read(&file, session, sizeof(Session), &bytesRead);
+    f_read(&file, customizeTable, sizeof(CustomizeTable), &bytesRead);
     f_close(&file);
-    return bytesRead == sizeof(Session);
+    return bytesRead == sizeof(CustomizeTable);
 }
 
-bool saveSession(const u8* customizeTable) {
+bool saveSession(const CustomizeTable* customizeTable) {
     FIL file;
     FRESULT res;
     unsigned int bytesWritten;
@@ -27,14 +27,6 @@ bool saveSession(const u8* customizeTable) {
         return false;
     }
 
-    const Session session = {.magic = KTMAGIC, .kipVersion = CURRENT_VERSION};
-    const unsigned int sessionHeaderSize = ((void*)&session.customizeTable - (void*)&session.magic);
-    res = f_write(&file, &session, sessionHeaderSize, &bytesWritten);
-    if (res != FR_OK || bytesWritten != sessionHeaderSize) {
-        f_close(&file);
-        return false;
-    }
-    f_lseek(&file, sessionHeaderSize);
     res = f_write(&file, customizeTable, sizeof(CustomizeTable), &bytesWritten);
     if (res != FR_OK || bytesWritten != sizeof(CustomizeTable)) {
         f_close(&file);

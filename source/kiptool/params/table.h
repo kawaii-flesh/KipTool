@@ -4,8 +4,6 @@
 typedef struct {
     const char* name;
     const char* description;
-    const enum Category category;
-    const enum Platform platform;
     const unsigned int baseOffset;
     const unsigned int paramsCount;
     const Param* params[];

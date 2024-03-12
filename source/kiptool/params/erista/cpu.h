@@ -16,12 +16,9 @@ const FixedLimits eristaCpuMaxVoltFL = {.min = 1180, .max = 1350, .stepSize = 5}
 // MANUAL 1180-1350 STEP 5mV
 const Param eristaCpuMaxVolt = {
     .name = "CPU VMAX MODE",
-    .category = CPU,
-    .platform = ERISTA,
     .measure = "mV",
     .description = NULL,
     .offset = getOffset(defaultCustTable.eristaCpuMaxVolt),
-    .length = 4,
     .defaultValue = defaultCustTable.eristaCpuMaxVolt,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &eristaCpuMaxVoltFV}, {.type = EFixedLimits, .values = &eristaCpuMaxVoltFL}}};

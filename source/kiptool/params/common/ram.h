@@ -14,12 +14,9 @@ const FixedLimits commonEmcMemVoltFL = {.min = 950000, .max = 1400000, .stepSize
 // MANUAL 950'000-1400'000 STEP 12'500uV
 const Param commonEmcMemVolt = {
     .name = "RAM VDD MODE",
-    .category = RAM,
-    .platform = COMMON,
     .measure = "mV",
     .description = NULL,
     .offset = getOffset(defaultCustTable.commonEmcMemVolt),
-    .length = 4,
     .defaultValue = defaultCustTable.commonEmcMemVolt,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &commonEmcMemVoltFV}, {.type = EFixedLimits, .values = &commonEmcMemVoltFL}}};
@@ -35,12 +32,9 @@ const FixedValues ramTiming1FV = {.valuesCount = 9,
                                              {.value = 7},
                                              {.value = 8}}};
 const Param ramTiming1 = {.name = "RAM Timing 1",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetOne),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetOne,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming1FV}}};
@@ -56,12 +50,9 @@ const FixedValues ramTiming2FV = {.valuesCount = 9,
                                              {.value = 7},
                                              {.value = 8}}};
 const Param ramTiming2 = {.name = "RAM Timing 2",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetTwo),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetTwo,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming2FV}}};
@@ -78,12 +69,9 @@ const FixedValues ramTiming3FV = {.valuesCount = 10,
                                              {.value = 8},
                                              {.value = 9}}};
 const Param ramTiming3 = {.name = "RAM Timing 3",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetThree),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetThree,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming3FV}}};
@@ -99,12 +87,9 @@ const FixedValues ramTiming4FV = {.valuesCount = 9,
                                              {.value = 7},
                                              {.value = 8}}};
 const Param ramTiming4 = {.name = "RAM Timing 4",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetFour),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetFour,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming4FV}}};
@@ -120,12 +105,9 @@ const FixedValues ramTiming5FV = {.valuesCount = 9,
                                              {.value = 7},
                                              {.value = 8}}};
 const Param ramTiming5 = {.name = "RAM Timing 5",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetFive),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetFive,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming5FV}}};
@@ -143,12 +125,9 @@ const FixedValues ramTiming6FV = {.valuesCount = 11,
                                              {.value = 9},
                                              {.value = 10}}};
 const Param ramTiming6 = {.name = "RAM Timing 6",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetSix),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetSix,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming6FV}}};
@@ -170,12 +149,9 @@ const FixedValues ramTiming7FV = {.valuesCount = 15,
                                              {.value = 13},
                                              {.value = 14}}};
 const Param ramTiming7 = {.name = "RAM Timing 7",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetSeven),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetSeven,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming7FV}}};
@@ -201,12 +177,9 @@ const FixedValues ramTiming8FV = {.valuesCount = 19,
                                              {.value = 17},
                                              {.value = 18}}};
 const Param ramTiming8 = {.name = "RAM Timing 8",
-                          .category = RAM,
-                          .platform = COMMON,
                           .measure = NULL,
                           .description = NULL,
                           .offset = getOffset(defaultCustTable.ramTimingPresetEight),
-                          .length = 4,
                           .defaultValue = defaultCustTable.ramTimingPresetEight,
                           .limitsCount = 1,
                           .limits = {{.type = EFixedValues, .values = &ramTiming8FV}}};
@@ -214,8 +187,6 @@ const Param ramTiming8 = {.name = "RAM Timing 8",
 const Table ramTimingsTable = {
     .name = "RAM Timings Table",
     .description = NULL,
-    .category = RAM,
-    .platform = COMMON,
     .baseOffset = getOffset(defaultCustTable.ramTimingPresetOne),
     .paramsCount = 8,
     .params = {&ramTiming1, &ramTiming2, &ramTiming3, &ramTiming4, &ramTiming5, &ramTiming6, &ramTiming7, &ramTiming8}};
@@ -234,12 +205,9 @@ const FixedValues eBALFV = {.valuesCount = 5,
 // 4 SRT ST1
 // 5 SRT ST2
 const Param eBAL = {.name = "EMC BALLANCE ADVANCED LOGIC",
-                    .category = RAM,
-                    .platform = COMMON,
                     .measure = NULL,
                     .description = NULL,
                     .offset = getOffset(defaultCustTable.eBAL),
-                    .length = 4,
                     .defaultValue = defaultCustTable.eBAL,
                     .limitsCount = 2,
                     .limits = {{.type = EFixedValues, .values = &eBALFV}}};
@@ -257,12 +225,9 @@ const FixedValues eBASFV = {.valuesCount = 4,
 // 4 RESERVED
 // 5 LOH-C4C
 const Param eBAS = {.name = "EBA-SHIFT",
-                    .category = RAM,
-                    .platform = COMMON,
                     .measure = NULL,
                     .description = NULL,
                     .offset = getOffset(defaultCustTable.eBAS),
-                    .length = 4,
                     .defaultValue = defaultCustTable.eBAS,
                     .limitsCount = 2,
                     .limits = {{.type = EFixedValues, .values = &eBASFV}}};
@@ -270,12 +235,9 @@ const Param eBAS = {.name = "EBA-SHIFT",
 const FixedValues pMeh0FV = {.valuesCount = 2, .values = {{.value = 0}, {.value = 1}}};
 // 0 eBAS Sub-Zero 0-1
 const Param pMeh0 = {.name = "pMeh 0",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[0]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[0],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh0FV}}};
@@ -283,24 +245,18 @@ const FixedValues pMeh1FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 1 divMB Supressor 0-4
 const Param pMeh1 = {.name = "pMeh 1",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[1]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[1],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh1FV}}};
 const FixedValues pMeh2FV = {.valuesCount = 3, .values = {{.value = 0}, {.value = 1}, {.value = 2}}};
 // 2 1333>1065>800
 const Param pMeh2 = {.name = "pMeh 2",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[2]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[2],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh2FV}}};
@@ -308,12 +264,9 @@ const FixedValues pMeh3FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 3 eBAW Shift 0-4
 const Param pMeh3 = {.name = "pMeh 3",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[3]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[3],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh3FV}}};
@@ -321,12 +274,9 @@ const FixedValues pMeh4FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 4 eBAR Shift 0-4
 const Param pMeh4 = {.name = "pMeh 4",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[4]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[4],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh4FV}}};
@@ -342,12 +292,9 @@ const FixedValues pMeh5FV = {.valuesCount = 9,
                                         {.value = 8}}};
 // 5 RTW Shift 0-8
 const Param pMeh5 = {.name = "pMeh 5",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[5]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[5],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh5FV}}};
@@ -363,12 +310,9 @@ const FixedValues pMeh6FV = {.valuesCount = 9,
                                         {.value = 8}}};
 // 6 WTR Shift 0-8
 const Param pMeh6 = {.name = "pMeh 6",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[6]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[6],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh6FV}}};
@@ -384,12 +328,9 @@ const FixedValues pMeh7FV = {.valuesCount = 9,
                                         {.value = 8}}};
 // 7 WTP Shift
 const Param pMeh7 = {.name = "pMeh 7",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[7]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[7],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh7FV}}};
@@ -397,12 +338,9 @@ const FixedValues pMeh8FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 8 RCD Reduct 0-4
 const Param pMeh8 = {.name = "pMeh 8",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[8]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[8],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh8FV}}};
@@ -410,12 +348,9 @@ const FixedValues pMeh9FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 9 RP Reduct 0-4
 const Param pMeh9 = {.name = "pMeh 9",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[9]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.pMEH[9],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &pMeh9FV}}};
@@ -439,36 +374,27 @@ const FixedValues pMeh10FV = {.valuesCount = 17,
                                          {.value = 16}}};
 // 10 RAS Shift 0-16
 const Param pMeh10 = {.name = "pMeh 10",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[10]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.pMEH[10],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &pMeh10FV}}};
 const FixedValues pMeh11FV = {.valuesCount = 4, .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}}};
 // 11 SRPD 0-3
 const Param pMeh11 = {.name = "pMeh 11",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[11]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.pMEH[11],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &pMeh11FV}}};
 const FixedValues pMeh12FV = {.valuesCount = 2, .values = {{.value = 0}, {.value = 1}}};
 // 12 E-Enhance P
 const Param pMeh12 = {.name = "pMeh 12",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[12]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.pMEH[12],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &pMeh12FV}}};
@@ -476,12 +402,9 @@ const FixedValues pMeh13FV = {.valuesCount = 5,
                               .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 13 DR Debug 0-4
 const Param pMeh13 = {.name = "pMeh 13",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[13]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.pMEH[13],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &pMeh13FV}}};
@@ -493,32 +416,24 @@ const FixedValues pMeh14FV = {
                {.value = 21}, {.value = 22}, {.value = 23}, {.value = 24}}};
 // 14 GameChanger 0-24
 const Param pMeh14 = {.name = "pMeh 14",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[14]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.pMEH[14],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &pMeh14FV}}};
 const FixedValues pMeh15FV = {.valuesCount = 2, .values = {{.value = 0}, {.value = 1}}};
 // 15 Eri-Bump 0-1
 const Param pMeh15 = {.name = "pMeh 15",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[15]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.pMEH[15],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &pMeh15FV}}};
 
 const Table pMehTable = {.name = "pMeh Table",
                          .description = NULL,
-                         .category = RAM,
-                         .platform = COMMON,
                          .baseOffset = getOffset(defaultCustTable.pMEH),
                          .paramsCount = 16,  // 16-23 RESERVED
                          .params = {&pMeh0, &pMeh1, &pMeh2, &pMeh3, &pMeh4, &pMeh5, &pMeh6, &pMeh7, &pMeh8, &pMeh9, &pMeh10,
@@ -536,12 +451,9 @@ const FixedValues sMeh0FV = {.valuesCount = 9,
                                         {.value = 9}}};
 // 0 ARB-Boost 1-9
 const Param sMeh0 = {.name = "sMeh 0",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[0]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[0],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh0FV}}};
@@ -549,12 +461,9 @@ const FixedValues sMeh1FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 1 ARB-BCD 0-4
 const Param sMeh1 = {.name = "sMeh 1",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[1]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[1],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh1FV}}};
@@ -562,12 +471,9 @@ const FixedValues sMeh2FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 2 ARB-BRP 0-4
 const Param sMeh2 = {.name = "sMeh 2",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[2]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[2],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh2FV}}};
@@ -575,12 +481,9 @@ const FixedValues sMeh3FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 3 ARB-RTR 0-4
 const Param sMeh3 = {.name = "sMeh 3",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[3]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[3],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh3FV}}};
@@ -588,12 +491,9 @@ const FixedValues sMeh4FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 4 ARB-RTW 0-4
 const Param sMeh4 = {.name = "sMeh 4",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[4]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[4],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh4FV}}};
@@ -601,12 +501,9 @@ const FixedValues sMeh5FV = {.valuesCount = 5,
                              .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 5 ARB-WTR 0-4
 const Param sMeh5 = {.name = "sMeh 5",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[5]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[5],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh5FV}}};
@@ -615,48 +512,36 @@ const FixedValues sMeh6FV = {
     .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}, {.value = 5}, {.value = 6}, {.value = 7}}};
 // 6 ??? 0-7
 const Param sMeh6 = {.name = "sMeh 6",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[6]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[6],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh6FV}}};
 const FixedValues sMeh7FV = {.valuesCount = 2, .values = {{.value = 0}, {.value = 1}}};
 // 7 trDVFS 0-1
 const Param sMeh7 = {.name = "sMeh 7",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[7]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[7],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh7FV}}};
 const FixedValues sMeh8FV = {.valuesCount = 2, .values = {{.value = 0}, {.value = 1}}};
 // 8 E-Boost 0-1
 const Param sMeh8 = {.name = "sMeh 8",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[8]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[8],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh8FV}}};
 const FixedValues sMeh9FV = {.valuesCount = 2, .values = {{.value = 0}, {.value = 1}}};
 // 9 SSC Logic 0-1
 const Param sMeh9 = {.name = "sMeh 9",
-                     .category = RAM,
-                     .platform = COMMON,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.sMEH[9]),
-                     .length = 4,
                      .defaultValue = defaultCustTable.sMEH[9],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedValues, .values = &sMeh9FV}}};
@@ -672,12 +557,9 @@ const FixedValues sMeh10FV = {.valuesCount = 9,
                                          {.value = 8}}};
 // 10 Latent 0-8
 const Param sMeh10 = {.name = "sMeh 10",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.sMEH[10]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.sMEH[10],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &sMeh10FV}}};
@@ -686,20 +568,15 @@ const FixedValues sMeh11FV = {.valuesCount = 5,
                               .values = {{.value = 0}, {.value = 1}, {.value = 2}, {.value = 3}, {.value = 4}}};
 // 11 CP-THM 0-4
 const Param sMeh11 = {.name = "sMeh 11",
-                      .category = RAM,
-                      .platform = COMMON,
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.sMEH[11]),
-                      .length = 4,
                       .defaultValue = defaultCustTable.sMEH[11],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedValues, .values = &sMeh11FV}}};
 const Table sMehTable = {
     .name = "sMeh Table",
     .description = NULL,
-    .category = RAM,
-    .platform = COMMON,
     .baseOffset = getOffset(defaultCustTable.sMEH),
     .paramsCount = 12,  // 12-23 RESERVED
     .params = {&sMeh0, &sMeh1, &sMeh2, &sMeh3, &sMeh4, &sMeh5, &sMeh6, &sMeh7, &sMeh8, &sMeh9, &sMeh10, &sMeh11}};

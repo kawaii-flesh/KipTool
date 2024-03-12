@@ -62,8 +62,8 @@ void ViewCredits() {
     gfx_clearscreen();
     gfx_printf(
         "\nTegraexplorer v%d.%d.%d\nBy SuchMemeManySkill\Based on Lockpick_RCM & Hekate, from shchmue & CTCaern\n\nKip Tool "
-        "v%d.%d.%d by kawaii-flesh\n\n",
-        LP_VER_MJ, LP_VER_MN, LP_VER_BF, KT_VER_MJ, KT_VER_MN, KT_VER_BF);
+        "v%d.%d.%d-%d by kawaii-flesh\n\n",
+        LP_VER_MJ, LP_VER_MN, LP_VER_BF, KT_VER_MJ, KT_VER_MN, KT_VER_BF, KT_CUST_VER);
 
     if (hidRead()->r)
         gfx_printf("%k\"I'm not even sure if it works\" - meme", COLOR_ORANGE);

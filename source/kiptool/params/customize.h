@@ -1,7 +1,6 @@
 #pragma once
 #include <utils/types.h>
 
-#define CURRENT_VERSION 19
 #define CUST \
     { 'C', 'U', 'S', 'T' }
 

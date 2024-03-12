@@ -8,7 +8,7 @@
 bool isDirExist(const char* path) {
     FILINFO finfo;
     FRESULT res;
-    res = f_stat(KTDIR, &finfo);
+    res = f_stat(path, &finfo);
     return res == FR_OK && (finfo.fattrib & AM_DIR);
 }
 

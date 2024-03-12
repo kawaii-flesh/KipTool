@@ -1,6 +1,7 @@
 #include "confirmationDialog.h"
 
 #include <mem/minerva.h>
+#include <string.h>
 #include <utils/util.h>
 
 #include "../../../gfx/gfxutils.h"
@@ -8,26 +9,17 @@
 #include "../gfx.h"
 
 // TODO new lines inter
-enum ConfirmationDialogResult confirmationDialog(const char* message, const enum ConfirmationDialogResult defaultValue) {
+enum ConfirmationDialogResult confirmationDialog(const char* messages[], const enum ConfirmationDialogResult defaultValue) {
     unsigned int selected = defaultValue == EYES ? 0 : 1;
     unsigned int holdTimer = 300;
     unsigned int linesCount = 0;
     unsigned int maxStringLen = 7;  // YES__NO
-    unsigned tmp = 0;
-    for (unsigned int i = 0;; ++i) {
-        ++tmp;
-        if (message[i] == 0) {
-            ++linesCount;
-            --tmp;
-            if (tmp > maxStringLen) maxStringLen = tmp;
-            break;
-        } else if (message[i] == '\n') {
-            ++linesCount;
-            --tmp;
-            if (tmp > maxStringLen) maxStringLen = tmp;
-            tmp = 0;
-        }
+    for (unsigned int i = 0; messages[i] != NULL; ++i) {
+        ++linesCount;
+        const unsigned int strLen = strlen(messages[i]);
+        if (strLen > maxStringLen) maxStringLen = strLen;
     }
+
     unsigned int fontSize = gfx_con.fntsz;
     unsigned int boxWidth = (maxStringLen * fontSize) + fontSize * 2;
     unsigned int boxHeight = (linesCount * fontSize) + fontSize * 4;
@@ -46,22 +38,27 @@ enum ConfirmationDialogResult confirmationDialog(const char* message, const enum
     bool redraw = true;
     Input_t* input = hidRead();
     Input_t oldButtons = *input;
-    gfx_box(boxX0Position, boxY0Position, boxX1Position, boxY1Position, COLOR_GREY);
-    gfx_con_setpos(boxX0Position + fontSize, boxY0Position + fontSize);
-    SETCOLOR(RGBUnionToU32(COLOR_WHITE), COLOR_GREY);
-    gfx_puts(message);
+    gfx_box(boxX0Position, boxY0Position, boxX1Position, boxY1Position, COLOR_CONFIRM);
+    unsigned int messageY = boxY0Position + fontSize;
+    unsigned int messageX = boxX0Position + fontSize;
+    SETCOLOR(RGBUnionToU32(COLOR_WHITE), COLOR_CONFIRM);
+    for (unsigned int i = 0; i < linesCount; ++i) {
+        gfx_con_setpos(messageX, messageY);
+        gfx_puts(messages[i]);
+        messageY += fontSize;
+    }
     while (1) {
         if (redraw) {
             minerva_periodic_training();
             redraw = false;
             gfx_printTopInfoKT();
-            gfx_box(yesX0Position, yesY0Position, noLastXPosition, noLastYPosition, COLOR_GREY);
-            SETCOLOR(RGBUnionToU32(COLOR_WHITE), COLOR_GREY);
-            if (selected == 0) SETCOLOR(COLOR_GREY, RGBUnionToU32(COLOR_WHITE));
+            gfx_box(yesX0Position, yesY0Position, noLastXPosition, noLastYPosition, COLOR_CONFIRM);
+            SETCOLOR(RGBUnionToU32(COLOR_WHITE), COLOR_CONFIRM);
+            if (selected == 0) SETCOLOR(COLOR_CONFIRM, RGBUnionToU32(COLOR_WHITE));
             gfx_con_setpos(yesX0Position, yesY0Position);
             gfx_puts("YES");
-            SETCOLOR(RGBUnionToU32(COLOR_WHITE), COLOR_GREY);
-            if (selected == 1) SETCOLOR(COLOR_GREY, RGBUnionToU32(COLOR_WHITE));
+            SETCOLOR(RGBUnionToU32(COLOR_WHITE), COLOR_CONFIRM);
+            if (selected == 1) SETCOLOR(COLOR_CONFIRM, RGBUnionToU32(COLOR_WHITE));
             gfx_con_setpos(noX0Position, yesY0Position);
             gfx_puts("NO");
         }

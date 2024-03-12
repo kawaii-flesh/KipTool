@@ -5,7 +5,7 @@
 #define getOffset(param) (int)((const void*)&param - (const void*)defaultCustTable.cust)
 const CustomizeTable defaultCustTable = {
     .cust = CUST,
-    .custRev = CURRENT_VERSION,
+    .custRev = KT_CUST_VER,
 
     .mtcConf = 0,  // eBAMATIC; CUSTOM_ADJ_ALL; NO_ADJ_ALL; CUSTOMIZED_ALL
 

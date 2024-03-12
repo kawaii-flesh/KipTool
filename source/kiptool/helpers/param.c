@@ -6,15 +6,16 @@
 
 #include "../params/param.h"
 
-extern const Param gKipVersion;
-void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value) {
-    if (param != &gKipVersion && param->defaultValue == value) strcpy(displayBuff + strlen(displayBuff), " - Default");
+void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam) {
+    if (param->defaultValue == value)
+        strcpy(displayBuff + strlen(displayBuff), " - Default");
+    else if (isParam)
+        strcpy(displayBuff + strlen(displayBuff), " - Changed");
 }
 
 void addLabel(const Param* param, const Value* value, char* displayBuff) {
     if (value->label == NULL) return;
-    strcpy(displayBuff + strlen(displayBuff), " - ");
-    strcpy(displayBuff + strlen(displayBuff), value->label);
+    s_printf(displayBuff + strlen(displayBuff), " - %s", value->label);
 }
 
 bool addLabelToFixedValue(const Param* param, char* displayBuff, unsigned int value) {
@@ -22,8 +23,7 @@ bool addLabelToFixedValue(const Param* param, char* displayBuff, unsigned int va
     for (unsigned int i = 0; i < limits->valuesCount; ++i) {
         if (limits->values[i].value == value) {
             if (limits->values[i].label == NULL) return true;
-            strcpy(displayBuff + strlen(displayBuff), " - ");
-            strcpy(displayBuff + strlen(displayBuff), limits->values[i].label);
+            s_printf(displayBuff + strlen(displayBuff), " - %s", limits->values[i].label);
             return true;
         }
     }
@@ -54,7 +54,17 @@ void formatValue(char* displayBuff, const unsigned int value) {
     return;
 }
 
-void getDisplayValue(const Param* param, char* displayBuff, unsigned int value) {
+void formatValueDiv(char* displayBuff, const unsigned int value, bool div) {
+    if (div) {
+        double dValue = value;
+        dValue /= 1000.0;
+        doubleToStr(displayBuff, dValue);
+    } else
+        utoa(value, displayBuff, 10);
+    return;
+}
+
+void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, int isParam) {
     formatValue(displayBuff, value);
     if (param->measure != NULL) strcpy(displayBuff + strlen(displayBuff), param->measure);
     bool founded = false;
@@ -88,6 +98,6 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value) 
         strcpy(displayBuff + strlen(displayBuff), " - Unknown value");
         return;
     }
-    addDefaultPostfix(param, displayBuff, value);
+    addDefaultPostfix(param, displayBuff, value, isParam);
     return;
 }

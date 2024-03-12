@@ -10,7 +10,7 @@ const FixedValues commonCpuBoostClockFV = {.valuesCount = 5,
                                                       {.value = 2000000, .label = "E"},
                                                       {.value = 2500000, .label = "D"},
                                                       {.value = 3000000, .label = "S"}}};
-const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .stepSize = 100000};
+const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .stepSize = 1000};  // STEP GCD
 // CPU LAUNCH CONTROL TARGET
 // 1428000 CPU-HI uV DEBUG
 // 1785000 CPU-LOW uV DEBUG
@@ -19,12 +19,9 @@ const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .step
 // 3000000 S
 // MANUAL 1400000-3000000 100000 STEP
 const Param commonCpuBoostClock = {.name = "CPU LAUNCH CONTROL TARGET",
-                                   .category = CPU,
-                                   .platform = MARIKO,
                                    .measure = "MHz",
                                    .description = NULL,
                                    .offset = getOffset(defaultCustTable.commonCpuBoostClock),
-                                   .length = 4,
                                    .defaultValue = defaultCustTable.commonCpuBoostClock,
                                    .limitsCount = 2,
                                    .limits = {{.type = EFixedValues, .values = &commonCpuBoostClockFV},
@@ -48,12 +45,9 @@ const FixedLimits SpeedShiftFL = {.min = 0, .max = 200, .stepSize = 25};
 // MANUAL 1-200
 const Param SpeedShift = {
     .name = "SPEEDSHIFT",
-    .category = CPU,
-    .platform = MARIKO,
     .measure = NULL,
     .description = NULL,
     .offset = getOffset(defaultCustTable.SpeedShift),
-    .length = 4,
     .defaultValue = defaultCustTable.SpeedShift,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &SpeedShiftFV}, {.type = EFixedLimits, .values = &SpeedShiftFL}}};
@@ -71,12 +65,9 @@ const FixedLimits CPUvFL = {.min = 430, .max = 670, .stepSize = 5};
 // 530 ECO ST3 (4IFIR E only)
 // MANUAL 430-670 5-10mV STEP
 const Param CPUv = {.name = "CPU UNDER MODE",
-                    .category = CPU,
-                    .platform = MARIKO,
                     .measure = "mV",
                     .description = NULL,
                     .offset = getOffset(defaultCustTable.CPUv),
-                    .length = 4,
                     .defaultValue = defaultCustTable.CPUv,
                     .limitsCount = 2,
                     .limits = {{.type = EFixedValues, .values = &CPUvFV}, {.type = EFixedLimits, .values = &CPUvFL}}};
@@ -98,13 +89,10 @@ const FixedValues marikoCpuHUVFV = {.valuesCount = 8,
 // 3 AUTO ECO ST2
 // 5 AUTO ECO ST3
 // MANUAL 1-7
-const Param marikoCpuHUV = {.name = "MARIKO CPU-HI ECO LOGIC",
-                            .category = CPU,
-                            .platform = MARIKO,
+const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
                             .measure = NULL,
                             .description = NULL,
                             .offset = getOffset(defaultCustTable.marikoCpuHUV),
-                            .length = 4,
                             .defaultValue = defaultCustTable.marikoCpuHUV,
                             .limitsCount = 2,
                             .limits = {{.type = EFixedValues, .values = &marikoCpuHUVFV}}};
@@ -121,17 +109,14 @@ const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1280, .stepSize = 5}
 // MANUAL 1130-1280 STEP 5mV
 const Param marikoCpuMaxVolt = {
     .name = "CPU VMAX MODE",
-    .category = CPU,
-    .platform = MARIKO,
     .measure = "mV",
     .description = NULL,
     .offset = getOffset(defaultCustTable.marikoCpuMaxVolt),
-    .length = 4,
     .defaultValue = defaultCustTable.marikoCpuMaxVolt,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &marikoCpuMaxVoltFV}, {.type = EFixedLimits, .values = &marikoCpuMaxVoltFL}}};
 
-const FixedValues marikoCpuUVFV = {.valuesCount = 4,
+const FixedValues marikoCpuUVFV = {.valuesCount = 7,
                                    .values = {{.value = 0},
                                               {.value = 1, .label = "ECO ST1"},
                                               {.value = 2},
@@ -146,12 +131,9 @@ const FixedValues marikoCpuUVFV = {.valuesCount = 4,
 // 5 ECO ST3
 // MANUAL 1-6
 const Param marikoCpuUV = {.name = "CPU-LOW ECO LOGIC",
-                           .category = CPU,
-                           .platform = MARIKO,
                            .measure = NULL,
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoCpuUV),
-                           .length = 4,
                            .defaultValue = defaultCustTable.marikoCpuUV,
                            .limitsCount = 1,
                            .limits = {{.type = EFixedValues, .values = &marikoCpuUVFV}}};
@@ -168,16 +150,13 @@ const FixedLimits dCPUvFL = {.min = 750, .max = 850, .stepSize = 5, .measure = "
 // 3 AUTO ECO ST3
 // 750-850 MANUAL
 const Param dCPUv = {.name = "CPU MIN-HIGH LOGIC",
-                     .category = CPU,
-                     .platform = MARIKO,
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.dCPUv),
-                     .length = 4,
                      .defaultValue = defaultCustTable.dCPUv,
                      .limitsCount = 2,
                      .limits = {{.type = EFixedValues, .values = &dCPUvFV}, {.type = EFixedLimits, .values = &dCPUvFL}}};
 
 const Params mCPUParams = {
-    .count = 7, .params = {&commonCpuBoostClock, &SpeedShift, &CPUv, &marikoCpuHUV, &marikoCpuMaxVolt, &marikoCpuUV, &dCPUv}};
+    .count = 7, .params = {&commonCpuBoostClock, &SpeedShift, &CPUv, &marikoCpuMaxVolt, &marikoCpuUV, &dCPUv, &marikoCpuHUV}};
 const Tables mCPUTables = {};

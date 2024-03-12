@@ -41,7 +41,7 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
         if (redrawScreen) {
             SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
             char temp[40] = "";
-            s_printf(temp, " Page %d / %d | Total %d entries", currentPage, totalPageCount, entriesCount - 1);
+            s_printf(temp, "Page %d / %d", currentPage, totalPageCount);
             gfx_con_setpos(YLEFT - strlen(temp) * 18, 0);
             gfx_printf(temp);
 
@@ -69,8 +69,6 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
         lastIndex = selected;
 
         SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
-        gfx_con_setpos(0, 704);
-        gfx_printf("Time taken for screen draw: %dms  ", get_tmr_ms() - lastDraw);
 
         while (hidRead()) {
             if (!(input->buttons)) {

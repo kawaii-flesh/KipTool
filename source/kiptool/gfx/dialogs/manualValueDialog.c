@@ -41,12 +41,13 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     }
     unsigned int holdTimer = 200;
     const unsigned int linesCount = 5;
-    const char help[] = "dec(<) inc(>) apply(A) back(B)";
+    const char help[] = "dec(<)/(down) inc(>)/(up) apply(A) back(B)";
     const char* measure = param->measure != NULL ? param->measure : fixedLimits->measure != NULL ? fixedLimits->measure : "";
     const unsigned int minMaxDif = numPlaces(max) - numPlaces(min);
-    unsigned int maxStringLen = 18 + numPlaces(min > 1500 ? min / 1000 : min) + numPlaces(max > 1500 ? max / 1000 : max) * 2 +
+    unsigned int maxStringLen = 16 + numPlaces(min > 1500 ? min / 1000 : min) + numPlaces(max > 1500 ? max / 1000 : max) * 2 +
                                 numPlaces(stepSize > 1500 ? stepSize / 1000 : stepSize) +
                                 (measure != NULL ? strlen(measure) : 0) + minMaxDif + 6;
+    if (strlen(help) + 2 > maxStringLen) maxStringLen = strlen(help) + 2;
     unsigned int fontSize = gfx_con.fntsz;
     unsigned int boxWidth = (maxStringLen * fontSize) + fontSize * 2;
     unsigned int boxHeight = (linesCount * fontSize) + fontSize * 2;
@@ -56,7 +57,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     unsigned int boxY1Position = 720 / 2 + boxHeight / 2;
     unsigned int boxXMid = boxX0Position + boxWidth / 2;
     unsigned int paramNameXPosition = boxXMid - (strlen(param->name) / 2) * fontSize;
-    unsigned int helpXPosition = boxXMid - 15 * fontSize;
+    unsigned int helpXPosition = boxXMid - 21 * fontSize;
 
     unsigned int paramNameYPosition = boxY0Position + 1 * fontSize;
     unsigned int helpYPosition = boxY0Position + 3 * fontSize;
@@ -85,20 +86,21 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             }
             redraw = false;
             char* minStr = malloc(8);
-            formatValue(minStr, min);
+            bool div = min > 1500 || currentValue > 1500 || max > 1500 || stepSize > 1500;
+            formatValueDiv(minStr, min, div);
             char* currentStr = malloc(8);
-            formatValue(currentStr, currentValue);
+            formatValueDiv(currentStr, currentValue, div);
             char* maxStr = malloc(8);
-            formatValue(maxStr, max);
+            formatValueDiv(maxStr, max, div);
             char* stepStr = malloc(8);
-            formatValue(stepStr, stepSize);
+            formatValueDiv(stepStr, stepSize, div);
             char* buff = calloc(256, 1);
-            s_printf(buff, "min=>%s %s %s<=max step=%s%s", minStr, currentStr, maxStr, stepStr, measure);
+            s_printf(buff, "min=%s %s %s=max step=%s%s", minStr, currentStr, maxStr, stepStr, measure);
             maxStringLen = strlen(buff);
             unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
             gfx_box(boxX0Position, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
             gfx_con_setpos(selectorX0Position, selectorY0Position);
-            gfx_printf("min=>%s %k%s%k %s<=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr,
+            gfx_printf("min=%s %k%s%k %s=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr,
                        measure);
             free(minStr);
             free(currentStr);
@@ -117,7 +119,8 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             if (oldButtons.a) {
                 if (validateValue(min, max, stepSize, currentValue)) {
                     const ManualValueResult good = {.value = currentValue, .status = EMVS_GOOD};
-                    if (confirmationDialog("Set new value?", EYES) == EYES)
+                    const char* message[] = {"Do you want to set new value?", NULL};
+                    if (confirmationDialog(message, EYES) == EYES)
                         return good;
                     else {
                         oldButtons = *hidRead();
@@ -126,12 +129,18 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                         break;
                     }
                 } else {
-                    const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
-                    return invalidValue;
+                    const char* message[] = {"Oops... The selected value cannot be used O_o", "Should I continue editing?",
+                                             NULL};
+                    if (confirmationDialog(message, ENO) == ENO) {
+                        const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
+                        return invalidValue;
+                    }
+                    break;
                 }
             } else if (oldButtons.b) {
                 const ManualValueResult exit = {.status = EMVS_EXIT};
-                if (confirmationDialog("Close?", EYES) == EYES)
+                const char* message[] = {"Do you want to close editor?", NULL};
+                if (confirmationDialog(message, EYES) == EYES)
                     return exit;
                 else {
                     oldButtons = *hidRead();
@@ -168,7 +177,11 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 currentValue = min;
         }
         if (currentValue != lastResult) {
-            if (currentValue % stepSize != 0) currentValue += currentValue % stepSize;  // TODO adjust, wrong stepsize?
+            if (currentValue % stepSize != 0) currentValue += currentValue % stepSize;
+            if (currentValue > max)
+                currentValue = max;
+            else if (currentValue < min)
+                currentValue = min;
             lastResult = currentValue;
             redraw = true;
         }

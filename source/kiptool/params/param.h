@@ -1,8 +1,6 @@
 #pragma once
 
 enum LimitsType { EFixedLimits, EFixedOneValue, EFixedValues, EMinByParam, EMaxByParam, EMinAndMaxByParam };
-enum Category { GENERAL, CPU, GPU, RAM };
-enum Platform { COMMON, MARIKO, ERISTA, UNKNOWN };
 
 typedef struct {
     const unsigned int value;
@@ -16,12 +14,9 @@ typedef struct {
 
 typedef struct {
     const char* name;
-    const enum Category category;
-    const enum Platform platform;
     const char* measure;
     const char* description;
     const unsigned int offset;
-    const unsigned int length;
     const unsigned int defaultValue;
     const unsigned int limitsCount;
     const Limit limits[];

@@ -31,23 +31,24 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
     else if (entry->type == EValue) {
         char* displayBuff = calloc(256, 1);
         const Value* value = entry->entry;
-        getDisplayValue(editorAdditionalData->param, displayBuff + strlen(displayBuff), value->value);
+        getDisplayValue(editorAdditionalData->param, displayBuff + strlen(displayBuff), value->value, 0);
         gfx_puts_limit(displayBuff, maxLen);
         free((void*)displayBuff);
     } else if (entry->type == ELimits) {
         char* displayBuff = calloc(256, 1);
         const FixedLimits* fixedLimits = entry->entry;
         int min = fixedLimits->min;
-        char* minStr = malloc(8);
-        formatValue(minStr, min);
-        char* curValStr = malloc(8);
-        formatValue(curValStr, editorAdditionalData->currentValue);
         int max = fixedLimits->max;
-        char* maxStr = malloc(8);
-        formatValue(maxStr, max);
         int stepSize = fixedLimits->stepSize;
+        bool div = min > 1500 || editorAdditionalData->currentValue > 1500 || max > 1500 || stepSize > 1500;
+        char* minStr = malloc(8);
+        formatValueDiv(minStr, min, div);
+        char* curValStr = malloc(8);
+        formatValueDiv(curValStr, editorAdditionalData->currentValue, div);
+        char* maxStr = malloc(8);
+        formatValueDiv(maxStr, max, div);
         char* stepStr = malloc(8);
-        formatValue(stepStr, stepSize);
+        formatValueDiv(stepStr, stepSize, div);
         const char* measure =
             editorAdditionalData->param->measure != NULL ? editorAdditionalData->param->measure : fixedLimits->measure;
         s_printf(displayBuff, "Manual value - min: %s curVal: %s max: %s step: %s", minStr,
@@ -97,7 +98,9 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                     startIndex = menuEntriesIndex;
                     menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
                 } else
-                    menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_VIOLET);
+                    menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == fixedValue->value
+                                                                    ? COLORTORGB(COLOR_DEFAULT_PARAM)
+                                                                    : COLORTORGB(COLOR_CHANGED_PARAM);
                 ++menuEntriesIndex;
             }
         if (fixedLimits != NULL) {
@@ -126,8 +129,16 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         } else if (selectedEntry.type == EValue) {
             const Value* value = selectedEntry.entry;
             setParamValue(custTable, param, value->value);
-        } else if (selectedEntry.type == EReset)
-            setParamValue(custTable, param, param->defaultValue);
+        } else if (selectedEntry.type == EReset) {
+            const char* message[] = {"Do you want to reset param?", NULL};
+            if (confirmationDialog(message, ENO) == EYES) {
+                setParamValue(custTable, param, param->defaultValue);
+                char* message = calloc(256, 1);
+                s_printf(message, "[Session] Param: %s has been reset", param->name);
+                gfx_printBottomInfoKT(message);
+                free(message);
+            }
+        }
     }
     free(menuEntries);
     return;

@@ -9,7 +9,7 @@ const FixedValues eristaEmcMaxClockFV = {.valuesCount = 4,
                                                     {.value = 1996800, .label = "D"},
                                                     {.value = 2131200, .label = "STAGE 1"},
                                                     {.value = 2265600, .label = "STAGE 2"}}};
-const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSize = 38400};
+const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSize = 400};  // step = GCD
 // 4IFIR MODE / RAM VDD MODE
 // E 1866 1868800 / 1150'000
 // D 2000 1996800 / 1250'000
@@ -18,12 +18,9 @@ const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSi
 // MANUAL 1600000-2366000 STEP 38400KHz
 const Param eristaEmcMaxClock = {
     .name = "EMC Max Clock",
-    .category = RAM,
-    .platform = ERISTA,
     .measure = "MHz",
     .description = NULL,
     .offset = getOffset(defaultCustTable.eristaEmcMaxClock),
-    .length = 4,
     .defaultValue = defaultCustTable.eristaEmcMaxClock,
     .limitsCount = 2,
     .limits = {{.type = EFixedValues, .values = &eristaEmcMaxClockFV}, {.type = EFixedLimits, .values = &eristaEmcMaxClockFL}}};
