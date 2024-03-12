@@ -18,25 +18,23 @@
 #define _CONFIG_H_
 #include <utils/types.h>
 
-typedef struct _hekate_config
-{
-	// Non-volatile config.
-	u32 autoboot;
-	u32 autoboot_list;
-	u32 bootwait;
-	u32 backlight;
-	u32 autohosoff;
-	u32 autonogc;
-	u32 updater2p;
-	u32 bootprotect;
-	// Global temporary config.
-	bool t210b01;
-	bool se_keygen_done;
-	bool sept_run;
-	bool aes_slots_new;
-	bool emummc_force_disable;
-	bool rcm_patched;
-	u32  errors;
+typedef struct _hekate_config {
+    // Non-volatile config.
+    u32 autoboot;
+    u32 autoboot_list;
+    u32 bootwait;
+    u32 backlight;
+    u32 autohosoff;
+    u32 autonogc;
+    u32 updater2p;
+    u32 bootprotect;
+    // Global temporary config.
+    bool t210b01;
+    bool sept_run;
+    bool aes_slots_new;
+    bool emummc_force_disable;
+    bool rcm_patched;
+    u32 errors;
 } hekate_config;
 
 void set_default_configuration();

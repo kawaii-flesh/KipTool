@@ -1,5 +1,6 @@
 #pragma once
 #include <utils/types.h>
+
 #include "../utils/vector.h"
 
 typedef void (*menuEntriesGatherer)(Vector_t* vec, void* data);
@@ -8,21 +9,21 @@ typedef void (*menuPaths)();
 typedef struct _menuEntry {
     union {
         struct {
-            u32 B:8;
-            u32 G:8;
-            u32 R:8;
-            u32 skip:1;
-            u32 hide:1;
+            u32 B : 8;
+            u32 G : 8;
+            u32 R : 8;
+            u32 skip : 1;
+            u32 hide : 1;
         };
         u32 optionUnion;
     };
-    char *name;
+    char* name;
     u8 icon;
     union {
         struct {
-            u16 size:12;
-            u16 showSize:1;
-            u16 sizeDef:3;
+            u16 size : 12;
+            u16 showSize : 1;
+            u16 sizeDef : 3;
         };
         u16 sizeUnion;
     };

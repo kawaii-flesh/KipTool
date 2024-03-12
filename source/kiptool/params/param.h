@@ -1,28 +1,25 @@
 #pragma once
 
-enum LimitsType {
-    EFixedLimits,
-    EFixedOneValue,
-    EFixedValues,
-    EMinByParam,
-    EMaxByParam,
-    EMinAndMaxByParam
-};
+enum LimitsType { EFixedLimits, EFixedOneValue, EFixedValues, EMinByParam, EMaxByParam, EMinAndMaxByParam };
 
 typedef struct {
     const unsigned int value;
-    const char *label;
+    const char* label;
 } Value;
 
 typedef struct {
-    const char *name;
-    const char *measure;
-    const char *description;
+    const enum LimitsType type;
+    const void* values;
+} Limit;
+
+typedef struct {
+    const char* name;
+    const char* measure;
+    const char* description;
     const unsigned int offset;
-    const unsigned int length;
     const unsigned int defaultValue;
-    const enum LimitsType limitsType;
-    const void *limits;
+    const unsigned int limitsCount;
+    const Limit limits[];
 } Param;
 
 typedef struct {
@@ -38,22 +35,28 @@ typedef struct {
     const unsigned int min;
     const unsigned int max;
     const unsigned int stepSize;
+    const char* measure;
 } FixedLimits;
 
 typedef struct {
-    const Param *min;
+    const Param* min;
     const unsigned int max;
     const unsigned int stepSize;
 } MinByParam;
 
 typedef struct {
     const unsigned int min;
-    const Param *max;
+    const Param* max;
     const unsigned int stepSize;
 } MaxByParam;
 
 typedef struct {
-    const Param *min;
-    const Param *max;
+    const Param* min;
+    const Param* max;
     const unsigned int stepSize;
 } MinAndMaxByParam;
+
+typedef struct Params {
+    const unsigned int count;
+    const Param* params[];
+} Params;
