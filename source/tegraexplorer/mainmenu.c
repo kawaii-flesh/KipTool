@@ -54,8 +54,10 @@ void HandleSD() {
     if (!sd_mount() || sd_get_card_removed()) {
         gfx_printf("Sd is not mounted!");
         hidWait();
-    } else
-        FileExplorer("sd:/");
+    } else {
+        const loaderKipPath = "sd:/atmosphere/kips";
+        FileExplorer(DirExists(loaderKipPath) ? loaderKipPath : "sd:/");
+    }
 }
 
 void ViewCredits() {

@@ -7,4 +7,3 @@
 
 bool loadSession(CustomizeTable* customizeTable);
 bool saveSession(const CustomizeTable* customizeTable);
-bool isSessionExist();

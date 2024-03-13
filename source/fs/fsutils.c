@@ -49,10 +49,15 @@ char* GetFileAttribs(FSEntry_t entry) {
 
 // Returns 1 if a file exists, 0 if it does not
 bool FileExists(const char* path) {
-    FRESULT fr;
-    FILINFO fno;
+    FILINFO finfo;
+    FRESULT res;
+    res = f_stat(path, &finfo);
+    return res == FR_OK && !(finfo.fattrib & AM_DIR);
+}
 
-    fr = f_stat(path, &fno);
-
-    return !(fr & FR_NO_FILE);
+bool DirExists(const char* path) {
+    FILINFO finfo;
+    FRESULT res;
+    res = f_stat(path, &finfo);
+    return res == FR_OK && (finfo.fattrib & AM_DIR);
 }

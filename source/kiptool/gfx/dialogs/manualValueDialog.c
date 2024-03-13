@@ -70,7 +70,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     bool fullRedraw = true;
     Input_t* input = hidRead();
     Input_t oldButtons = *input;
-
+    bool isFromConfirmDialog = false;
     while (1) {
         if (redraw) {
             gfx_printTopInfoKT();
@@ -108,69 +108,68 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             free(stepStr);
             free(buff);
         }
-        while (!hidRead()->buttons || oldButtons.buttons & input->buttons) {
-            if ((lastPress + holdTimer) < get_tmr_ms() && oldButtons.buttons & input->buttons)
-                break;
-            else if (oldButtons.buttons != input->buttons)
-                oldButtons = *input;
+        if (isFromConfirmDialog) {
+            const unsigned holdTimer = 500;
+            unsigned int lastTmrCheck = get_tmr_ms();
+            while (get_tmr_ms() < holdTimer + lastTmrCheck) {
+            };
+            isFromConfirmDialog = false;
+            oldButtons = *hidRead();
         }
-        while (1) {
-            if (input->buttons) oldButtons = *input;
-            if (oldButtons.a) {
-                if (validateValue(min, max, stepSize, currentValue)) {
-                    const ManualValueResult good = {.value = currentValue, .status = EMVS_GOOD};
-                    const char* message[] = {"Do you want to set new value?", NULL};
-                    if (confirmationDialog(message, EYES) == EYES)
-                        return good;
-                    else {
-                        oldButtons = *hidRead();
-                        fullRedraw = true;
-                        redraw = true;
-                        break;
-                    }
-                } else {
-                    const char* message[] = {"Oops... The selected value cannot be used O_o", "Should I continue editing?",
-                                             NULL};
-                    if (confirmationDialog(message, ENO) == ENO) {
-                        const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
-                        return invalidValue;
-                    }
-                    break;
-                }
-            } else if (oldButtons.b) {
-                const ManualValueResult exit = {.status = EMVS_EXIT};
-                const char* message[] = {"Do you want to close editor?", NULL};
+        while (!hidRead()->buttons || oldButtons.buttons & input->buttons) {
+            if (oldButtons.buttons != input->buttons) oldButtons = *input;
+            if ((lastPress + holdTimer) < get_tmr_ms() && (oldButtons.buttons & input->buttons)) break;
+        }
+        if (input->buttons) oldButtons = *input;
+        if (oldButtons.a) {
+            if (validateValue(min, max, stepSize, currentValue)) {
+                const ManualValueResult good = {.value = currentValue, .status = EMVS_GOOD};
+                const char* message[] = {"Do you want to set new value?", NULL};
                 if (confirmationDialog(message, EYES) == EYES)
-                    return exit;
+                    return good;
                 else {
-                    oldButtons = *hidRead();
                     fullRedraw = true;
                     redraw = true;
-                    break;
+                    isFromConfirmDialog = true;
+                    continue;
                 }
+            } else {
+                const char* message[] = {"Oops... The selected value cannot be used O_o", "Do you want to continue editing?",
+                                         NULL};
+                if (confirmationDialog(message, ENO) == ENO) {
+                    const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
+                    return invalidValue;
+                }
+                continue;
+            }
+        } else if (oldButtons.b) {
+            const ManualValueResult exit = {.status = EMVS_EXIT};
+            const char* message[] = {"Do you want to close editor?", NULL};
+            if (confirmationDialog(message, EYES) == EYES)
                 return exit;
-            } else if (!(hidRead()->buttons))
-                break;
-            else if ((lastPress + holdTimer) < get_tmr_ms())
-                break;
-        }
-
-        if (oldButtons.right) {
+            else {
+                fullRedraw = true;
+                redraw = true;
+                isFromConfirmDialog = true;
+                continue;
+            }
+            return exit;
+        } else if (oldButtons.right || oldButtons.volp) {
             if (currentValue + stepSize < max)
                 currentValue += stepSize;
             else
                 currentValue = max;
-        } else if (oldButtons.left) {
+        } else if (oldButtons.left || oldButtons.volm) {
             if (min < currentValue - stepSize)
                 currentValue -= stepSize;
             else
                 currentValue = min;
-        } else if (oldButtons.up) {
+        } else if (oldButtons.up && !oldButtons.volp) {
             if (currentValue + stepSize * mult < max)
                 currentValue += stepSize * mult;
             else
                 currentValue = max;
-        } else if (oldButtons.down) {
+        } else if (oldButtons.down && !oldButtons.volm) {
             if (min < currentValue - stepSize * mult)
                 currentValue -= stepSize * mult;
             else

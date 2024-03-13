@@ -212,11 +212,10 @@ const Param eBAL = {.name = "EMC BALLANCE ADVANCED LOGIC",
                     .limitsCount = 2,
                     .limits = {{.type = EFixedValues, .values = &eBALFV}}};
 
-const FixedValues eBASFV = {.valuesCount = 4,
-                            .values = {{.value = 0, .label = "SYK-LOH"},
-                                       {.value = 1, .label = "ECO ST1"},
-                                       {.value = 2, .label = "SYK-LOH"},
-                                       {.value = 5, .label = "LOH-C4C"}}};
+const FixedValues eBASFV = {
+    .valuesCount = 4,
+    .values = {
+        {.value = 0}, {.value = 1, .label = "ECO ST1"}, {.value = 2, .label = "SYK-LOH"}, {.value = 5, .label = "LOH-C4C"}}};
 // EBA-SHIFT
 // 0 DEFAULT
 // 1 ECO ST1

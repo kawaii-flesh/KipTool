@@ -5,16 +5,9 @@
 
 #include "../params/customize.h"
 
-bool isDirExist(const char* path) {
-    FILINFO finfo;
-    FRESULT res;
-    res = f_stat(path, &finfo);
-    return res == FR_OK && (finfo.fattrib & AM_DIR);
-}
-
 void createKTDirIfNotExist() {
     FRESULT res;
-    if (!isDirExist(KTDIR)) res = f_mkdir(KTDIR);
+    if (!DirExists(KTDIR)) res = f_mkdir(KTDIR);
 }
 
 // TODO errors check

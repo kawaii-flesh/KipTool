@@ -18,6 +18,8 @@
 #include "filemenu.h"
 #include "foldermenu.h"
 
+#define SD_ROOT "sd:/"
+
 MenuEntry_t topEntries[] = {{.optionUnion = COLORTORGB(COLOR_GREEN) | SKIPBIT},
                             {.optionUnion = COLORTORGB(COLOR_ORANGE)},
                             {.optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT, .name = "Clipboard -> Current folder"},
@@ -40,7 +42,7 @@ void FileExplorer(char* path) {
     while (1) {
         topEntries[2].optionUnion =
             (TConf.explorerCopyMode != CMODE_None) ? (COLORTORGB(COLOR_ORANGE)) : (COLORTORGB(COLOR_GREY) | SKIPBIT);
-        topEntries[1].name = (!strcmp(storedPath, path)) ? "<- Exit explorer" : "<- Folder back";
+        topEntries[1].name = (!strcmp(SD_ROOT, storedPath)) ? "<- Exit explorer" : "<- Folder back";
 
         gfx_clearscreen();
         gfx_printf("Loading...\r");
@@ -113,12 +115,11 @@ void FileExplorer(char* path) {
                 res = 0;
             }
         } else if (res < ARR_LEN(topEntries) || res == -1) {
-            if (!strcmp(storedPath, path)) {
+            if (!strcmp(SD_ROOT, storedPath)) {
                 clearFileVector(&fileVec);
                 free(storedPath);
                 return;
             }
-
             storedPath = EscapeFolder(oldPath);
             free(oldPath);
             res = 0;

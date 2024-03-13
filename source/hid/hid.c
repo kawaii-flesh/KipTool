@@ -2,6 +2,7 @@
 
 #include <display/di.h>
 #include <input/joycon.h>
+#include <input/touch.h>
 #include <utils/btn.h>
 #include <utils/types.h>
 #include <utils/util.h>
@@ -68,6 +69,9 @@ Input_t* hidRead() {
         inputs.rRight = (controller->rstick_x > RbaseX + 500) ? 1 : 0;
     }
     inputs.a = inputs.a || inputs.power;
+    inputs.b = inputs.b || (inputs.volp && inputs.volm);
+
+    if (*isTouchEnabled()) updateInput(&inputs);
 
     return &inputs;
 }

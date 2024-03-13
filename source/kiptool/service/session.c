@@ -36,10 +36,3 @@ bool saveSession(const CustomizeTable* customizeTable) {
 
     return true;
 }
-
-bool isSessionExist() {
-    FILINFO finfo;
-    FRESULT res;
-    res = f_stat(KTSESSION, &finfo);
-    return res == FR_OK && !(finfo.fattrib & AM_DIR);
-}
