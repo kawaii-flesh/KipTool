@@ -166,3 +166,10 @@ u32 gpio_get_bank_irq_id(u32 port)
 
 	return gpio_bank_irq_ids[bank_idx];
 }
+
+void gpio_direction_output(u32 port, u32 pins, int high)
+{
+	gpio_config(port, pins, GPIO_MODE_GPIO);
+	gpio_write(port, pins, high);
+	gpio_output_enable(port, pins, GPIO_OUTPUT_ENABLE);
+}

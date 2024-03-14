@@ -8,3 +8,4 @@ char* EscapeFolder(const char* current);
 char* CombinePaths(const char* current, const char* add);
 char* GetFileAttribs(FSEntry_t entry);
 bool FileExists(const char* path);
+bool DirExists(const char* path);

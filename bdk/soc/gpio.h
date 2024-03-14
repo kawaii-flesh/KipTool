@@ -91,5 +91,6 @@ int  gpio_interrupt_status(u32 port, u32 pins);
 void gpio_interrupt_enable(u32 port, u32 pins, int enable);
 void gpio_interrupt_level(u32 port, u32 pins, int high, int edge, int delta);
 u32  gpio_get_bank_irq_id(u32 port);
+void gpio_direction_output(u32 port, u32 pins, int high);
 
 #endif

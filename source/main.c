@@ -20,6 +20,7 @@
 #include <display/di.h>
 #include <gfx_utils.h>
 #include <input/joycon.h>
+#include <input/touch.h>
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
 #include <mem/minerva.h>
@@ -235,14 +236,20 @@ void ipl_main() {
     display_backlight_pwm_init();
     display_backlight_brightness(100, 1000);
 
+    if (hidRead()->volm) {
+        // Initialize touch.
+        *isTouchEnabled() = touch_power_on();
+    }
+
     // Overclock BPMP.
     bpmp_clk_rate_set(BPMP_CLK_DEFAULT_BOOST);
     minerva_change_freq(FREQ_800);
 
     _show_errors();
+
     gfx_clearscreen();
     gfx_printf("Waiting for the JoyCons to be ready ...");
-    while (!hidConnected())
+    while (!hidConnected() && !*isTouchEnabled())
         ;
 
     EnterMainMenu();

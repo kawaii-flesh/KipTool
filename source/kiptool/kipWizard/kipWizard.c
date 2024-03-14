@@ -115,7 +115,7 @@ int kipWizard(char* path, FSEntry_t entry) {
         bool goToExit = false;
         bool loadedFromSession = false;
         const char* messageLoadSession[] = {"Do you want to load a session file?", NULL};
-        if (!isSessionExist()) {
+        if (!FileExists(KTSESSION)) {
             f_lseek(&kipFile, baseOffset);
             f_read(&kipFile, custTable, custTableSize, &bytesReaded);
         } else if (confirmationDialog(messageLoadSession, EYES) == ENO) {

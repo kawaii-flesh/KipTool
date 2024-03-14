@@ -8,7 +8,6 @@
 #include "../../../hid/hid.h"
 #include "../gfx.h"
 
-// TODO new lines inter
 enum ConfirmationDialogResult confirmationDialog(const char* messages[], const enum ConfirmationDialogResult defaultValue) {
     unsigned int selected = defaultValue == EYES ? 0 : 1;
     unsigned int holdTimer = 300;
@@ -64,29 +63,20 @@ enum ConfirmationDialogResult confirmationDialog(const char* messages[], const e
         }
 
         while (!hidRead()->buttons || oldButtons.buttons & input->buttons) {
-            if ((lastPress + holdTimer) < get_tmr_ms() && oldButtons.buttons & input->buttons)
-                break;
-            else if (oldButtons.buttons != input->buttons)
-                oldButtons = *input;
+            if (oldButtons.buttons != input->buttons) oldButtons = *input;
+            if ((lastPress + holdTimer) < get_tmr_ms() && (oldButtons.buttons & input->buttons)) break;
         }
-        while (1) {
-            if (input->buttons) oldButtons = *input;
-            if (oldButtons.a)
-                return selected == 0 ? EYES : ENO;
-            else if (oldButtons.b)
-                return ENOT_SELECTED;
-            else if (!(hidRead()->buttons))
-                break;
-            else if ((lastPress + holdTimer) < get_tmr_ms())
-                break;
-        }
-
-        if (oldButtons.right) {
+        if (oldButtons.buttons != input->buttons) oldButtons = *input;
+        if (oldButtons.a)
+            return selected == 0 ? EYES : ENO;
+        else if (oldButtons.b)
+            return ENOT_SELECTED;
+        else if (oldButtons.right || oldButtons.volp) {
             if (selected == 1)
                 selected = 0;
             else
                 ++selected;
-        } else if (oldButtons.left) {
+        } else if (oldButtons.left || oldButtons.volm) {
             if (selected == 0)
                 selected = 1;
             else
