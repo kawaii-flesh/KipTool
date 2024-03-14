@@ -37,7 +37,7 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 ### Режим сенсорного управления
 Для включения `рижима сенсерного управления` необходимо при загрузке пейлоада `KipTool.bin` зажать кнопку `Громкость -` (области "сенсорных кнопок" не отображаются, используйте воображение)
 
-![Touch mode](/screenshots/touch.bmp)
+![Touch mode](/screenshots/touch.jpg)
 
 ## Использование редактора параметров
 1. `Browse SD`
@@ -68,7 +68,7 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 - ![#ff8c00](https://placehold.co/15x15/ff8c00/ff8c00.png) - Имеет недефолтное значение
 - ![#ffff40](https://placehold.co/15x15/ffff40/ffff40.png) - Является таблицей
 
-![Params menu](/screenshots/params_menu.bmp)
+![Params menu](/screenshots/params_menu.jpg)
 
 ### Значение (в меню редактирования параметра)
 - ![#00ddff](https://placehold.co/15x15/00ddff/00ddff.png) - Является текущим значением
@@ -76,12 +76,12 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 - ![#ff8c00](https://placehold.co/15x15/ff8c00/ff8c00.png) - Является недефолтным значением
 - ![#ffff40](https://placehold.co/15x15/ffff40/ffff40.png) - Пункт задания значения вручную
 
-![Params menu](/screenshots/edit_param.bmp)
+![Params menu](/screenshots/edit_param.jpg)
 
 ## Скриншоты
 
-![Main menu](/screenshots/main_menu.bmp)
+![Main menu](/screenshots/main_menu.jpg)
 
-![CPU Params](/screenshots/cpu_params.bmp)
+![CPU Params](/screenshots/cpu_params.jpg)
 
-![Value editor](/screenshots/value_editor.bmp)
+![Value editor](/screenshots/value_editor.jpg)
