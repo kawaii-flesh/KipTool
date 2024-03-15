@@ -16,6 +16,7 @@ const FixedLimits CPUvFL = {.min = 430, .max = 670, .stepSize = 5, .measure = "m
 // MANUAL 430-670 STEP 5-10mV
 // 620mV DEFAULT
 // MARIKO CPU VOLT MIN = CPUv
+// ERISTA CPU VOLT MIN = CPUv + 205mV
 const Param CPUv = {.name = "CPU UNDER LOGIC",
                     .measure = NULL,
                     .description = NULL,
