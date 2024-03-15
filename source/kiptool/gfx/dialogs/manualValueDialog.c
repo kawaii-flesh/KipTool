@@ -111,10 +111,10 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
         if (isFromConfirmDialog) {
             const unsigned holdTimer = 500;
             unsigned int lastTmrCheck = get_tmr_ms();
-            while (get_tmr_ms() < holdTimer + lastTmrCheck) {
+            while (get_tmr_ms() < holdTimer + lastTmrCheck && hidRead()->buttons) {
             };
             isFromConfirmDialog = false;
-            oldButtons = *hidRead();
+            oldButtons = *input;
         }
         while (!hidRead()->buttons || oldButtons.buttons & input->buttons) {
             if (oldButtons.buttons != input->buttons) oldButtons = *input;
@@ -131,6 +131,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                     fullRedraw = true;
                     redraw = true;
                     isFromConfirmDialog = true;
+                    oldButtons = *input;
                     continue;
                 }
             } else {
@@ -151,6 +152,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 fullRedraw = true;
                 redraw = true;
                 isFromConfirmDialog = true;
+                oldButtons = *input;
                 continue;
             }
             return exit;
