@@ -3,7 +3,7 @@
 #include "../defaultCustomize.h"
 #include "../param.h"
 
-const FixedOneValue cKipVersionFOV = {19};
+const FixedOneValue cKipVersionFOV = {.value = {.value = KT_CUST_VER}};
 const Param cKipVersion = {.name = "Kip version",
                            .measure = NULL,
                            .description = NULL,

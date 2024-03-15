@@ -1,6 +1,6 @@
 #pragma once
 
-enum LimitsType { EFixedLimits, EFixedOneValue, EFixedValues, EMinByParam, EMaxByParam, EMinAndMaxByParam };
+enum LimitsType { EFixedLimits, EFixedRange, EFixedOneValue, EFixedValues, EMinByParam, EMaxByParam, EMinAndMaxByParam };
 
 typedef struct {
     const unsigned int value;
@@ -37,6 +37,11 @@ typedef struct {
     const unsigned int stepSize;
     const char* measure;
 } FixedLimits;
+
+typedef struct {
+    const unsigned int start;
+    const unsigned int end;
+} FixedRange;
 
 typedef struct {
     const Param* min;

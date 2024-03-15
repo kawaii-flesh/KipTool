@@ -4,6 +4,35 @@
 #include "../param.h"
 #include "../table.h"
 
+const FixedValues eristaGpuUVFV = {
+    .valuesCount = 3,
+    .values = {{.value = 0, .label = "ECO ST1"}, {.value = 1, .label = "ECO ST2"}, {.value = 2, .label = "ECO ST3"}}};
+// GPU ECO LOGIC
+// 0 AUTO ECO ST1
+// 1 AUTO ECO ST2
+// 2 AUTO ECO ST3
+// ERISTA = eristaGpuDvfsTable uV - (12500 uV *marikoGpuUV)
+const Param eristaGpuUV = {.name = "GPU ECO LOGIC ",
+                           .measure = NULL,
+                           .description = NULL,
+                           .offset = getOffset(defaultCustTable.marikoGpuUV),
+                           .defaultValue = defaultCustTable.marikoGpuUV,
+                           .limitsCount = 1,
+                           .limits = {{.type = EFixedValues, .values = &eristaGpuUVFV}}};
+
+const FixedValues eristaHGPUvFV = {.valuesCount = 1, .values = {{.value = 0, .label = "AUTO"}}};
+const FixedLimits eristaHGPUvFL = {.min = 850, .max = 1300, .stepSize = 50, .measure = "mV"};
+// GPU OVER LOGIC
+// 0 AUTO
+// ERISTA: 850-1300 MANUAL
+const Param eristaHGPUv = {
+    .name = "GPU OVER MODE",
+    .description = NULL,
+    .offset = getOffset(defaultCustTable.hGPUv),
+    .defaultValue = defaultCustTable.hGPUv,
+    .limitsCount = 2,
+    .limits = {{.type = EFixedValues, .values = &eristaHGPUvFV}, {.type = EFixedLimits, .values = &eristaHGPUvFL}}};
+
 const FixedLimits eristaGpuDvfsTable192mhzFL = {.min = defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0 - 75000,
                                                 .max = defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0 + 75000,
                                                 .stepSize = 500};
@@ -244,7 +273,12 @@ const Param eristaGpuDvfsTable1612mhz = {.name = "1612mhz",
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[23].cvb_pll_param.c0,
                                          .limitsCount = 1,
                                          .limits = {{.type = EFixedLimits, .values = &eristaGpuDvfsTable1612mhzFL}}};
-
+// ERISTA GPU ECO LOGIC
+// ECO ST1 = -12500uV
+// ECO ST2 = -25000uV
+// ECO ST3 = -37500uV
+// MANUAL = -75000uV << Default >>
+// +75000uV
 const Table eristaGpuDvfsTable = {
     .name = "GPU Volt Table",
     .description = NULL,
@@ -257,5 +291,5 @@ const Table eristaGpuDvfsTable = {
                &eristaGpuDvfsTable1344mhz, &eristaGpuDvfsTable1382mhz, &eristaGpuDvfsTable1420mhz, &eristaGpuDvfsTable1459mhz,
                &eristaGpuDvfsTable1497mhz, &eristaGpuDvfsTable1536mhz, &eristaGpuDvfsTable1574mhz, &eristaGpuDvfsTable1612mhz}};
 
-const Params eGPUParams = {};
+const Params eGPUParams = {.count = 2, .params = {&eristaGpuUV, &eristaHGPUv}};
 const Tables eGPUTables = {.count = 1, .tables = {&eristaGpuDvfsTable}};

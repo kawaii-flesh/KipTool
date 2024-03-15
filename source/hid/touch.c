@@ -41,13 +41,13 @@ static touch_panel_info_t _panels[] = {
     {-1, 1, 0, 1, "GiS VA 6.2\""}     // 2.
 };
 
-static int touch_command(u8 cmd, u8 *buf, u8 size) {
+static int touch_command(u8 cmd, u8* buf, u8 size) {
     int res = i2c_send_buf_small(I2C_3, STMFTS_I2C_ADDR, cmd, buf, size);
     if (!res) return 1;
     return 0;
 }
 
-static int touch_read_reg(u8 *cmd, u32 csize, u8 *buf, u32 size) {
+static int touch_read_reg(u8* cmd, u32 csize, u8* buf, u32 size) {
     int res = i2c_send_buf_small(I2C_3, STMFTS_I2C_ADDR, cmd[0], &cmd[1], csize - 1);
     if (res) res = i2c_recv_buf(buf, size, I2C_3, STMFTS_I2C_ADDR);
     if (!res) return 1;
@@ -55,7 +55,7 @@ static int touch_read_reg(u8 *cmd, u32 csize, u8 *buf, u32 size) {
     return 0;
 }
 
-static int touch_wait_event(u8 event, u8 status, u32 timeout, u8 *buf) {
+static int touch_wait_event(u8 event, u8 status, u32 timeout, u8* buf) {
     u32 timer = get_tmr_ms() + timeout;
     while (true) {
         u8 tmp[8] = {0};
@@ -73,7 +73,7 @@ static int touch_wait_event(u8 event, u8 status, u32 timeout, u8 *buf) {
 #define Y_REAL_MAX 704
 #define EDGE_OFFSET 15
 
-static void _touch_compensate_limits(touch_event *event, bool touching) {
+static void _touch_compensate_limits(touch_event* event, bool touching) {
     event->x = MAX(event->x, EDGE_OFFSET);
     event->x = MIN(event->x, X_REAL_MAX);
     event->x -= EDGE_OFFSET;
@@ -89,7 +89,7 @@ static void _touch_compensate_limits(touch_event *event, bool touching) {
     }
 }
 
-static void _touch_process_contact_event(touch_event *event, bool touching) {
+static void _touch_process_contact_event(touch_event* event, bool touching) {
     event->x = (event->raw[2] << 4) | ((event->raw[4] & STMFTS_MASK_Y_LSB) >> 4);
 
     // Normally, GUI elements have bigger horizontal estate.
@@ -111,7 +111,7 @@ static void _touch_process_contact_event(touch_event *event, bool touching) {
     _touch_compensate_limits(event, touching);
 }
 
-static void _touch_parse_event(touch_event *event) {
+static void _touch_parse_event(touch_event* event) {
     event->type = event->raw[1] & STMFTS_MASK_EVENT_ID;
 
     switch (event->type) {
@@ -145,7 +145,7 @@ static void _touch_parse_event(touch_event *event) {
     // DPRINTF("4 = %02X\n5 = %02X\n6 = %02X\n7 = %02X\n", event->raw[4], event->raw[5], event->raw[6], event->raw[7]);
 }
 
-void touch_poll(touch_event *event) {
+void touch_poll(touch_event* event) {
     i2c_recv_buf_small(event->raw, 8, I2C_3, STMFTS_I2C_ADDR, STMFTS_LATEST_EVENT);
 
     _touch_parse_event(event);
@@ -177,7 +177,7 @@ touch_info touch_get_info() {
     return info;
 }
 
-touch_panel_info_t *touch_get_panel_vendor() {
+touch_panel_info_t* touch_get_panel_vendor() {
     u8 buf[5] = {0};
     u8 cmd = STMFTS_VENDOR_GPIO_STATE;
     static touch_panel_info_t panel_info = {-2, 0, 0, 0, ""};
@@ -187,7 +187,7 @@ touch_panel_info_t *touch_get_panel_vendor() {
     if (touch_wait_event(STMFTS_EV_VENDOR, STMFTS_VENDOR_GPIO_STATE, 2000, buf)) return NULL;
 
     for (u32 i = 0; i < ARRAY_SIZE(_panels); i++) {
-        touch_panel_info_t *panel = &_panels[i];
+        touch_panel_info_t* panel = &_panels[i];
         if (buf[0] == panel->gpio0 && buf[1] == panel->gpio1 && buf[2] == panel->gpio2) return panel;
     }
 
@@ -199,7 +199,7 @@ touch_panel_info_t *touch_get_panel_vendor() {
     return &panel_info;
 }
 
-int touch_get_fw_info(touch_fw_info_t *fw) {
+int touch_get_fw_info(touch_fw_info_t* fw) {
     u8 buf[8] = {0};
 
     memset(fw, 0, sizeof(touch_fw_info_t));
@@ -242,7 +242,7 @@ int touch_sys_reset() {
     return 1;
 }
 
-int touch_panel_ito_test(u8 *err) {
+int touch_panel_ito_test(u8* err) {
     int res = 0;
 
     // Reset touchscreen module.
@@ -275,7 +275,7 @@ int touch_panel_ito_test(u8 *err) {
     return res;
 }
 
-int touch_get_fb_info(u8 *buf) {
+int touch_get_fb_info(u8* buf) {
     u8 tmp[5];
 
     u8 cmd[3] = {STMFTS_RW_FRAMEBUFFER_REG, 0, 0};
@@ -391,41 +391,41 @@ void touch_power_off() {
     clock_disable_i2c(I2C_3);
 }
 
-bool *isTouchEnabled() {
-    static bool touch_enabled = false;
+int* isTouchEnabled() {
+    static int touch_enabled = 0;
     return &touch_enabled;
 }
 
 #define TOUCH_SIZEW 240
 #define TOUCH_SIZEH 240
-int isTouchUp(touch_event *tevent) {
+int isTouchDown(touch_event* tevent) {
     return (tevent->x <= 1279) && (tevent->x >= 1279 - TOUCH_SIZEW) && (tevent->y >= 0) && (tevent->y < TOUCH_SIZEH);
 }
 
-int isTouchRight(touch_event *tevent) {
+int isTouchRight(touch_event* tevent) {
     return (tevent->x <= 1279) && (tevent->x >= 1279 - TOUCH_SIZEW) && (tevent->y > 359 - TOUCH_SIZEH / 2) &&
            (tevent->y <= 359 + TOUCH_SIZEH / 2);
 }
 
-int isTouchA(touch_event *tevent) {
+int isTouchA(touch_event* tevent) {
     return (tevent->x <= 1279) && (tevent->x >= 1279 - TOUCH_SIZEW) && (tevent->y < 720) && (tevent->y >= 720 - TOUCH_SIZEH);
 }
 
-int isTouchDown(touch_event *tevent) {
+int isTouchUp(touch_event* tevent) {
     return (tevent->x < TOUCH_SIZEW) && (tevent->x > 0) && (tevent->y >= 0) && (tevent->y < TOUCH_SIZEH);
 }
 
-int isTouchLeft(touch_event *tevent) {
+int isTouchLeft(touch_event* tevent) {
     return (tevent->x < TOUCH_SIZEW) && (tevent->x > 0) && (tevent->y > 359 - TOUCH_SIZEH / 2) &&
            (tevent->y <= 359 + TOUCH_SIZEH / 2);
 }
 
-int isTouchB(touch_event *tevent) {
+int isTouchB(touch_event* tevent) {
     return (tevent->x < TOUCH_SIZEW) && (tevent->x > 0) && (tevent->y < 720) && (tevent->y >= 720 - TOUCH_SIZEH);
 }
 
 #define TOUCH_HOLD 300
-void updateInput(Input_t *inputs) {
+void updateInput(Input_t* inputs) {
     static unsigned int lastTouch = 0;
     touch_event tevent;
     touch_poll(&tevent);

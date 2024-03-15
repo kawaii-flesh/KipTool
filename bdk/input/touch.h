@@ -176,6 +176,6 @@ int touch_execute_autotune();
 int touch_sense_enable();
 int touch_power_on();
 void touch_power_off();
-bool* isTouchEnabled();
+int* isTouchEnabled();
 
 #endif /* __TOUCH_H_ */

@@ -1,5 +1,6 @@
 #include "mainmenu.h"
 
+#include <input/touch.h>
 #include <mem/heap.h>
 #include <soc/fuse.h>
 #include <storage/nx_sd.h>
@@ -16,6 +17,7 @@
 #include "../gfx/gfxutils.h"
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
+#include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../utils/utils.h"
 #include "tconf.h"
 #include "tools.h"
@@ -27,6 +29,8 @@ enum {
     MainBrowseSd,
     MainMountSd,
     MainViewCredits,
+    MainMisc,
+    MainActivateTouchMode,
     MainExit,
     MainPowerOff,
     MainRebootRCM,
@@ -40,6 +44,8 @@ MenuEntry_t mainMenuEntries[] = {
     [MainBrowseSd] = {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Browse SD"},
     [MainMountSd] = {.optionUnion = COLORTORGB(COLOR_YELLOW)},  // To mount/unmount the SD
     [MainViewCredits] = {.optionUnion = COLORTORGB(COLOR_YELLOW), .name = "Credits"},
+    [MainMisc] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Misc --"},
+    [MainActivateTouchMode] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
     [MainExit] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Exit --"},
     [MainPowerOff] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Power off"},
     [MainRebootRCM] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot to RCM"},
@@ -91,10 +97,24 @@ void MountOrUnmountSD() {
         hidWait();
 }
 
+void ActivateTouchMode() {
+    if (*isTouchEnabled()) {
+        const char* message[] = {"Do you want to deactivate touch mode?", NULL};
+        if (confirmationDialog(message, EYES) == EYES) {
+            *isTouchEnabled() = 0;
+        }
+    } else {
+        const char* message[] = {"Do you want to activate touch mode?", NULL};
+        if (confirmationDialog(message, EYES) == EYES) {
+            *isTouchEnabled() = touch_power_on();
+        }
+    }
+}
+
 menuPaths mainMenuPaths[] = {
-    [MainBrowseSd] = HandleSD,     [MainMountSd] = MountOrUnmountSD,    [MainViewCredits] = ViewCredits,
-    [MainRebootAMS] = RebootToAMS, [MainRebootHekate] = RebootToHekate, [MainRebootRCM] = reboot_rcm,
-    [MainPowerOff] = power_off,    [MainRebootNormal] = reboot_normal,
+    [MainBrowseSd] = HandleSD,       [MainMountSd] = MountOrUnmountSD, [MainActivateTouchMode] = ActivateTouchMode,
+    [MainViewCredits] = ViewCredits, [MainRebootAMS] = RebootToAMS,    [MainRebootHekate] = RebootToHekate,
+    [MainRebootRCM] = reboot_rcm,    [MainPowerOff] = power_off,       [MainRebootNormal] = reboot_normal,
 };
 
 void EnterMainMenu() {
@@ -109,6 +129,7 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin"));
         mainMenuEntries[MainRebootHekate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
         mainMenuEntries[MainRebootRCM].hide = h_cfg.t210b01;
+        mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";
         Vector_t ent = newVec(sizeof(MenuEntry_t), ARRAY_SIZE(mainMenuEntries));
         ent.count = ARRAY_SIZE(mainMenuEntries);
         memcpy(ent.data, mainMenuEntries, sizeof(MenuEntry_t) * ARRAY_SIZE(mainMenuEntries));

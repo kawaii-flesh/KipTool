@@ -248,9 +248,9 @@ void ipl_main() {
     _show_errors();
 
     gfx_clearscreen();
-    gfx_printf("Waiting for the JoyCons to be ready ...");
-    while (!hidConnected() && !*isTouchEnabled())
-        ;
+    gfx_printf("Waiting for the JoyCons to be ready. Or press power button to continue ...");
+    while (!hidConnected() && !*isTouchEnabled() && !hidRead()->power) {
+    }
 
     EnterMainMenu();
 

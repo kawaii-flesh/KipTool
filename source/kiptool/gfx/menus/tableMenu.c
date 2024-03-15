@@ -27,6 +27,8 @@ void newTableMenu(const u8* custTable, const Table* table) {
     menuEntries[menuEntriesIndex].type = EReset;
     menuEntries[menuEntriesIndex].entry = "Reset the table to default values";
     unsigned int startIndex = 0;
+    unsigned int maxParamNameLen = 0;
+    FormatingData formatingData;
     while (1) {
         menuEntriesIndex = 1;
         for (unsigned int paramI = 0; paramI < paramsCount; ++paramI) {
@@ -36,9 +38,13 @@ void newTableMenu(const u8* custTable, const Table* table) {
                                                             : COLORTORGB(COLOR_CHANGED_PARAM);
             menuEntries[menuEntriesIndex].type = EParam;
             menuEntries[menuEntriesIndex].entry = param;
+            const unsigned int paramNameLen = strlen(param->name);
+            if (paramNameLen > maxParamNameLen) maxParamNameLen = paramNameLen;
             ++menuEntriesIndex;
         }
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, custTable, printParamEntry);
+        getFormatingData(&formatingData, custTable, table->paramsCount, table->params);
+        PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
+        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
         if (res == -1) {
             free(menuEntries);
             return;

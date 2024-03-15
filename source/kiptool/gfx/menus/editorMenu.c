@@ -26,9 +26,21 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
-    if (entry->type == ELabel || entry->type == EReset)
+    if (entry->type == ELabel)
         gfx_puts_limit((const char*)entry->entry, maxLen);
-    else if (entry->type == EValue) {
+    else if (entry->type == EReset) {
+        char* displayBuff = calloc(256, 1);
+        s_printf(displayBuff, "%s", "Reset to the default value - ");
+        formatValueDiv(displayBuff + strlen(displayBuff), editorAdditionalData->param->defaultValue,
+                       editorAdditionalData->param->defaultValue > 1500);
+        gfx_puts_limit(displayBuff, maxLen);
+        free(displayBuff);
+    } else if (entry->type == EFixedRange) {
+        const char* buff = calloc(8, 1);
+        utoa(entry->entry, buff, 10);
+        gfx_puts_limit(buff, maxLen);
+        free((void*)buff);
+    } else if (entry->type == EValue) {
         char* displayBuff = calloc(256, 1);
         const Value* value = entry->entry;
         getDisplayValue(editorAdditionalData->param, displayBuff + strlen(displayBuff), value->value, 0);
@@ -69,15 +81,21 @@ void newEditorMenu(const u8* custTable, const Param* param) {
     const unsigned int limitsCount = param->limitsCount;
     const FixedValues* fixedValues = NULL;
     const FixedLimits* fixedLimits = NULL;
+    const FixedRange* fixedRange = NULL;
     unsigned int totalEntriesCount = 2;
-    for (unsigned int i = 0; i < limitsCount; ++i)
+    for (unsigned int i = 0; i < limitsCount; ++i) {
         if (param->limits[i].type == EFixedLimits) {
             fixedLimits = param->limits[i].values;
             ++totalEntriesCount;
         } else if (param->limits[i].type == EFixedValues) {
             fixedValues = param->limits[i].values;
             totalEntriesCount += fixedValues->valuesCount;
+        } else if (param->limits[i].type == EFixedRange) {
+            fixedRange = param->limits[i].values;
+            totalEntriesCount += (fixedRange->end - fixedRange->start);
+            ++totalEntriesCount;
         }
+    }
 
     MenuEntry* menuEntries = calloc(sizeof(MenuEntry), totalEntriesCount);
     menuEntries[0].optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT;
@@ -113,9 +131,20 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                 menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_YELLOW);
             ++menuEntriesIndex;
         }
+        if (fixedRange != NULL)
+            for (unsigned int i = fixedRange->start; i <= fixedRange->end; ++i) {
+                menuEntries[menuEntriesIndex].type = EFixedRange;
+                menuEntries[menuEntriesIndex].entry = i;
+                if (paramCurrentValue == i) {
+                    startIndex = menuEntriesIndex;
+                    menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
+                } else
+                    menuEntries[menuEntriesIndex].optionUnion =
+                        param->defaultValue == i ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
+                ++menuEntriesIndex;
+            }
         menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
         menuEntries[menuEntriesIndex].type = EReset;
-        menuEntries[menuEntriesIndex].entry = "Reset to the default value";
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
         int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, printValueEntry);
@@ -129,6 +158,8 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         } else if (selectedEntry.type == EValue) {
             const Value* value = selectedEntry.entry;
             setParamValue(custTable, param, value->value);
+        } else if (selectedEntry.type == EFixedRange) {
+            setParamValue(custTable, param, selectedEntry.entry);
         } else if (selectedEntry.type == EReset) {
             const char* message[] = {"Do you want to reset param?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
