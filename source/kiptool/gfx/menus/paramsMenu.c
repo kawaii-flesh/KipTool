@@ -1,12 +1,15 @@
 #include "paramsMenu.h"
 
+#include <stdlib.h>
+
 #include "../../../gfx/gfxutils.h"
 #include "../../helpers/kiprw.h"
+#include "../../helpers/param.h"
 #include "editorMenu.h"
 #include "ktMenu.h"
 #include "tableMenu.h"
 
-void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, u8* custTable) {
+void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, PrintParamAdditionalData* printParamAdditionalData) {
     if (entry->hide) return;
 
     (highlighted) ? SETCOLOR(bg, RGBUnionToU32(entry->optionUnion)) : SETCOLOR(RGBUnionToU32(entry->optionUnion), bg);
@@ -25,9 +28,12 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, u8* c
         const char* displayBuff = malloc(1024);
         const Param* param = (const Param*)entry->entry;
         s_printf(displayBuff, "%s - ", param->name);
-        getDisplayValue(param, displayBuff + strlen(displayBuff), getParamValueFromBuffer(custTable, param), 1);
-        gfx_puts_limit(displayBuff, maxLen);
-        free(displayBuff);
+        getDisplayValue(param, displayBuff + strlen(displayBuff),
+                        getParamValueFromBuffer(printParamAdditionalData->custTable, param), 1);
+        const char* formattedBuff = getFormattedBuff(printParamAdditionalData->formatingData, displayBuff);
+        gfx_puts_limit(formattedBuff, maxLen);
+        free((void*)formattedBuff);
+        free((void*)displayBuff);
     } else if (entry->type == ETable) {
         const Table* table = (const Table*)entry->entry;
         gfx_puts_limit(table->name, maxLen);
@@ -47,6 +53,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
     menuEntries[0].type = ELabel;
     menuEntries[0].entry = sectionTitle;
     while (1) {
+        FormatingData formatingData = {0, 0, 0};
         unsigned int menuEntriesIndex = 1;
         for (unsigned int paramArrayIndex = 0; paramArrayIndex < paramsArraysCount; ++paramArrayIndex) {
             for (unsigned int paramI = 0; paramI < params[paramArrayIndex]->count; ++paramI) {
@@ -58,6 +65,11 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                 menuEntries[menuEntriesIndex].entry = param;
                 ++menuEntriesIndex;
             }
+            FormatingData tmp;
+            getFormatingData(&tmp, custTable, params[paramArrayIndex]->count, params[paramArrayIndex]->params);
+            if (tmp.nameLen > formatingData.nameLen) formatingData.nameLen = tmp.nameLen;
+            if (tmp.valueLen > formatingData.valueLen) formatingData.valueLen = tmp.valueLen;
+            if (tmp.labelLen > formatingData.labelLen) formatingData.labelLen = tmp.labelLen;
         }
         for (unsigned int tableArrayIndex = 0; tableArrayIndex < tablesArraysCount; ++tableArrayIndex) {
             for (unsigned int tableI = 0; tableI < tables[tableArrayIndex]->count; ++tableI) {
@@ -70,7 +82,8 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
         menuEntries[menuEntriesIndex].type = EReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, custTable, printParamEntry);
+        PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
+        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
         if (res == -1) {
             free(menuEntries);
             return;

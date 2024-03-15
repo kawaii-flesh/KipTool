@@ -1,10 +1,11 @@
 #include "param.h"
 
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "../../hid/hid.h"
 #include "../params/param.h"
+#include "kiprw.h"
 
 void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam) {
     if (param->defaultValue == value)
@@ -13,7 +14,7 @@ void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value
         strcpy(displayBuff + strlen(displayBuff), " - Changed");
 }
 
-void addLabel(const Param* param, const Value* value, char* displayBuff) {
+void addLabel(const Value* value, char* displayBuff) {
     if (value->label == NULL) return;
     s_printf(displayBuff + strlen(displayBuff), " - %s", value->label);
 }
@@ -73,7 +74,7 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
         if (limit.type == EFixedOneValue) {
             const FixedOneValue* fixedOneValue = (const FixedOneValue*)limit.values;
             if (fixedOneValue->value.value == value) {
-                addLabel(param, &fixedOneValue->value, displayBuff);
+                addLabel(&fixedOneValue->value, displayBuff);
                 founded = true;
                 break;
             }
@@ -81,7 +82,7 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
             const FixedValues* fixedValues = (const FixedValues*)limit.values;
             for (unsigned int i = 0; i < fixedValues->valuesCount; ++i)
                 if (fixedValues->values[i].value == value) {
-                    addLabel(param, &fixedValues->values[i], displayBuff);
+                    addLabel(&fixedValues->values[i], displayBuff);
                     founded = true;
                     break;
                 }
@@ -89,6 +90,12 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
             const FixedLimits* fixedLimits = (const FixedLimits*)limit.values;
             if ((fixedLimits->min <= value && value <= fixedLimits->max) && (value % fixedLimits->stepSize == 0)) {
                 if (fixedLimits->measure != NULL) strcpy(displayBuff + strlen(displayBuff), fixedLimits->measure);
+                founded = true;
+                break;
+            }
+        } else if (limit.type == EFixedRange) {
+            const FixedRange* fixedRange = (const FixedRange*)limit.values;
+            if (fixedRange->start <= value && value <= fixedRange->end) {
                 founded = true;
                 break;
             }
@@ -100,4 +107,118 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
     }
     addDefaultPostfix(param, displayBuff, value, isParam);
     return;
+}
+
+void getFormatingData(FormatingData* formatingData, const u8* custTable, const unsigned int paramsCount,
+                      const Param* params[]) {
+    char* displayBuff = calloc(1024, 1);
+    unsigned int nameLen = 0;
+    unsigned int valueLen = 0;
+    unsigned int labelLen = 0;
+    for (unsigned int i = 0; i < paramsCount; ++i) {
+        unsigned partsCount = 0;
+        s_printf(displayBuff, "%s - ", params[i]->name);
+        getDisplayValue(params[i], displayBuff + strlen(displayBuff), getParamValueFromBuffer(custTable, params[i]), 1);
+        bool space = false;
+        for (unsigned int c = 0; c < strlen(displayBuff); ++c) {
+            if (displayBuff[c] == '-' && space) ++partsCount;
+            space = displayBuff[c] == ' ';
+        }
+        space = false;
+        unsigned int tmp = 0;
+        while (*displayBuff != '-' || !space) {
+            space = *displayBuff == ' ';
+            ++displayBuff;
+            ++tmp;
+        }
+        space = false;
+        if (tmp > nameLen) nameLen = tmp;
+        tmp = 0;
+        while (*displayBuff != '-' || !space) {
+            space = *displayBuff == ' ';
+            ++displayBuff;
+            ++tmp;
+        }
+        space = false;
+        if (tmp > valueLen) valueLen = tmp;
+        if (partsCount == 3) {
+            tmp = 0;
+            while (*displayBuff != '-' || !space) {
+                space = *displayBuff == ' ';
+                ++displayBuff;
+                ++tmp;
+            }
+            if (tmp > labelLen) labelLen = tmp;
+        }
+    }
+    formatingData->nameLen = nameLen;
+    formatingData->valueLen = valueLen;
+    formatingData->labelLen = labelLen;
+    free(displayBuff);
+}
+
+char* getFormattedBuff(FormatingData* formatingData, char* buff) {
+    char* newBuff = calloc(1024, 1);
+    char* start = newBuff;
+    unsigned int tmp = 0;
+    bool space = false;
+    unsigned int partsCount = 0;
+    for (unsigned int c = 0; c < strlen(buff); ++c) {
+        if (buff[c] == '-' && space) ++partsCount;
+        space = buff[c] == ' ';
+    }
+    space = false;
+    while (*buff != '-' || !space) {
+        space = *buff == ' ';
+        *newBuff = *buff;
+        ++tmp;
+        ++buff;
+        ++newBuff;
+    }
+    for (unsigned int i = 0; i < formatingData->nameLen - tmp; ++i) {
+        *newBuff = ' ';
+        ++newBuff;
+    }
+    space = false;
+    tmp = 0;
+    while (*buff != '-' || !space) {
+        space = *buff == ' ';
+        *newBuff = *buff;
+        ++tmp;
+        ++buff;
+        ++newBuff;
+    }
+    space = false;
+    for (unsigned int i = 0; i < formatingData->valueLen - tmp; ++i) {
+        *newBuff = ' ';
+        ++newBuff;
+    }
+    space = false;
+    tmp = 0;
+    if (partsCount == 3) {
+        while (*buff != '-' || !space) {
+            space = *buff == ' ';
+            *newBuff = *buff;
+            ++tmp;
+            ++buff;
+            ++newBuff;
+        }
+        space = false;
+    } else {
+        if (formatingData->labelLen > 0) {
+            *newBuff = '-';
+            ++newBuff;
+            tmp = 1;
+        }
+    }
+    for (unsigned int i = 0; i < formatingData->labelLen - tmp; ++i) {
+        *newBuff = ' ';
+        ++newBuff;
+    }
+    while (*buff != '\0') {
+        *newBuff = *buff;
+        ++buff;
+        ++newBuff;
+    }
+    return start;
 }

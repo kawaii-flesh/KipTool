@@ -4,33 +4,16 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues GPUvFV = {
-    .valuesCount = 3,
-    .values = {{.value = 3, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 1, .label = "ECO ST3"}}};
-const FixedLimits GPUvFL = {.min = 430, .max = 770, .stepSize = 5, .measure = "mV"};
-// GPU UNDER LOGIC
-// 3 AUTO ECO ST1
-// 2 AUTO ECO ST2
-// 1 AUTO ECO ST3
-// MANUAL 430-770 mV 5-10mV STEP
-const Param GPUv = {.name = "GPU UNDER LOGIC",
-                    .measure = NULL,
-                    .description = NULL,
-                    .offset = getOffset(defaultCustTable.GPUv),
-                    .defaultValue = defaultCustTable.GPUv,
-                    .limitsCount = 2,
-                    .limits = {{.type = EFixedValues, .values = &GPUvFV}, {.type = EFixedLimits, .values = &GPUvFL}}};
-
 const FixedValues marikoGpuUVFV = {.valuesCount = 4,
                                    .values = {{.value = 0, .label = "ECO ST1"},
                                               {.value = 1, .label = "ECO ST2"},
                                               {.value = 2, .label = "ECO ST3"},
                                               {.value = 3, .label = "MANUAL"}}};
 // GPU ECO LOGIC
-// 0 ECO ST1
-// 1 ECO ST2
-// 2 ECO ST3
-// 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) STEP 5mV
+// 0 AUTO ECO ST1
+// 1 AUTO ECO ST2
+// 2 AUTO ECO ST3
+// 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV STEP
 const Param marikoGpuUV = {.name = "GPU ECO LOGIC ",
                            .measure = NULL,
                            .description = NULL,
@@ -268,21 +251,18 @@ const Table marikoGpuVoltArray = {
                &marikoGpuVoltArray1344mhz, &marikoGpuVoltArray1382mhz, &marikoGpuVoltArray1420mhz, &marikoGpuVoltArray1459mhz,
                &marikoGpuVoltArray1497mhz, &marikoGpuVoltArray1536mhz, &marikoGpuVoltArray1574mhz, &marikoGpuVoltArray1612mhz}};
 
-const FixedValues hGPUvFV = {.valuesCount = 3,
-                             .values = {{.value = 1000, .label = "ECO"}, {.value = 1050}, {.value = 1100, .label = "SRT"}}};
-const FixedLimits hGPUvFL = {.min = 750, .max = 1200, .stepSize = 50};
-// MARIKO GPU OVER MODE
-// 1000 4IFIR ECO
-// 1050 DEFAULT
-// 1100 4IFIR SRT
-// MANUAL 750-1200
-const Param hGPUv = {.name = "GPU OVER MODE",
-                     .measure = "mV",
-                     .description = NULL,
-                     .offset = getOffset(defaultCustTable.hGPUv),
-                     .defaultValue = defaultCustTable.hGPUv,
-                     .limitsCount = 2,
-                     .limits = {{.type = EFixedValues, .values = &hGPUvFV}, {.type = EFixedLimits, .values = &hGPUvFL}}};
+const FixedValues marikoHGPUvFV = {.valuesCount = 1, .values = {{.value = 0, .label = "AUTO"}}};
+const FixedLimits marikoHGPUvFL = {.min = 750, .max = 1200, .stepSize = 50, .measure = "mV"};
+// GPU OVER LOGIC
+// 0 AUTO
+// MARIKO: 750-1200 MANUAL
+const Param marikoHGPUv = {
+    .name = "GPU OVER MODE",
+    .description = NULL,
+    .offset = getOffset(defaultCustTable.hGPUv),
+    .defaultValue = defaultCustTable.hGPUv,
+    .limitsCount = 2,
+    .limits = {{.type = EFixedValues, .values = &marikoHGPUvFV}, {.type = EFixedLimits, .values = &marikoHGPUvFL}}};
 
-const Params mGPUParams = {.count = 3, .params = {&GPUv, &marikoGpuUV, &hGPUv}};
+const Params mGPUParams = {.count = 2, .params = {&marikoGpuUV, &marikoHGPUv}};
 const Tables mGPUTables = {.count = 1, .tables = {&marikoGpuVoltArray}};

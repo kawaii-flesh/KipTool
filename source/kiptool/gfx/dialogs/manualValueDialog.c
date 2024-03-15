@@ -65,7 +65,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
 
     unsigned int lastPress = 1000 + get_tmr_ms();
     unsigned int lastResult = currentValue;
-    const int mult = 10;
+    const int mult = (max - min) / (stepSize * 10);
     bool redraw = true;
     bool fullRedraw = true;
     Input_t* input = hidRead();

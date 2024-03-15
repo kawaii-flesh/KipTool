@@ -19,71 +19,73 @@ const CustomizeTable defaultCustTable = {
     // ERISTA CPU VMAX MODE // 1200 ECO // 1250-1350 STAGE 1-3 // 1180-1350 MANUAL 5mV STEP
     .eristaCpuMaxVolt = 1235,
 
-    // 4IFIR MODE / RAM VDD MODE
-    // E 1866 1868800 / 1150'000
-    // D 2000 1996800 / 1250'000
-    // S 2133 2131200 / 1350'000
-    // S 2266 2265600 / 1350'000
-    .eristaEmcMaxClock = 2265600,
-    // 1600000-2366000 MANUAL 38400 KHz STEP
+    // 4IFIR MODE / eBAMATIC STAGE 0-1-2-3
+    // S-LOH 1600 / 1600000 / eBAL 2 2 2 2
+    // E ST2 1733 / 1734400 / eBAL 3 2 2 2
+    // E ST1 1866 / 1868800 / eBAL 3 3 2 2
+    // D ST1 2000 / 1996800 / eBAL 3 3 3 2
+    // D ST2 2133 / 2131200 / eBAL 3 4 3 3
+    // S ST1 2266 / 2265600 / eBAL 4 4 4 3
+    // L-C4C 2366 / 2361600 / eBAL 4 4 4 4
+    .eristaEmcMaxClock = 2124800,  // 2278400 2240000 2201600 2163200 2124800
+    // 1600000-2366000 MANUAL 38.4MHz STEP
 
     // MARIKO CPU VMAX MODE // 1150 ECO // 1180-1250 STAGE 1-3 // 1130-1280 MANUAL 5mV STEP
     .marikoCpuMaxVolt = 1150,
 
-    // 4IFIR MODE / eBAMATIC STAGE: 1-2-3
-    // S-LOH 1600 / 1600000 / eBAL: 1 1 2
-    // E ST3 1733 / 1734400 / eBAL: 1 2 2
-    // E ST2 1866 / 1862400 / eBAL: 2 2 2
-    // E ST1 2000 / 1996800 / eBAL: 2 2 3
-    // D ST1 2133 / 2131200 / eBAL: 2 3 3
-    // D ST2 2266 / 2265600 / eBAL: 3 3 3
-    // D ST3 2400 / 2400000 / eBAL: 3 3 4
-    // S ST1 2533 / 2534400 / eBAL: 3 4 4
-    // S ST2 2666 / 2665600 / eBAL: 4 4 4
-    // S ST3 2800 / 2800000 / eBAL: 4 4 5
-    // L-C4C 2933 / 2934400 / eBAL: 4 5 5
-    .marikoEmcMaxClock = 2265600,
-    // 1333000-2733000 MANUAL 38400 KHz STEP
+    // 4IFIR MODE / eBAMATIC STAGE 0-1-2-3
+    // S-LOH 1600 / 1600000 / eBAL 1 1 1 1
+    // E ST3 1733 / 1734400 / eBAL 1 1 1 1
+    // E ST2 1866 / 1868800 / eBAL 2 1 1 1
+    // E ST1 2000 / 1996800 / eBAL 2 2 1 1
+    // D ST1 2133 / 2131200 / eBAL 2 2 2 1
+    // D ST2 2266 / 2265600 / eBAL 2 2 2 2
+    // D ST3 2400 / 2400000 / eBAL 3 2 2 2
+    // S ST1 2533 / 2534400 / eBAL 3 3 2 2
+    // S ST2 2666 / 2665600 / eBAL 4 3 3 2
+    // S ST3 2800 / 2800000 / eBAL 4 4 3 3
+    // L-C4C 2933 / 2934400 / eBAL 5 4 4 3
+    .marikoEmcMaxClock = 2534400,  // MICRON E/H eBAL 4 < 3.8GHz // SAMSUNG B eBAL 4 < 3.9GHz // HYNIX CJR/DJR eBAL 4 < 3.8GHz
+    // 1333000-2733000 MANUAL 38.4MHz STEP
 
-    // RAM VDDQ MODE // 550'000 ECO // 650'000 DEFAULT // 750'000 SRT // 300'000-800'000 MANUAL
+    // RAM VDDQ MODE // 500'000 ECO // 650'000 DEFAULT // 700'000 SRT // 300'000-800'000 MANUAL
     .marikoEmcVddqVolt = 650000,
 
-    // CPU-LOW ECO LOGIC // 0 DEFAULT // 1 ECO ST1 // 3 ECO ST2 // 5 ECO ST3 // 1-6 MANUAL
+    // CPU-LOW ECO LOGIC // 0 ECO ALT-MODE (low=0 & high=0) // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-6 MANUAL
     .marikoCpuUV = 0,
 
-    // GPU ECO LOGIC // 0 ECO ST1 // 1 ECO ST2 // 2 ECO ST3 // 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV
-    // STEP
+    // GPU ECO LOGIC // 0 AUTO ECO ST1 // 1 AUTO ECO ST2 // 2 AUTO ECO ST3
     .marikoGpuUV = 0,
+    // 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV STEP // ERISTA = eristaGpuDvfsTable uV - (12500 uV *
+    // marikoGpuUV)
 
-    // CPU UNDER MODE // 620 DEFAULT // 590 ECO ST1 // 560 ECO ST2 (4IFIR E or D only) // 530 ECO ST3 (4IFIR E only) // 430-670
-    // MANUAL 5-10mV STEP
-    .CPUv = 620,
+    // CPU UNDER LOGIC // 3 AUTO ECO ST1 // 2 AUTO ECO ST2 // 1 AUTO ECO ST3 // 430-670 MANUAL 5-10mV STEP
+    .CPUv = 3,
+    // 620mV DEFAULT // MARIKO CPU VOLT MIN = CPUv, ERISTA CPU VOLT MIN = CPUv + 205mV
 
-    // GPU UNDER LOGIC // 3 AUTO ECO ST1 // 2 AUTO ECO ST2 // 1 AUTO ECO ST3 // 430-770 MANUAL mV 5-10mV STEP
+    // GPU UNDER LOGIC // 3 AUTO ECO ST1 // 2 AUTO ECO ST2 // 1 AUTO ECO ST3 // 430-970 MANUAL mV 5-10mV STEP
     .GPUv = 3,
+    // 610mV DEFAULT // MARIKO GPU VOLT MIN = CPUv, ERISTA GPU VOLT MIN = CPUv + 100mV
 
     // EMB ECO LOGIC // 3 AUTO // 2 AUTO ECO ST1 // 1 AUTO ECO ST2 // 0 AUTO ECO ST3 // 300-1150 MANUAL mV
     .marikoEmcDvbShift = 3,
 
-    .ramTimingPresetOne = 1,
-
-    .ramTimingPresetTwo = 1,
-
-    .ramTimingPresetThree = 1,
-
-    .ramTimingPresetFour = 1,
-
-    .ramTimingPresetFive = 1,
-
-    .ramTimingPresetSix = 1,
-
-    .ramTimingPresetSeven = 1,
+    // DERIVATIVE TIMINGS ORCHESTRATORs // SAMSUNG D/E 2666 eBAL 2 RCD 12
+    .drochr01 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
+    .drochr02 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-8 AUTO STAGE // 9 ALT LOGIC
+    .drochr03 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE // 10 ALT LOGIC
+    .drochr04 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
+    .drochr05 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE // ! drochr05 = drochr01 + drochr05
+    .drochr06 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-14 AUTO STAGE
+    .drochr07 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-10 AUTO STAGE
 
     .marikoGpuVoltArray = {395, 420, 445, 470, 495, 520, 545, 570, 595, 620, 645, 670,
                            695, 720, 750, 780, 810, 840, 870, 900, 930, 960, 990, 1020},
 
     .eristaCpuDvfsTable =
         {
+            {408000, {786986}, {}},
+            {510000, {819932}, {}},
             {612000, {852878}, {}},
             {714000, {885824}, {}},
             {816000, {918770}, {}},
@@ -100,19 +102,18 @@ const CustomizeTable defaultCustTable = {
             {1963500, {1235000}, {5100873, -279186, 4747}},
             {2091000, {1235000}, {5100873, -279186, 4747}},
             {2193000, {1235000}, {5100873, -279186, 4747}},
-            {2296000, {1240000}, {5100873, -279186, 4747}},
-            {2397000, {1262000}, {5100873, -279186, 4747}},
-            {2499000, {1298000}, {5100873, -279186, 4747}},
-            {2602000, {1358000}, {5100873, -279186, 4747}},
+            {2295000, {1235000}, {5100873, -279186, 4747}},
+            {2397000, {1235000}, {5100873, -279186, 4747}},
+            {2499000, {1235000}, {5100873, -279186, 4747}},
+            {2602000, {1235000}, {5100873, -279186, 4747}},
             //{ 2703000, { 1358000 }, {  5100873, -279186,  4747 } },
         },
 
     .marikoCpuDvfsTable =
         {
-            //{  204000, {  732856,   -17335,      113 }, {} },
-            //{  306000, {  760024,   -18195,      113 }, {} },
-            //{  408000, {  760024,   -18195,      113 }, {} },
-            //{  510000, {  789258,   -19055,      113 }, {} },
+            //{  204000, {  732856, -17335, 113 }, {} },
+            //{  306000, {  760024, -18195, 113 }, {} },
+            {408000, {760024, -18195, 113}, {}},          {510000, {789258, -19055, 113}, {}},
             {612000, {853926, -20775, 113}, {}},          {714000, {889361, -21625, 113}, {}},
             {816000, {926862, -22485, 113}, {}},          {918000, {966431, -23345, 113}, {}},
             {1020000, {1008066, -24205, 113}, {1120000}}, {1122000, {1051768, -25065, 113}, {1120000}},
@@ -123,18 +124,17 @@ const CustomizeTable defaultCustTable = {
             {2091000, {1580725, -33235, 113}, {1120000}}, {2193000, {1580725, -33235, 113}, {1235000}},
             {2295000, {1635431, -34095, 113}, {1235000}}, {2397000, {1702903, -34955, 113}, {1235000}},
             {2499000, {1754400, -35643, 113}, {1235000}}, {2602000, {1805897, -36331, 113}, {1235000}},
-            //{ 2703000, { 1857394,   -37019,      113 }, { 1235000 } },
-            //{ 2805000, { 1908891,   -37707,      113 }, { 1235000 } },
-            //{ 2907000, { 1960388,   -38395,      113 }, { 1235000 } },
-            //{ 3009000, { 2011885,   -39083,      113 }, { 1235000 } },
+            //{ 2703000, { 1857394, -37019, 113 }, { 1235000 } },
+            //{ 2805000, { 1908891, -37707, 113 }, { 1235000 } },
+            //{ 2907000, { 1960388, -38395, 113 }, { 1235000 } },
+            //{ 3009000, { 2011885, -39083, 113 }, { 1235000 } },
         },
 
     .marikoCpuDvfsTableSLT =
         {
-            //{  204000, {  732856,   -17335,      113 }, {} },
-            //{  306000, {  760024,   -18195,      113 }, {} },
-            //{  408000, {  760024,   -18195,      113 }, {} },
-            //{  510000, {  789258,   -19055,      113 }, {} },
+            //{  204000, {  732856, -17335, 113 }, {} },
+            //{  306000, {  760024, -18195, 113 }, {} },
+            {408000, {760024, -18195, 113}, {}},          {510000, {789258, -19055, 113}, {}},
             {612000, {853926, -20775, 113}, {}},          {714000, {889361, -21625, 113}, {}},
             {816000, {926862, -22485, 113}, {}},          {918000, {966431, -23345, 113}, {}},
             {1020000, {1008066, -24205, 113}, {1120000}}, {1122000, {1051768, -25065, 113}, {1120000}},
@@ -147,7 +147,7 @@ const CustomizeTable defaultCustTable = {
             {2499000, {1754400, -35643, 113}, {1235000}}, {2601000, {1805897, -36331, 113}, {1235000}},
             {2703000, {1857394, -37019, 113}, {1235000}}, {2805000, {1908891, -37707, 113}, {1235000}},
             {2907000, {1960388, -38395, 113}, {1235000}}, {3009000, {2011885, -39083, 113}, {1235000}},
-            //{ 3111000, { 2063382,   -39771,      113 }, { 1235000 } },
+            //{ 3111000, { 2063382, -39771, 113 }, { 1235000 } },
         },
 
     // ERISTA GPU ECO LOGIC // ECO ST1 = -12500uV // ECO ST2 = -25000uV // ECO ST3 = -37500uV // MANUAL = -75000uV << Default >>
@@ -155,95 +155,91 @@ const CustomizeTable defaultCustTable = {
     .eristaGpuDvfsTable =
         {
             // Freq KHz  	// Volt uV
-            {192000,
+            //{  192000, {}, {  687500, } },
+            {230400,
              {},
              {
                  687500,
              }},
-            {230400,
+            {268800,
              {},
              {
                  700000,
              }},
-            {268800,
+            {307200,
              {},
              {
                  712500,
              }},
-            {307200,
+            {345600,
              {},
              {
                  725000,
              }},
-            {345600,
+            {384000,
              {},
              {
                  737500,
              }},
-            {384000,
+            {422400,
              {},
              {
                  750000,
              }},
-            {422400,
+            {460800,
              {},
              {
                  762500,
              }},
-            {460800,
+            {499200,
              {},
              {
                  775000,
              }},
-            {499200,
+            {537600,
              {},
              {
                  787500,
              }},
-            {537600,
+            {576000,
              {},
              {
                  800000,
              }},
-            {576000,
+            {613400,
              {},
              {
                  812500,
              }},
-            {614400,
+            {652800,
              {},
              {
                  825000,
              }},
-            {652800,
+            {691200,
              {},
              {
                  837500,
              }},
-            {691200,
+            {729600,
              {},
              {
                  850000,
              }},
-            {729600,
+            {768000,
              {},
              {
                  862500,
              }},
-            {768000,
+            {806400,
              {},
              {
                  875000,
              }},
-            {806400,
+            {840800,
              {},
              {
                  887500,
-             }},
-            {844800,
-             {},
-             {
-                 900000,
              }},
             {883200,
              {},
@@ -258,47 +254,53 @@ const CustomizeTable defaultCustTable = {
             {960000,
              {},
              {
-                 937500,
+                 950000,
              }},
             {998400,
              {},
              {
-                 950000,
+                 962500,
              }},
             {1036800,
              {},
              {
                  975000,
              }},
-            {1075200,
+            {1074200,
              {},
              {
-                 1012500,
+                 1000000,
              }},
             {1113600,
              {},
              {
-                 1050000,
+                 1037500,
              }},
             {1152000,
              {},
              {
-                 1100000,
+                 1062500,
              }},
             {1190400,
              {},
              {
-                 1150000,
+                 1100000,
              }},
             {1228800,
              {},
              {
-                 1175000,
+                 1125000,
+             }},
+            {1267200,
+             {},
+             {
+                 1150000,
              }},
         },
 
     .marikoGpuDvfsTable =
         {
+            // Freq KHz  	// Volt uV
             {192000,
              {},
              {
@@ -407,6 +409,7 @@ const CustomizeTable defaultCustTable = {
 
     .marikoGpuDvfsTableSLT =
         {
+            // Freq KHz  	// Volt uV
             {192000,
              {},
              {
@@ -420,7 +423,7 @@ const CustomizeTable defaultCustTable = {
             {307200,
              {},
              {
-                 435000,
+                 440000,
              }},
             {384000,
              {},
@@ -523,6 +526,7 @@ const CustomizeTable defaultCustTable = {
 
     .marikoGpuDvfsTableHiOPT =
         {
+            // Freq KHz  	// Volt uV
             {192000,
              {},
              {
@@ -648,51 +652,59 @@ const CustomizeTable defaultCustTable = {
     // SPEEDSHIFT ECO LOGIC // 0 DEFAULT // 50 AUTO SRT // 100 AUTO ECO ST1 // 125 AUTO ECO ST2 // 150 AUTO ECO ST3 // 1-200
     // MANUAL
     .SpeedShift = 0,
+    // Ov << 100 >> uV
 
-    // MARIKO CPU-HI ECO LOGIC // 0 DEFAULT // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-7 MANUAL
-    .marikoCpuHUV = 0,
+    // MARIKO CPU-HI ECO LOGIC // 0 ECO ALT-MODE (low=0 & high=0) // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-7
+    // MANUAL
+    .marikoCpuHUV = 1,
 
-    // MARIKO GPU OVER MODE // 1000 4IFIR ECO // 1050 DEFAULT // 1100 4IFIR SRT // 750-1200 MANUAL
-    .hGPUv = 1050,
+    // GPU OVER LOGIC // 0 AUTO // MARIKO: 750-1200 MANUAL // ERISTA: 850-1300 MANUAL
+    .hGPUv = 0,
 
-    // MARIKO CPU MIN-HIGH LOGIC // 0 DEFAULT // 1 AUTO ECO ST1 // 2 AUTO ECO ST2 // 3 AUTO ECO ST3 // 750-850 MANUAL
+    // MARIKO CPU MIN-HIGH LOGIC // 0 AUTO // 1 AUTO ECO ST1 // 2 AUTO ECO ST2 // 3 AUTO ECO ST3 // 750-850 MANUAL
     .dCPUv = 0,
 
-    // EMC BALLANCE ADVANCED LOGIC // 0 RESERVED // 1 SYK-LOH // 2 ECO ST1 // 3 DEFAULT // 4 SRT ST1 // 5 SRT ST2
-    .eBAL = 3,  // TRADE MAX FREQ FOR EFFICIENCY // EFFICIENCY << PRIORITY >> FREQUENCY
+    // EMC BALLANCE ADVANCED LOGIC // 0 eBAMATIC // 1 SYK-LOH // 2 ECO ST1 // 3 DEFAULT // 4 SRT ST1 // 5 SRT ST2
+    .eBAL = 0,
+    // TRADE MAX FREQ FOR EFFICIENCY // EFFICIENCY << PRIORITY >> FREQUENCY
 
-    .ramTimingPresetEight = 1,  // ХХ MGCJ 2400 >< 2 EBAL // 5 MGCJ 2400 >< 2 EBAL // 15
+    .drochr08 = 1,  // 0 DEBUG // 1 AUTO DEFAULT // 2-12 AUTO
 
-    // EBA-SHIFT // 0 DEFAULT // 1 ECO ST1 // 2 SYK-LOH // 3 RESERVED // 4 RESERVED // 5 LOH-C4C
-    .eBAS = 0,  // TRADE MAX FREQ FOR EFFICIENCY // FREQUENCY << PRIORITY >> EFFICIENCY
+    // EBA-SHIFT // 0 DEFAULT // 1 AUTO ST1 // 2 SYK-LOH // 3 AUTO ST3 // 4 AUTO ST4 // 5 LOH-C4C
+    .eBAS = 0,
+    // TRADE MAX FREQ FOR EFFICIENCY // FREQUENCY << PRIORITY >> EFFICIENCY
 
-    // PRIMARY MICRO-ENHANCE LOGIC			 	         // 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2
+    // PRIMARY MICRO-ENHANCE LOGIC			 	    // 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2
     // 1333>1065>800
     // 0-2
-    // 3 eBAW Shift 0-4		    // 4 eBAR Shift 0-4      // 5 RTW Shift 0-8	      // 6 WTR Shift 0-8 	    // 7 WTP
-    // Shift
-    // 0-8
-    // 8 RCD Reduct 0-4 	    // 9 RP Reduct 0-4       // 10 RAS Shift 0-16	  // 11 SRPD 0-3
-    // // 12 E-Enhance P
+    // 3 eBAW Shift 0-4		// 4 eBAR Shift 0-4     // 5 RTW Crement 0-4	 // 6 WTR Crement 0-4 	   // 7 WTP Crement 0-4
+    // 8 RCD Decret 0-4 	// 9 RP Decret 0-4      // 10 RAS Decret 0-8	 // 11 SRPD 0-15 		   // 12
+    // E-Enhance
+    // P
     // 0-1
-    // 13 DR Debug 0-4		    // 14 GameChanger 0-24	 // 15 Eri-Bump 0-1
-    .pMEH = {0, 2, 0, 2, 2, 4, 4, 4, 0, 0, 8, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-    // DEF = 0  2  0  2  2  4  4  4  0  0  8  0  0  0  0  1 >> RESERVED >>
-    // NUM = 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+    // 13 DR Debug 0-5		// 14 GameChanger 0-24	// 15 Eri-Bump 0-1		 // 16 lovec 0-1		   // 17
+    // DBI
+    // 0-3
+    // 18 eBAMATIC ST 0-3	// 19 vMINetune ST 0-5
+    .pMEH = {0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0},
+    // DEF =  0  2  0  2  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  3  >> RESERVED >>
+    // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
-    // SECONDARY MICRO-ENHANCE LOGIC (SAFE) 		 // 0 ARB-Boost 1-9  // 1 ARB-BCD 0-4   // 2 ARB-BRP 0-4   // 3 ARB-RTR
-    // 0-4  // 4
-    // ARB-RTW 0-4
-    // 5 ARB-WTR 0-4  		  // 5 ARB-WTR 0-4   // 7 trDVFS 0-1     // 8 E-Boost 0-1   // 9 SSC Logic 0-1 // 10 Latent 0-8
-    // //
-    // 11 CP-THM 0-4
-    .sMEH = {4, 2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // DEF = 4  2  2  2  2  2  0  1  1  1  0  2 >> RESERVED >>
-    // NUM = 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+    // SECONDARY MICRO-ENHANCE LOGIC (SAFE)	// 0 ARB-Boost 1-9		// 1 ARB-BCD 0-4	// 2 ARB-BRP 0-4
+    // 3
+    // ARB-RTR
+    // 0-4
+    // 4 ARB-RTW 0-4	// 5 ARB-WTR 0-4	// 6 eZQ Override 0-7	// 7 trDVFS 0-1		// 8 E-Boost 0-1	// 9 SSC
+    // Logic
+    // 0-1
+    // 10 Latent 0-8  	// 11 FEH-NEH 0-4	// 12 Clatok 0-1		// 13 CPriora 0-1
+    .sMEH = {4, 2, 2, 2, 2, 2, 0, 1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // DEF =  4  2  2  2  2  2  0  1  0  1  0  2  0  0  >> RESERVED >>
+    // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
-    // Secret Hardware Assisted Integration Tool for Advanced Necessities (UNSAFE)
-    // SPELL = [ SLOT1 ][ SLOT2 ][ SLOT3 ][ SLOT4 ][S][RP]
-    .SHAITAN = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13}
-    // Magic numbers, the right combination adds functionality from the future
-
+    // Secret Hardware Assisted Integration Tool 4 Advanced Necessities
+    // SPELL = [S][   SLOT1   ][   SLOT2   ][   SLOT3   ][R]
+    .SHAITAN = {0, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 0},  //! DANGER
+    // NUM 	 =  0   1  2  3  4   5  6  7  8   9 10 11 12 13
+    // Magic numbers - right combination adds feautures from the future
 };

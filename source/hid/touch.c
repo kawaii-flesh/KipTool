@@ -391,14 +391,14 @@ void touch_power_off() {
     clock_disable_i2c(I2C_3);
 }
 
-bool *isTouchEnabled() {
-    static bool touch_enabled = false;
+int *isTouchEnabled() {
+    static int touch_enabled = 0;
     return &touch_enabled;
 }
 
 #define TOUCH_SIZEW 240
 #define TOUCH_SIZEH 240
-int isTouchUp(touch_event *tevent) {
+int isTouchDown(touch_event *tevent) {
     return (tevent->x <= 1279) && (tevent->x >= 1279 - TOUCH_SIZEW) && (tevent->y >= 0) && (tevent->y < TOUCH_SIZEH);
 }
 
@@ -411,7 +411,7 @@ int isTouchA(touch_event *tevent) {
     return (tevent->x <= 1279) && (tevent->x >= 1279 - TOUCH_SIZEW) && (tevent->y < 720) && (tevent->y >= 720 - TOUCH_SIZEH);
 }
 
-int isTouchDown(touch_event *tevent) {
+int isTouchUp(touch_event *tevent) {
     return (tevent->x < TOUCH_SIZEW) && (tevent->x > 0) && (tevent->y >= 0) && (tevent->y < TOUCH_SIZEH);
 }
 
