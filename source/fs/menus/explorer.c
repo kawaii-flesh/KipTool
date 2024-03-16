@@ -33,7 +33,7 @@ MenuEntry_t MakeMenuOutFSEntry(FSEntry_t entry) {
     return out;
 }
 
-void FileExplorer(char* path) {
+void FileExplorer(const char* path) {
     char* storedPath = CpyStr(path);
     int res = 0;
 

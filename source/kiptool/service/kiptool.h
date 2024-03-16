@@ -4,7 +4,6 @@
 #include <stdbool.h>
 
 #define KTDIR "sd:/.kt"
-#define KTMAGIC \
-    { 'K', 'I', 'P', 'T', 'O', 'O', 'L', 0 }
 
-void createKTDirIfNotExist();
+FRESULT createKTDirIfNotExist();
+FRESULT overwriteCUST(FIL* kipFile, const unsigned int custOffset, const u8* custTable);

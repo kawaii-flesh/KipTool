@@ -8,6 +8,8 @@ enum { CMODE_None = 0, CMODE_Copy, CMODE_Move, CMODE_CopyFolder, CMODE_MoveFolde
 typedef struct {
     u32 FSBuffSize;
     char* srcCopy;
+    int isMariko;
+    u32 errors;
     union {
         struct {
             u16 minervaEnabled : 1;

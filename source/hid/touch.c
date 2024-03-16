@@ -17,8 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "touch.h"
+
 #include <gfx_utils.h>
-#include <input/touch.h>
 #include <power/max7762x.h>
 #include <soc/clock.h>
 #include <soc/gpio.h>
@@ -425,23 +426,19 @@ int isTouchB(touch_event* tevent) {
 }
 
 #define TOUCH_HOLD 300
-void updateInput(Input_t* inputs) {
-    static unsigned int lastTouch = 0;
-    touch_event tevent;
-    touch_poll(&tevent);
-    if (tevent.type == STMFTS_EV_MULTI_TOUCH_ENTER) {
-        if (isTouchUp(&tevent))
+void updateInput(Input_t* inputs, touch_event* tevent) {
+    if (tevent->type == STMFTS_EV_MULTI_TOUCH_ENTER) {
+        if (isTouchUp(tevent))
             inputs->up = 1;
-        else if (isTouchDown(&tevent))
+        else if (isTouchDown(tevent))
             inputs->down = 1;
-        else if (isTouchRight(&tevent))
+        else if (isTouchRight(tevent))
             inputs->right = 1;
-        else if (isTouchLeft(&tevent))
+        else if (isTouchLeft(tevent))
             inputs->left = 1;
-        else if (isTouchA(&tevent))
+        else if (isTouchA(tevent))
             inputs->a = 1;
-        else if (isTouchB(&tevent))
+        else if (isTouchB(tevent))
             inputs->b = 1;
-        lastTouch = get_tmr_ms();
     }
 }

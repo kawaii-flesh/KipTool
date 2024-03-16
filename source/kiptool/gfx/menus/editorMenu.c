@@ -1,12 +1,14 @@
 #include "editorMenu.h"
 
 #include <mem/heap.h>
+#include <stdlib.h>
 #include <string.h>
 #include <utils/sprintf.h>
 
 #include "../../helpers/kiprw.h"
 #include "../../helpers/param.h"
 #include "../dialogs/manualValueDialog.h"
+#include "../gfx.h"
 #include "ktMenu.h"
 
 bool validateValueByFixedLimits(const FixedLimits* fixedLimits, const unsigned int value) {
@@ -26,28 +28,28 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
-    if (entry->type == ELabel)
+    if (entry->type == ETLabel)
         gfx_puts_limit((const char*)entry->entry, maxLen);
-    else if (entry->type == EReset) {
-        char* displayBuff = calloc(256, 1);
+    else if (entry->type == ETReset) {
+        char* displayBuff = malloc(256);
         s_printf(displayBuff, "%s", "Reset to the default value - ");
         formatValueDiv(displayBuff + strlen(displayBuff), editorAdditionalData->param->defaultValue,
                        editorAdditionalData->param->defaultValue > 1500);
         gfx_puts_limit(displayBuff, maxLen);
         free(displayBuff);
-    } else if (entry->type == EFixedRange) {
-        const char* buff = calloc(8, 1);
-        utoa(entry->entry, buff, 10);
+    } else if (entry->type == ETFixedRange) {
+        char* buff = malloc(8);
+        utoa((unsigned int)entry->entry, buff, 10);  // It is not a bug. entry->entry is an unsigned int value
         gfx_puts_limit(buff, maxLen);
         free((void*)buff);
-    } else if (entry->type == EValue) {
-        char* displayBuff = calloc(256, 1);
+    } else if (entry->type == ETValue) {
+        char* displayBuff = malloc(256);
         const Value* value = entry->entry;
-        getDisplayValue(editorAdditionalData->param, displayBuff + strlen(displayBuff), value->value, 0);
+        getDisplayValue(editorAdditionalData->param, displayBuff, value->value, 0);
         gfx_puts_limit(displayBuff, maxLen);
         free((void*)displayBuff);
-    } else if (entry->type == ELimits) {
-        char* displayBuff = calloc(256, 1);
+    } else if (entry->type == ETLimits) {
+        char* displayBuff = malloc(256);
         const FixedLimits* fixedLimits = entry->entry;
         int min = fixedLimits->min;
         int max = fixedLimits->max;
@@ -99,7 +101,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
 
     MenuEntry* menuEntries = calloc(sizeof(MenuEntry), totalEntriesCount);
     menuEntries[0].optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT;
-    menuEntries[0].type = ELabel;
+    menuEntries[0].type = ETLabel;
     menuEntries[0].entry = (void*)param->name;
     while (1) {
         gfx_clearscreenKT();
@@ -110,7 +112,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         if (fixedValues != NULL)
             for (unsigned int valueI = 0; valueI < fixedValues->valuesCount; ++valueI) {
                 const Value* fixedValue = &fixedValues->values[valueI];
-                menuEntries[menuEntriesIndex].type = EValue;
+                menuEntries[menuEntriesIndex].type = ETValue;
                 menuEntries[menuEntriesIndex].entry = fixedValue;
                 if (paramCurrentValue == fixedValue->value) {
                     startIndex = menuEntriesIndex;
@@ -122,7 +124,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                 ++menuEntriesIndex;
             }
         if (fixedLimits != NULL) {
-            menuEntries[menuEntriesIndex].type = ELimits;
+            menuEntries[menuEntriesIndex].type = ETLimits;
             menuEntries[menuEntriesIndex].entry = fixedLimits;
             if (canBeManualValue && startIndex == 0) {
                 startIndex = menuEntriesIndex;
@@ -133,8 +135,9 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         }
         if (fixedRange != NULL)
             for (unsigned int i = fixedRange->start; i <= fixedRange->end; ++i) {
-                menuEntries[menuEntriesIndex].type = EFixedRange;
-                menuEntries[menuEntriesIndex].entry = i;
+                menuEntries[menuEntriesIndex].type = ETFixedRange;
+                menuEntries[menuEntriesIndex].entry =
+                    i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
                 if (paramCurrentValue == i) {
                     startIndex = menuEntriesIndex;
                     menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
@@ -144,7 +147,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                 ++menuEntriesIndex;
             }
         menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
-        menuEntries[menuEntriesIndex].type = EReset;
+        menuEntries[menuEntriesIndex].type = ETReset;
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
         int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, printValueEntry);
@@ -152,15 +155,15 @@ void newEditorMenu(const u8* custTable, const Param* param) {
             break;
         }
         const MenuEntry selectedEntry = menuEntries[res + 1];
-        if (selectedEntry.type == ELimits) {
+        if (selectedEntry.type == ETLimits) {
             const ManualValueResult manualValueResult = manualValueDialog(param, canBeManualValue ? paramCurrentValue : -1);
             if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, param, manualValueResult.value);
-        } else if (selectedEntry.type == EValue) {
+        } else if (selectedEntry.type == ETValue) {
             const Value* value = selectedEntry.entry;
             setParamValue(custTable, param, value->value);
-        } else if (selectedEntry.type == EFixedRange) {
-            setParamValue(custTable, param, selectedEntry.entry);
-        } else if (selectedEntry.type == EReset) {
+        } else if (selectedEntry.type == ETFixedRange) {
+            setParamValue(custTable, param, (unsigned int)selectedEntry.entry);  // It is not a bug
+        } else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset param?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
                 setParamValue(custTable, param, param->defaultValue);

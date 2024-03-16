@@ -1,9 +1,12 @@
 #include "ktMenu.h"
 
+#include <string.h>
+#include <utils/sprintf.h>
 #include <utils/util.h>
 
 #include "../../../gfx/gfxutils.h"
 #include "../../../hid/hid.h"
+#include "../gfx.h"
 
 int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, const void* additionalData,
               void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* additionalData)) {
@@ -37,7 +40,6 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
     int totalPageCount = ((entriesCount - 1) / screenLenY) + 1;
     while (1) {
         int currentPage = (selected / screenLenY) + 1;
-        u32 lastDraw = get_tmr_ms();
         if (redrawScreen) {
             SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
             char temp[40] = "";
@@ -137,7 +139,7 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
 
         lastPress = get_tmr_ms();
 
-        if (selected < lastIndex && !pageTurn || selected == entriesCount - 1) {
+        if ((selected < lastIndex && !pageTurn) || (selected == entriesCount - 1)) {
             while (selected > currentPageFirstIndex - 1 && entries[selected].optionUnion & SKIPHIDEBITS) --selected;
             if (selected < currentPageFirstIndex) {
                 selected = totalPageCount == 1 ? entriesCount - 1 : MIN(nextPageFirstIndex - 1, entriesCount - 1);
@@ -168,7 +170,7 @@ void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* addi
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
-    if (entry->type == ELabel) gfx_puts_limit((const char*)entry->entry, maxLen);
+    if (entry->type == ETLabel) gfx_puts_limit((const char*)entry->entry, maxLen);
 
     gfx_putc('\n');
 }

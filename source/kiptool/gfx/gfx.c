@@ -11,14 +11,31 @@
 #include "../params/param.h"
 #include "../params/table.h"
 
+// #define ALLOC_DEBUG
+#ifdef ALLOC_DEBUG
+#include <mem/heap.h>
+#endif
+
 void gfx_printTopInfoKT() {
     SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
     gfx_con_setpos(0, 0);
+#ifndef ALLOC_DEBUG
     gfx_printf("Kip Tool %d.%d.%d-%d | SoC: %s | Battery: %d%% %c\n", KT_VER_MJ, KT_VER_MN, KT_VER_BF, KT_CUST_VER,
                getHWType() == COMMON   ? "Common"
                : getHWType() == MARIKO ? "Mariko"
                                        : "Erista",
                getBatteryValue(), (getCurrentChargeState() ? 129 : 32));
+#endif
+#ifdef ALLOC_DEBUG
+    heap_monitor_t mon = {};
+    heap_monitor(&mon, 0);
+
+    gfx_printf("Kip Tool %d.%d.%d-%d | SoC: %s | Battery: %d%% %c usedMem: %d\n", KT_VER_MJ, KT_VER_MN, KT_VER_BF, KT_CUST_VER,
+               getHWType() == COMMON   ? "Common"
+               : getHWType() == MARIKO ? "Mariko"
+                                       : "Erista",
+               getBatteryValue(), (getCurrentChargeState() ? 129 : 32), mon.used);
+#endif
     RESETCOLOR;
 }
 

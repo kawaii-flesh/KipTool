@@ -2,22 +2,20 @@
 
 #include <display/di.h>
 #include <input/joycon.h>
-#include <input/touch.h>
 #include <utils/btn.h>
 #include <utils/types.h>
 #include <utils/util.h>
 
-#include "../config.h"
 #include "../gfx/gfx.h"
+#include "../tegraexplorer/tconf.h"
 #include "../tegraexplorer/tools.h"
 #include "../utils/utils.h"
+#include "touch.h"
 
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
 void hidInit() { jc_init_hw(); }
-
-extern hekate_config h_cfg;
 
 Input_t* hidRead() {
     jc_gamepad_rpt_t* controller = joycon_poll();
@@ -25,9 +23,8 @@ Input_t* hidRead() {
     inputs.buttons = 0;
     u8 left_connected = 0;
     u8 right_connected = 0;
-
     if (controller != NULL) {
-        if (controller->home && !h_cfg.t210b01) RebootToPayloadOrRcm();
+        if (controller->home && !TConf.isMariko) RebootToPayloadOrRcm();
 
         if (controller->cap) TakeScreenshot();
 
@@ -71,7 +68,14 @@ Input_t* hidRead() {
     inputs.a = inputs.a || inputs.power;
     inputs.b = inputs.b || (inputs.volp && inputs.volm);
 
-    if (*isTouchEnabled()) updateInput(&inputs);
+    if (*isTouchEnabled()) {
+        touch_event tevent;
+        touch_poll(&tevent);
+        if (tevent.fingers == 3)
+            TakeScreenshot();
+        else
+            updateInput(&inputs, &tevent);
+    }
 
     return &inputs;
 }

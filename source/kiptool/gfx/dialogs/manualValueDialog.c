@@ -1,10 +1,13 @@
 #include "manualValueDialog.h"
 
+#include <mem/heap.h>
 #include <string.h>
+#include <utils/sprintf.h>
 #include <utils/util.h>
 
 #include "../../../gfx/gfxutils.h"
 #include "../../../hid/hid.h"
+#include "../../helpers/param.h"
 #include "../../params/param.h"
 #include "../gfx.h"
 #include "confirmationDialog.h"
@@ -85,8 +88,8 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 fullRedraw = false;
             }
             redraw = false;
-            char* minStr = malloc(8);
             bool div = min > 1500 || currentValue > 1500 || max > 1500 || stepSize > 1500;
+            char* minStr = malloc(8);
             formatValueDiv(minStr, min, div);
             char* currentStr = malloc(8);
             formatValueDiv(currentStr, currentValue, div);
@@ -94,7 +97,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             formatValueDiv(maxStr, max, div);
             char* stepStr = malloc(8);
             formatValueDiv(stepStr, stepSize, div);
-            char* buff = calloc(256, 1);
+            char* buff = malloc(256);
             s_printf(buff, "min=%s %s %s=max step=%s%s", minStr, currentStr, maxStr, stepStr, measure);
             maxStringLen = strlen(buff);
             unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
