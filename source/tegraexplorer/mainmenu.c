@@ -35,7 +35,7 @@ enum {
     MainPowerOff,
     MainRebootRCM,
     MainRebootNormal,
-    MainRebootHekate,
+    MainRebootUpdate,
     MainRebootAMS,
 };
 
@@ -50,7 +50,7 @@ MenuEntry_t mainMenuEntries[] = {
     [MainPowerOff] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Power off"},
     [MainRebootRCM] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot to RCM"},
     [MainRebootNormal] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot normally"},
-    [MainRebootHekate] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot to bootloader/update.bin"},
+    [MainRebootUpdate] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot to bootloader/update.bin"},
     [MainRebootAMS] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot to atmosphere/reboot_payload.bin"},
 };
 
@@ -87,7 +87,7 @@ extern int launch_payload(char* path);
 
 void RebootToAMS() { launch_payload("sd:/atmosphere/reboot_payload.bin"); }
 
-void RebootToHekate() { launch_payload("sd:/bootloader/update.bin"); }
+void RebootToUpdate() { launch_payload("sd:/bootloader/update.bin"); }
 
 void MountOrUnmountSD() {
     gfx_clearscreen();
@@ -113,7 +113,7 @@ void ActivateTouchMode() {
 
 menuPaths mainMenuPaths[] = {
     [MainBrowseSd] = HandleSD,       [MainMountSd] = MountOrUnmountSD, [MainActivateTouchMode] = ActivateTouchMode,
-    [MainViewCredits] = ViewCredits, [MainRebootAMS] = RebootToAMS,    [MainRebootHekate] = RebootToHekate,
+    [MainViewCredits] = ViewCredits, [MainRebootAMS] = RebootToAMS,    [MainRebootUpdate] = RebootToUpdate,
     [MainRebootRCM] = reboot_rcm,    [MainPowerOff] = power_off,       [MainRebootNormal] = reboot_normal,
 };
 
@@ -127,7 +127,7 @@ void EnterMainMenu() {
 
         // -- Exit --
         mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin"));
-        mainMenuEntries[MainRebootHekate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
+        mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
         mainMenuEntries[MainRebootRCM].hide = h_cfg.t210b01;
         mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";
         Vector_t ent = newVec(sizeof(MenuEntry_t), ARRAY_SIZE(mainMenuEntries));
@@ -140,7 +140,7 @@ void EnterMainMenu() {
         res = newMenu(&ent, res, 79, 30,
                       (ent.count == ARRAY_SIZE(mainMenuEntries)) ? ALWAYSREDRAW : ALWAYSREDRAW | ENABLEPAGECOUNT,
                       ent.count - ARRAY_SIZE(mainMenuEntries));
-        if (res < 10 && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
+        if (res < 12 && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
 
         free(ent.data);
     }
