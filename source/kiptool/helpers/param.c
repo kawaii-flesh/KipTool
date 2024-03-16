@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <utils/sprintf.h>
 
 #include "../../hid/hid.h"
 #include "../params/param.h"
@@ -112,6 +113,7 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
 void getFormatingData(FormatingData* formatingData, const u8* custTable, const unsigned int paramsCount,
                       const Param* params[]) {
     char* displayBuff = calloc(1024, 1);
+    char* start = displayBuff;
     unsigned int nameLen = 0;
     unsigned int valueLen = 0;
     unsigned int labelLen = 0;
@@ -154,25 +156,26 @@ void getFormatingData(FormatingData* formatingData, const u8* custTable, const u
     formatingData->nameLen = nameLen;
     formatingData->valueLen = valueLen;
     formatingData->labelLen = labelLen;
-    free(displayBuff);
+    free(start);
 }
 
 char* getFormattedBuff(FormatingData* formatingData, char* buff) {
     char* newBuff = calloc(1024, 1);
     char* start = newBuff;
+    char *oldBuff = buff;
     unsigned int tmp = 0;
     bool space = false;
     unsigned int partsCount = 0;
-    for (unsigned int c = 0; c < strlen(buff); ++c) {
-        if (buff[c] == '-' && space) ++partsCount;
-        space = buff[c] == ' ';
+    for (unsigned int c = 0; c < strlen(oldBuff); ++c) {
+        if (oldBuff[c] == '-' && space) ++partsCount;
+        space = oldBuff[c] == ' ';
     }
     space = false;
-    while (*buff != '-' || !space) {
-        space = *buff == ' ';
-        *newBuff = *buff;
+    while (*oldBuff != '-' || !space) {
+        space = *oldBuff == ' ';
+        *newBuff = *oldBuff;
         ++tmp;
-        ++buff;
+        ++oldBuff;
         ++newBuff;
     }
     for (unsigned int i = 0; i < formatingData->nameLen - tmp; ++i) {
@@ -181,11 +184,11 @@ char* getFormattedBuff(FormatingData* formatingData, char* buff) {
     }
     space = false;
     tmp = 0;
-    while (*buff != '-' || !space) {
-        space = *buff == ' ';
-        *newBuff = *buff;
+    while (*oldBuff != '-' || !space) {
+        space = *oldBuff == ' ';
+        *newBuff = *oldBuff;
         ++tmp;
-        ++buff;
+        ++oldBuff;
         ++newBuff;
     }
     space = false;
@@ -196,11 +199,11 @@ char* getFormattedBuff(FormatingData* formatingData, char* buff) {
     space = false;
     tmp = 0;
     if (partsCount == 3) {
-        while (*buff != '-' || !space) {
-            space = *buff == ' ';
-            *newBuff = *buff;
+        while (*oldBuff != '-' || !space) {
+            space = *oldBuff == ' ';
+            *newBuff = *oldBuff;
             ++tmp;
-            ++buff;
+            ++oldBuff;
             ++newBuff;
         }
         space = false;
@@ -215,9 +218,9 @@ char* getFormattedBuff(FormatingData* formatingData, char* buff) {
         *newBuff = ' ';
         ++newBuff;
     }
-    while (*buff != '\0') {
-        *newBuff = *buff;
-        ++buff;
+    while (*oldBuff != '\0') {
+        *newBuff = *oldBuff;
+        ++oldBuff;
         ++newBuff;
     }
     return start;

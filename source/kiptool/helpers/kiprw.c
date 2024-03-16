@@ -1,7 +1,9 @@
 #include "kiprw.h"
 
 #include <mem/heap.h>
+#include <utils/sprintf.h>
 
+#include "../gfx/gfx.h"
 #include "../params/param.h"
 #include "../service/session.h"
 
@@ -25,7 +27,7 @@ unsigned int getParamValueFromFile(FIL* file, const unsigned int baseOffset, con
 }
 
 int checkVersionAndMagicFromBuffer(const CustomizeTable* customizeTable) {
-    return customizeTable->custRev == KT_CUST_VER && compareU8Arrays(customizeTable->cust, "CUST", 4);
+    return customizeTable->custRev == KT_CUST_VER && compareU8Arrays((const u8*)customizeTable->cust, (const u8*)"CUST", 4);
 }
 
 int searchBytesArray(const u8* array, const unsigned int size, FIL* file) {
@@ -63,7 +65,7 @@ int searchBytesArray(const u8* array, const unsigned int size, FIL* file) {
 
 void setParamValue(const u8* buffer, const Param* param, unsigned int value) {
     *(unsigned int*)(buffer + param->offset) = value;
-    saveSession(buffer);
+    saveSession((const CustomizeTable*)buffer);
     char* message = calloc(256, 1);
     s_printf(message, "[Session] Param: %s has been changed", param->name);
     gfx_printBottomInfoKT(message);

@@ -20,7 +20,6 @@
 #include <display/di.h>
 #include <gfx_utils.h>
 #include <input/joycon.h>
-#include <input/touch.h>
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
 #include <mem/minerva.h>
@@ -31,6 +30,7 @@
 #include <soc/bpmp.h>
 #include <soc/hw_init.h>
 #include <soc/pmc.h>
+#include <soc/t210.h>
 #include <storage/nx_sd.h>
 #include <storage/sdmmc.h>
 #include <string.h>
@@ -40,7 +40,6 @@
 #include <utils/sprintf.h>
 #include <utils/util.h>
 
-#include "config.h"
 #include "err.h"
 #include "fs/fstypes.h"
 #include "fs/fsutils.h"
@@ -49,11 +48,11 @@
 #include "gfx/gfxutils.h"
 #include "gfx/menu.h"
 #include "hid/hid.h"
+#include "hid/touch.h"
 #include "tegraexplorer/mainmenu.h"
 #include "tegraexplorer/tconf.h"
 #include "utils/vector.h"
 
-hekate_config h_cfg;
 boot_cfg_t __attribute__((section("._boot_cfg"))) b_cfg;
 
 volatile nyx_storage_t* nyx_str = (nyx_storage_t*)NYX_STORAGE_ADDR;
@@ -160,9 +159,9 @@ static inline void _show_errors() {
     u32* excp_type = (u32*)EXCP_TYPE_ADDR;
     u32* excp_lr = (u32*)EXCP_LR_ADDR;
 
-    if (*excp_enabled == EXCP_MAGIC) h_cfg.errors |= ERR_EXCEPTION;
+    if (*excp_enabled == EXCP_MAGIC) TConf.errors |= ERR_EXCEPTION;
 
-    if (h_cfg.errors) {
+    if (TConf.errors) {
         /*
         if (h_cfg.errors & ERR_SD_BOOT_EN)
                 WPRINTF("Failed to mount SD!\n");
@@ -176,7 +175,7 @@ static inline void _show_errors() {
                 WPRINTF("\nUpdate bootloader folder!\n\n");
         */
 
-        if (h_cfg.errors & ERR_EXCEPTION) {
+        if (TConf.errors & ERR_EXCEPTION) {
             gfx_clearscreen();
             WPRINTFARGS("LR %08X", *excp_lr);
             u32 exception = 0;
@@ -214,17 +213,15 @@ void ipl_main() {
     // Tegra/Horizon configuration goes to 0x80000000+, package2 goes to 0xA9800000, we place our heap in between.
     heap_init(IPL_HEAP_START);
 
-    // Set bootloader's default configuration.
-    set_default_configuration();
-
     // Mount SD Card.
-    h_cfg.errors |= !sd_mount() ? ERR_SD_BOOT_EN : 0;
+    TConf.errors |= !sd_mount() ? ERR_SD_BOOT_EN : 0;
 
     TConf.minervaEnabled = !minerva_init();
     TConf.FSBuffSize = (TConf.minervaEnabled) ? 0x800000 : 0x10000;
+    TConf.isMariko = hw_get_chip_id() == GP_HIDREV_MAJOR_T210B01;
 
     if (!TConf.minervaEnabled)  //! TODO: Add Tegra210B01 support to minerva.
-        h_cfg.errors |= ERR_LIBSYS_MTC;
+        TConf.errors |= ERR_LIBSYS_MTC;
 
     display_init();
 

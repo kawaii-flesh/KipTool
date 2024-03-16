@@ -1,10 +1,14 @@
 #include "paramsMenu.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <utils/sprintf.h>
 
 #include "../../../gfx/gfxutils.h"
 #include "../../helpers/kiprw.h"
 #include "../../helpers/param.h"
+#include "../../service/session.h"
+#include "../gfx.h"
 #include "editorMenu.h"
 #include "ktMenu.h"
 #include "tableMenu.h"
@@ -22,10 +26,10 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
-    if (entry->type == ELabel || entry->type == EReset)
+    if (entry->type == ETLabel || entry->type == ETReset)
         gfx_puts_limit((const char*)entry->entry, maxLen);
-    else if (entry->type == EParam) {
-        const char* displayBuff = malloc(1024);
+    else if (entry->type == ETParam) {
+        char* displayBuff = malloc(1024);
         const Param* param = (const Param*)entry->entry;
         s_printf(displayBuff, "%s - ", param->name);
         getDisplayValue(param, displayBuff + strlen(displayBuff),
@@ -34,11 +38,10 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
         gfx_puts_limit(formattedBuff, maxLen);
         free((void*)formattedBuff);
         free((void*)displayBuff);
-    } else if (entry->type == ETable) {
+    } else if (entry->type == ETTable) {
         const Table* table = (const Table*)entry->entry;
         gfx_puts_limit(table->name, maxLen);
     }
-
     gfx_putc('\n');
 }
 
@@ -50,7 +53,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
     for (unsigned int i = 0; i < tablesArraysCount; ++i) totalEntriesCount += tables[i]->count;
     MenuEntry* menuEntries = calloc(sizeof(MenuEntry), totalEntriesCount);
     menuEntries[0].optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT;
-    menuEntries[0].type = ELabel;
+    menuEntries[0].type = ETLabel;
     menuEntries[0].entry = sectionTitle;
     while (1) {
         FormatingData formatingData = {0, 0, 0};
@@ -61,7 +64,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                 menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == getParamValueFromBuffer(custTable, param)
                                                                 ? COLORTORGB(COLOR_DEFAULT_PARAM)
                                                                 : COLORTORGB(COLOR_CHANGED_PARAM);
-                menuEntries[menuEntriesIndex].type = EParam;
+                menuEntries[menuEntriesIndex].type = ETParam;
                 menuEntries[menuEntriesIndex].entry = param;
                 ++menuEntriesIndex;
             }
@@ -74,13 +77,13 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         for (unsigned int tableArrayIndex = 0; tableArrayIndex < tablesArraysCount; ++tableArrayIndex) {
             for (unsigned int tableI = 0; tableI < tables[tableArrayIndex]->count; ++tableI) {
                 menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_YELLOW);
-                menuEntries[menuEntriesIndex].type = ETable;
+                menuEntries[menuEntriesIndex].type = ETTable;
                 menuEntries[menuEntriesIndex].entry = tables[tableArrayIndex]->tables[tableI];
                 ++menuEntriesIndex;
             }
         }
         menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
-        menuEntries[menuEntriesIndex].type = EReset;
+        menuEntries[menuEntriesIndex].type = ETReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
         int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
@@ -89,12 +92,12 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
             return;
         }
         const MenuEntry selectedEntry = menuEntries[res + 1];
-        if (selectedEntry.type == ETable) {
+        if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
             newTableMenu(custTable, table);
-        } else if (selectedEntry.type == EParam)
+        } else if (selectedEntry.type == ETParam)
             newEditorMenu(custTable, selectedEntry.entry);
-        else if (selectedEntry.type == EReset) {
+        else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset all params in this category?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
                 for (unsigned int i = 0; i < paramsArraysCount; ++i) {
@@ -109,7 +112,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                                                             tables[i]->tables[j]->params[k]->defaultValue);
                     }
                 }
-                saveSession(custTable);
+                saveSession((const CustomizeTable*)custTable);
                 char* message = calloc(256, 1);
                 s_printf(message, "[Session] Category: %s has been reset", sectionTitle);
                 gfx_printBottomInfoKT(message);

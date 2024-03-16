@@ -5,15 +5,13 @@
 #include <utils/types.h>
 #include <utils/util.h>
 
-#include "../config.h"
 #include "../fs/fsutils.h"
 #include "../gfx/gfx.h"
 #include "../gfx/gfxutils.h"
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
+#include "../tegraexplorer/tconf.h"
 #include "vector.h"
-
-extern hekate_config h_cfg;
 
 extern int launch_payload(char* path);
 
@@ -21,7 +19,7 @@ void ALWAYS_INLINE power_off() { power_set_state(POWER_OFF_RESET); }
 
 void ALWAYS_INLINE reboot_rcm() { power_set_state(REBOOT_RCM); }
 
-void ALWAYS_INLINE reboot_normal() { power_set_state((h_cfg.t210b01) ? REBOOT_BYPASS_FUSES : POWER_OFF_REBOOT); }
+void ALWAYS_INLINE reboot_normal() { power_set_state((TConf.isMariko) ? REBOOT_BYPASS_FUSES : POWER_OFF_REBOOT); }
 
 void RebootToPayloadOrRcm() {
     if (FileExists("sd:/atmosphere/reboot_payload.bin")) launch_payload("sd:/atmosphere/reboot_payload.bin");

@@ -1,6 +1,5 @@
 #include "mainmenu.h"
 
-#include <input/touch.h>
 #include <mem/heap.h>
 #include <soc/fuse.h>
 #include <storage/nx_sd.h>
@@ -8,7 +7,6 @@
 #include <utils/btn.h>
 #include <utils/util.h>
 
-#include "../config.h"
 #include "../fs/fsutils.h"
 #include "../fs/menus/explorer.h"
 #include "../fs/menus/filemenu.h"
@@ -17,12 +15,11 @@
 #include "../gfx/gfxutils.h"
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
+#include "../hid/touch.h"
 #include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../utils/utils.h"
 #include "tconf.h"
 #include "tools.h"
-
-extern hekate_config h_cfg;
 
 enum {
     MainExplore = 0,
@@ -61,7 +58,7 @@ void HandleSD() {
         gfx_printf("Sd is not mounted!");
         hidWait();
     } else {
-        const loaderKipPath = "sd:/atmosphere/kips";
+        const char loaderKipPath[] = "sd:/atmosphere/kips";
         FileExplorer(DirExists(loaderKipPath) ? loaderKipPath : "sd:/");
     }
 }
@@ -69,7 +66,7 @@ void HandleSD() {
 void ViewCredits() {
     gfx_clearscreen();
     gfx_printf(
-        "\nTegraexplorer v%d.%d.%d\nBy SuchMemeManySkill\Based on Lockpick_RCM & Hekate, from shchmue & CTCaern\n\nKip Tool "
+        "\nTegraexplorer v%d.%d.%d\nBy SuchMemeManySkill Based on Lockpick_RCM & Hekate, from shchmue & CTCaern\n\nKip Tool "
         "v%d.%d.%d-%d by kawaii-flesh\n\n",
         LP_VER_MJ, LP_VER_MN, LP_VER_BF, KT_VER_MJ, KT_VER_MN, KT_VER_BF, KT_CUST_VER);
 
@@ -128,7 +125,7 @@ void EnterMainMenu() {
         // -- Exit --
         mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin"));
         mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
-        mainMenuEntries[MainRebootRCM].hide = h_cfg.t210b01;
+        mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
         mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";
         Vector_t ent = newVec(sizeof(MenuEntry_t), ARRAY_SIZE(mainMenuEntries));
         ent.count = ARRAY_SIZE(mainMenuEntries);

@@ -3,7 +3,7 @@
 #include "../../../gfx/gfxutils.h"
 #include "ktMenu.h"
 
-enum MenuEntryType { ELabel, EParam, ETable, EValue, ELimits, EReset };
+enum MenuEntryType { ETLabel, ETParam, ETTable, ETValue, ETLimits, ETReset, ETFixedRange };
 
 typedef struct MenuEntry {
     union {

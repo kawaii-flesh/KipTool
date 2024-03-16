@@ -6,7 +6,7 @@
 #include "ktMenu.h"
 
 typedef struct PrintParamAdditionalData {
-    u8* custTable;
+    const u8* custTable;
     FormatingData* formatingData;
 } PrintParamAdditionalData;
 

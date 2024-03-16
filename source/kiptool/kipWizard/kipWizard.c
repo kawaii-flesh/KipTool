@@ -33,41 +33,41 @@
 
 const Params* allCPUParams[] = {&cCPUParams, &mCPUParams, &eCPUParams};
 const Tables* allCPUTables[] = {&cCPUTables, &mCPUTables, &eCPUTables};
-void printCPUParams(const u8* custTable, enum Platform platform) {
+void printCPUParams(const CustomizeTable* custTable, enum Platform platform) {
     gfx_clearscreenKT();
     const Params* allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
     const Tables* allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
     if (platform == COMMON)
-        newParamsMenu(custTable, "CPU", allCPUParams, 3, allCPUTables, 3);
+        newParamsMenu((const u8*)custTable, "CPU", allCPUParams, 3, allCPUTables, 3);
     else
-        newParamsMenu(custTable, "CPU", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, "CPU", allParams, 2, allTables, 2);
 }
 
 const Params* allGPUParams[] = {&cGPUParams, &mGPUParams, &eGPUParams};
 const Tables* allGPUTables[] = {&cGPUTables, &mGPUTables, &eGPUTables};
-void printGPUParams(const u8* custTable, enum Platform platform) {
+void printGPUParams(const CustomizeTable* custTable, enum Platform platform) {
     gfx_clearscreenKT();
     const Params* allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
     const Tables* allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
     if (platform == COMMON)
-        newParamsMenu(custTable, "GPU", allGPUParams, 3, allGPUTables, 3);
+        newParamsMenu((const u8*)custTable, "GPU", allGPUParams, 3, allGPUTables, 3);
     else
-        newParamsMenu(custTable, "GPU", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, "GPU", allParams, 2, allTables, 2);
 }
 
 const Params* allRAMParams[] = {&cRAMParams, &mRAMParams, &eRAMParams};
 const Tables* allRAMTables[] = {&cRAMTables, &mRAMTables, &eRAMTables};
-void printRAMParams(const u8* custTable, enum Platform platform) {
+void printRAMParams(const CustomizeTable* custTable, enum Platform platform) {
     gfx_clearscreenKT();
     const Params* allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
     const Tables* allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
     if (platform == COMMON)
-        newParamsMenu(custTable, "RAM", allRAMParams, 3, allRAMTables, 3);
+        newParamsMenu((const u8*)custTable, "RAM", allRAMParams, 3, allRAMTables, 3);
     else
-        newParamsMenu(custTable, "RAM", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, "RAM", allParams, 2, allTables, 2);
 }
 
-void memcpy_kt(u8* dst, u8* src, const unsigned int size) {
+void memcpy_kt(u8* dst, const u8* src, const unsigned int size) {
     for (unsigned int i = 0; i < size; ++i) dst[i] = src[i];
 }
 
@@ -109,7 +109,7 @@ int kipWizard(char* path, FSEntry_t entry) {
     unsigned int startIndex = 0;
     if (kipVersion == KT_CUST_VER) {
         const unsigned int custTableSize = sizeof(CustomizeTable);
-        CustomizeTable* custTable = calloc(custTableSize, 1);
+        CustomizeTable* custTable = malloc(custTableSize);
 
         unsigned int bytesReaded;
         bool goToExit = false;
@@ -145,14 +145,14 @@ int kipWizard(char* path, FSEntry_t entry) {
         if (!goToExit) {
             char* displayBuff = malloc(1024);
             MenuEntry entries[] = {
-                {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = "-- Kip Wizard --"},
-                {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ELabel, .entry = "CPU Params"},
-                {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ELabel, .entry = "GPU Params"},
-                {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ELabel, .entry = "RAM Params"},
-                {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ELabel, .entry = ""},
-                {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ELabel, .entry = "Apply changes"},
-                {.optionUnion = COLORTORGB(COLOR_GREY), .type = ELabel, .entry = "Reset all params to default values"}};
-            void (*functions[])(const u8*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
+                {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = "-- Kip Wizard --"},
+                {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ETLabel, .entry = "CPU Params"},
+                {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ETLabel, .entry = "GPU Params"},
+                {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ETLabel, .entry = "RAM Params"},
+                {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = ""},
+                {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ETLabel, .entry = "Apply changes"},
+                {.optionUnion = COLORTORGB(COLOR_GREY), .type = ETLabel, .entry = "Reset all params to default values"}};
+            void (*functions[])(const CustomizeTable*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
             while (1) {
                 gfx_clearscreenKT();
                 int res = newMenuKT(entries, 7, startIndex, NULL, printEntry);
@@ -162,14 +162,14 @@ int kipWizard(char* path, FSEntry_t entry) {
                 else if (res == 3) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
-                        overwriteCUST(&kipFile, baseOffset, custTable);
+                        overwriteCUST(&kipFile, baseOffset, (const u8*)custTable);
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
                     }
                 } else if (res == 4) {
                     ++startIndex;
                     const char* message[] = {"Do you want to reset all params?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
-                        memcpy_kt(custTable, &defaultCustTable, sizeof(CustomizeTable));
+                        memcpy_kt((u8*)custTable, (const u8*)&defaultCustTable, sizeof(CustomizeTable));
                         saveSession(custTable);
                         gfx_printBottomInfoKT("[Session] All params have been reset");
                     }
