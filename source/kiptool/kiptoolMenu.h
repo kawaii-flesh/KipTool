@@ -1,15 +1,17 @@
 #pragma once
 #include "kipWizard/kipWizard.h"
 #include "service/kiptool.h"
+#include "menuparser/KipToolMenuExample.h"
 
-enum { KTMenu = 0, KTWizard };
+enum { KTMenu = 0, KTWizard, MenuParser };
 
 MenuEntry_t kipToolMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- Kip Tool Menu --"},
     {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Kip Wizard"},
+    {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Menu Parser"},
 };
 
-const int (*kipToolMenuPaths[])(char*, FSEntry_t) = {[KTWizard] = kipWizard};
+const int (*kipToolMenuPaths[])(char*, FSEntry_t) = {[KTWizard] = kipWizard, [MenuParser] = MenuParserDemo};
 
 void drawKipToolMenu(char* path, FSEntry_t entry) {
     createKTDirIfNotExist();
