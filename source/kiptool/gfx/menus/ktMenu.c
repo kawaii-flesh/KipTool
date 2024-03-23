@@ -164,7 +164,7 @@ void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* addi
 
     if (entry->icon) {
         gfx_putc(entry->icon);
-        gfx_putc(' ');
+        gfx_putc('       ');
         maxLen -= 2;
     }
 

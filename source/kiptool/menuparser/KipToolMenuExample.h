@@ -1,3 +1,3 @@
 #pragma once
 
-int MenuParserDemo();
+int MenuParserDemo(char* path, FSEntry_t entry);

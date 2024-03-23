@@ -7,12 +7,13 @@
 #include <string.h>
 #include <mem/heap.h>
 #include <errno.h>
+#include "printf.h"
 
 // #define WINDOWS_KIP_TOOL
 
 #ifdef WINDOWS_KIP_TOOL
 #include <stdio.h>
-#define s_printf sprintf
+#define snprintf sprintf
 #endif
 
 #pragma warning(disable : 4996)
@@ -33,6 +34,17 @@ static int jsoneq(const char* json, jsmntok_t* tok, const char* s) {
 	return -1;
 }
 //*/
+
+void* LocalRealloc(void* original, size_t old_size, size_t new_size)
+{
+	void* ptr = calloc(new_size, 1);
+	if (ptr)
+	{
+		memcpy(ptr, original, old_size);
+	}
+	free(original);
+	return ptr;
+}
 
 void DeleteMenuElement(menu_entry_s* elem)
 {
@@ -225,7 +237,7 @@ void SaveErrorData(jsmntok_t* json_tokens, uint32_t* ptr, char* json_text, menu_
 	{
 		if (t->value_error != 0)
 		{
-			s_printf(t->value_error, "%s , shift:%ld", reason, json_tokens[*ptr].start);
+			snprintf(t->value_error, 256,"%s , shift:%ld", reason, json_tokens[*ptr].start);
 		}
 	}
 }
@@ -395,7 +407,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 						}
 						else
 						{
-							char** temp = NULL;//(char**)realloc(t->requered_jsons, (t->_requered_json_allocated_size + 5) * (sizeof(char**)));
+							char** temp = (char**)LocalRealloc(t->requered_jsons, t->_requered_json_allocated_size * (sizeof(char**)),(t->_requered_json_allocated_size + 5) * (sizeof(char**)));
 							if (temp == NULL)
 							{
 								free(elem);
@@ -719,7 +731,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 				}
 				if (type == VT_DECIMAL)
 				{
-					elem->value_data.step = GetLongInt(work_buffer);;
+					elem->value_data.step = GetLongInt(work_buffer);
 				}
 				else
 				{
@@ -917,7 +929,7 @@ void SaveErrorDependecies(entry_list_s* entity, menu_creation_res_s* res)
 		res->error_ptr = -1;
 		return;
 	}
-	s_printf(res->value_error, "Error: Entity id: %lu have non-existing parent!", entity->elem->_id);
+	snprintf(res->value_error, 256, "Error: Entity id: %lu have non-existing parent!", entity->elem->_id);
 }
 
 void SaveErrorParams(entry_list_s* entity, menu_creation_res_s* res, const char* reason)
@@ -928,7 +940,7 @@ void SaveErrorParams(entry_list_s* entity, menu_creation_res_s* res, const char*
 		res->error_ptr = -1;
 		return;
 	}
-	s_printf(res->value_error, "Error: Entity id: %lu parameter error: %s", entity->elem->_id, reason);
+	snprintf(res->value_error, 256, "Error: Entity id: %lu parameter error: %s", entity->elem->_id, reason);
 }
 
 // Рекурсивный подход, так как не могу спроектировать алгоритм обхода, стека 32 метра, надеюсь влезем, а вложенность у нас не такая огромная
