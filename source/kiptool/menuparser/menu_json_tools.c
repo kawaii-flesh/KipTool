@@ -70,7 +70,7 @@ void CleanList(entry_list_s* head, uint8_t cleanup_elements)
 	}
 }
 
-typedef enum value_type_t
+typedef enum _value_type_t
 {
 	VT_HEX,
 	VT_UNDEFINED,
@@ -84,7 +84,7 @@ typedef enum value_type_t
 	VT_MANUAL,
 	VT_RANGE,
 	VT_FOLDER_ENTRY
-}value_type_t;
+}_value_type_t;
 
 #define IsDigit(c)		((c) >= '0' && (c) <= '9')
 
@@ -126,7 +126,7 @@ int64_t GetLongInt(const char* value)
 	return out;
 }
 
-value_type_t GetValueType(char* value)
+_value_type_t GetValueType(char* value)
 {
 	uint8_t is_number = 1;
 	size_t value_len = strlen(value);
@@ -337,7 +337,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_FOLDER_ENTRY && type != VT_PARAM_VALUE && type != VT_PARAM)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "entity_type is not FolderEntry, Param or ParamValue: ");
@@ -521,7 +521,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_DECIMAL && type != VT_HEX)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "offset is not decimal or hex: ");
@@ -542,7 +542,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 			else if (jsoneq(json_text, &json_tokens[*ptr], "param_size") == 0)
 			{
 				*ptr += 1;
-				if (elem->value_data.param_size)
+				if (elem->value_data.value_size)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Parameter param_size already existed: ");
 					return NULL;
@@ -559,7 +559,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "param_size is not decimal: ");
 					return NULL;
 				}
-				elem->value_data.param_size = (uint32_t)GetLongInt(work_buffer);
+				elem->value_data.value_size = (uint32_t)GetLongInt(work_buffer);
 				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 			}
 			else if (jsoneq(json_text, &json_tokens[*ptr], "unit_name") == 0)
@@ -582,7 +582,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 			else if (jsoneq(json_text, &json_tokens[*ptr], "parameter_type") == 0)
 			{
 				*ptr += 1;
-				if (elem->value_data.param_type)
+				if (elem->value_data.value_type)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Parameter parameter_type already existed: ");
 					return NULL;
@@ -594,18 +594,18 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_FIXED && type != VT_RANGE && type != VT_MANUAL)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "parameter_type is not Fixed, Manual or Range: ");
 					return NULL;
 				}
 				if (type == VT_FIXED)
-					elem->value_data.param_type = PARAM_FIXED_SELECTION;
+					elem->value_data.value_type = VALUE_FIXED_SELECTION;
 				else if (type == VT_RANGE)
-					elem->value_data.param_type = PARAM_RANGE_SELECTION;
+					elem->value_data.value_type = VALUE_RANGE_SELECTION;
 				else
-					elem->value_data.param_type = PARAM_MANUAL_SELECTION;
+					elem->value_data.value_type = VALUE_MANUAL_SELECTION;
 				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 			}
 			else if (jsoneq(json_text, &json_tokens[*ptr], "value") == 0)
@@ -618,7 +618,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_DECIMAL && type != VT_HEX)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "value is not decimal or hex: ");
@@ -645,7 +645,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_DECIMAL && type != VT_HEX)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "min_value is not decimal or hex: ");
@@ -671,7 +671,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_DECIMAL && type != VT_HEX)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "max_value is not decimal or hex: ");
@@ -697,7 +697,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_DECIMAL && type != VT_HEX)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "delimiter is not decimal or hex: ");
@@ -723,7 +723,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
 					return NULL;
 				}
-				value_type_t type = GetValueType(work_buffer);
+				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_DECIMAL && type != VT_HEX)
 				{
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "value_step is not decimal or hex: ");
@@ -960,9 +960,14 @@ void SetUpperEntryFirstItem(menu_entry_s* first_item, menu_entry_s* inner_entry)
 		{
 			if (inner_entry->_id == inner_entry->item_parent->value_data.default_value.id)
 			{
-				if (inner_entry->value_data.param_type == PARAM_FIXED_SELECTION)
+				if (inner_entry->value_data.value_type == VALUE_FIXED_SELECTION)
 				{
 					inner_entry->item_parent->value_data.default_value.value = inner_entry->value_data.value;
+					inner_entry->item_parent->value_data.current_value = inner_entry->value_data.value;
+				}
+				else if (inner_entry->value_data.value_type == VALUE_RANGE_SELECTION)
+				{
+					inner_entry->item_parent->value_data.current_value = inner_entry->item_parent->value_data.default_value.value;
 				}
 			}
 		}
@@ -1128,13 +1133,13 @@ menu_entry_s* SetDependencies(entry_list_s* map, menu_creation_res_s* res)
 					}
 				}
 
-				if (current_ptr->elem->value_data.param_size == 0)
+				if (current_ptr->elem->value_data.value_size == 0)
 				{
-					if (current_ptr->elem->item_parent->value_data.param_size == 0)
+					if (current_ptr->elem->item_parent->value_data.value_size == 0)
 					{
-						current_ptr->elem->item_parent->value_data.param_size = 4;
+						current_ptr->elem->item_parent->value_data.value_size = 4;
 					}
-					current_ptr->elem->value_data.param_size = current_ptr->elem->item_parent->value_data.param_size;
+					current_ptr->elem->value_data.value_size = current_ptr->elem->item_parent->value_data.value_size;
 				}
 
 				if (current_ptr->elem->value_data.delimiter == 0)
@@ -1145,6 +1150,7 @@ menu_entry_s* SetDependencies(entry_list_s* map, menu_creation_res_s* res)
 							current_ptr->elem->value_data.delimiter = 1;
 						else
 							current_ptr->elem->value_data.delimiter = 1000;
+						current_ptr->elem->item_parent->value_data.delimiter = 1;// TODO RECHECK
 					}
 					else
 						current_ptr->elem->value_data.delimiter = current_ptr->elem->item_parent->value_data.delimiter;

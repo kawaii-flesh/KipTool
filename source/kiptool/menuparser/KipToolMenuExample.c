@@ -3,6 +3,7 @@
 #include <string.h>
 #include <utils/util.h>
 
+#include "../../../bdk/utils/sprintf.h"
 #include "../../err.h"
 #include "../../fs/fsutils.h"
 #include "../../gfx/gfx.h"
@@ -10,17 +11,25 @@
 #include "../../gfx/menu.h"
 #include "../../hid/hid.h"
 #include "../gfx/dialogs/confirmationDialog.h"
+#include "../gfx/dialogs/manualValueDialog.h"
 #include "../gfx/gfx.h"
 #include "../gfx/menus/ktMenu.h"
 #include "../gfx/menus/paramsMenu.h"
 #include "../helpers/hw.h"
 #include "../helpers/kiprw.h"
 #include "../helpers/param.h"
+#include "../params/param.h"
 #include "../service/kiptool.h"
 #include "../service/session.h"
 #include "draw_helper.h"
 #include "menu_json_tools.h"
-#include "../../../bdk/utils/sprintf.h"
+
+#define DEBUG_BREAKPOINT                             \
+    while (1) {                                      \
+        Input_t* input = hidRead();                  \
+        if (!(input->buttons)) input = hidWait();    \
+        if (input->buttons & (BtnPow | JoyB)) break; \
+    }
 
 char* ReadFile(const char* path) {
     FIL file;
@@ -72,7 +81,7 @@ void MenuDrawingLogic(menu_entry_s* menu) {
             gfx_clearscreenKT();
             int res = newMenuKT(curr_menu, menu_elements, start_index, NULL, printEntry);
             gfx_printf("Selected: %d", res);
-            DeleteMenuEntry(curr_menu, menu_elements, curr_menu);
+            DeleteMenuEntry(curr_menu, menu_elements, current);
             if (res == -1) {
                 nav_temp = LocateUpperSelectionMenu(current, &start_index);
                 if (nav_temp) {
@@ -82,14 +91,81 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                     return 0;
                 }
             }
-            nav_temp = LocateChoosenMenu(current, res);
+            nav_temp = LocateChoosenMenu(current, &res);
             if (nav_temp == NULL) {
                 nav_temp = current;
                 start_index = 1;
                 goto drawMenu;
             }
             if (nav_temp->item_inner_group) {
+                if (nav_temp->menu_info.entry_type == ENTRY_PARAM)
+                {
+                    start_index = LocateChoosenInnerMenuParam(nav_temp);
+                }
+                else
+                    start_index = 1;
                 current = nav_temp->item_inner_group;
+                nav_temp = current;
+                
+                goto drawMenu;
+            } else {
+                if (nav_temp->menu_info.entry_type == ENTRY_VALUE) {
+                    if (nav_temp->value_data.value_type == VALUE_MANUAL_SELECTION) {
+                        FixedLimits lim_val = {.max = nav_temp->value_data.max_value,
+                                               .min = nav_temp->value_data.min_value,
+                                               .measure = nav_temp->value_data.unit_name,
+                                               .stepSize = nav_temp->value_data.step};
+                        Limit lim = {.type = EFixedLimits, .values = &lim_val};
+                        Param param = {.name = GetMenuHeaderName(current),
+                                       .description = nav_temp->menu_info.name,
+                                       .measure = nav_temp->value_data.unit_name,
+                                       .limitsCount = 1,
+                                       .offset = nav_temp->value_data.offset,
+                                       .defaultValue = -1,
+                                       .limits = &lim};
+                        // gfx_printf("Max = %d Min = %d Measure = %s, Step = %d\r\n",
+                        // ((FixedLimits*)(param.limits[0].values))[0].max, ((FixedLimits*)(param.limits[0].values))[0].min,
+                        //  ((FixedLimits*)(param.limits[0].values))[0].measure,
+                        //  ((FixedLimits*)(param.limits[0].values))[0].stepSize);
+                        // DEBUG_BREAKPOINT;
+                        ManualValueResult val = manualValueDialog(&param, -1);
+                        if (val.status == EMVS_GOOD) {
+                            current->item_parent->value_data.current_value = val.value;
+                            current->item_parent->value_data.delimiter = nav_temp->value_data.delimiter;
+                            free(current->item_parent->value_data.unit_name);
+                            current->item_parent->value_data.unit_name =
+                                (char*)calloc(strlen(nav_temp->value_data.unit_name) + 1, 1);
+                            memcpy(current->item_parent->value_data.unit_name, nav_temp->value_data.unit_name,
+                                   strlen(nav_temp->value_data.unit_name));
+                            current->item_parent->value_data.delimiter = nav_temp->value_data.delimiter;
+                            nav_temp = LocateUpperSelectionMenu(current, &start_index);
+                            if (nav_temp) {
+                                current = nav_temp;
+                                goto drawMenu;
+                            } else {
+                                return 0;
+                            }
+                        }
+
+                    } else {
+                        current->item_parent->value_data.current_value = GetSelectedParameterValue(nav_temp, res);
+                        current->item_parent->value_data.delimiter = nav_temp->value_data.delimiter;
+                        free(current->item_parent->value_data.unit_name);
+                        current->item_parent->value_data.unit_name =
+                            (char*)calloc(strlen(nav_temp->value_data.unit_name) + 1, 1);
+                        memcpy(current->item_parent->value_data.unit_name, nav_temp->value_data.unit_name,
+                               strlen(nav_temp->value_data.unit_name));
+                        nav_temp = LocateUpperSelectionMenu(current, &start_index);
+                        if (nav_temp) {
+                            current = nav_temp;
+                            goto drawMenu;
+                        } else {
+                            return 0;
+                        }
+                    }
+                } else {
+                    nav_temp = current;
+                }
                 nav_temp = current;
                 start_index = 1;
                 goto drawMenu;
@@ -98,7 +174,7 @@ void MenuDrawingLogic(menu_entry_s* menu) {
     }
 }
 
-int MenuParserDemo(char* path, FSEntry_t entry) {
+void MenuParserDemo(char* path, FSEntry_t entry) {
     char* filePath = CombinePaths(path, entry.name);
 
     Input_t* input = hidRead();
@@ -112,7 +188,6 @@ int MenuParserDemo(char* path, FSEntry_t entry) {
     }
 
     gfx_clearscreenKT();
-    char* displayBuff = malloc(1024);
 
     gfx_printf("Reading ");
     gfx_printf("sd:/kip21/kip21.json\r\n");
@@ -126,7 +201,7 @@ int MenuParserDemo(char* path, FSEntry_t entry) {
             if (!(input->buttons)) input = hidWait();
             if (input->buttons & (BtnPow | JoyB)) break;
         }
-        return 0;
+        return;
     }
     // Вызываем эту функцию для парсинга JSON-а. Она не создает меню, но парсит все его элементы
     menu_creation_res_s* menu_skeleton = ReadJsonMenuFromText(json_data);
@@ -139,7 +214,7 @@ int MenuParserDemo(char* path, FSEntry_t entry) {
             if (!(input->buttons)) input = hidWait();
             if (input->buttons & (BtnPow | JoyB)) break;
         }
-        return 0;
+        return;
     }
     free(json_data);
     // Если эта переменная отличается от нуля, то JSON имеет поле entries
@@ -167,7 +242,7 @@ int MenuParserDemo(char* path, FSEntry_t entry) {
                 if (!(input->buttons)) input = hidWait();
                 if (input->buttons & (BtnPow | JoyB)) break;
             }
-            return 0;
+            return;
         }
 
         // Если и в нем будут вхождения - они добавятся в конец этого списка, и requered_jsons_size увеличится
@@ -188,7 +263,7 @@ int MenuParserDemo(char* path, FSEntry_t entry) {
             if (!(input->buttons)) input = hidWait();
             if (input->buttons & (BtnPow | JoyB)) break;
         }
-        return 0;
+        return;
     }
 
     // Если все ок - удаляем список, он не удалит меню, просто освободит память от уже ненужных элементов.
@@ -232,6 +307,6 @@ int MenuParserDemo(char* path, FSEntry_t entry) {
     //     } else if (res <= 2)
     //         functions[res](custTable, getHWType());
     // }
-    free(displayBuff);
-    return 0;
+    free(filePath);
+    return;
 }
