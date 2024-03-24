@@ -114,16 +114,12 @@ void PopulateMenuValueRange(MenuEntry* menu_header, uint32_t count, uint32_t* me
                      (float)i / (float)nav_temp->value_data.delimiter);
         }
 
-        if (nav_temp->menu_info.entry_type == ENTRY_FOLDER) {
-            menu_header[*menu_ptr].optionUnion = COLORTORGB(COLOR_GREEN);
-        } else if (nav_temp->menu_info.entry_type == ENTRY_PARAM) {
-            menu_header[*menu_ptr].optionUnion = COLORTORGB(COLOR_DEFAULT);
-        } else {
-            if (nav_temp->value_data.value_type == VALUE_MANUAL_SELECTION) {
-                menu_header[*menu_ptr].optionUnion = COLORTORGB(COLOR_ORANGE);
-            } else
-                menu_header[*menu_ptr].optionUnion = COLORTORGB(COLOR_GREY);
-        }
+        if (nav_temp->item_parent->value_data.default_value.id == nav_temp->_id &&
+            nav_temp->item_parent->value_data.default_value.value == i) {
+            menu_header[*menu_ptr].optionUnion = COLORTORGB(COLOR_BLUE);
+        } else
+            menu_header[*menu_ptr].optionUnion = COLORTORGB(COLOR_ORANGE);
+
         menu_header[*menu_ptr].type = ETLabel;
         *menu_ptr += 1;
     }
@@ -168,7 +164,8 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements) {
     return curr_menu;
 }
 
-void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char* param_value_curr, char* value_modified_ext) {
+void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char* param_value_curr, char* value_modified_ext,
+                                    uint32_t* color) {
     menu_entry_s* nav_temp = entity->item_inner_group;
     char value_modified[] = "Modified";
     char value_default[] = "Default";
@@ -184,10 +181,13 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
                              nav_temp->value_data.unit_name);
                 }
                 snprintf(value_name, MENU_PARAMETER_VALUE_NAME + 1, nav_temp->menu_info.name);
-                if (entity->value_data.default_value.id == nav_temp->_id)
+                if (entity->value_data.default_value.id == nav_temp->_id) {
+                    *color = COLORTORGB(COLOR_DEFAULT_PARAM);
                     snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_default);
-                else
+                } else {
+                    *color = COLORTORGB(COLOR_CHANGED_PARAM);
                     snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_modified);
+                }
                 return;
             }
         } else if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_MANUAL_SELECTION) {
@@ -203,10 +203,13 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
                 }
                 snprintf(value_name, MENU_PARAMETER_VALUE_NAME + 1, nav_temp->menu_info.name);
                 if (entity->value_data.default_value.id == nav_temp->_id &&
-                    entity->value_data.default_value.value == entity->value_data.current_value)
+                    entity->value_data.default_value.value == entity->value_data.current_value) {
                     snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_default);
-                else
+                    *color = COLORTORGB(COLOR_DEFAULT_PARAM);
+                } else {
                     snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_modified);
+                    *color = COLORTORGB(COLOR_CHANGED_PARAM);
+                }
                 return;
             }
         } else if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_RANGE_SELECTION) {
@@ -224,10 +227,13 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
                     snprintf(value_name, MENU_PARAMETER_VALUE_NAME + 1, nav_temp->menu_info.name,
                              (uint32_t)entity->value_data.current_value);
                     if (entity->value_data.default_value.id == nav_temp->_id &&
-                        entity->value_data.default_value.value == entity->value_data.current_value)
+                        entity->value_data.default_value.value == entity->value_data.current_value) {
                         snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_default);
-                    else
+                        *color = COLORTORGB(COLOR_DEFAULT_PARAM);
+                    } else {
                         snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_modified);
+                        *color = COLORTORGB(COLOR_CHANGED_PARAM);
+                    }
                     return;
                 }
                 beg += nav_temp->value_data.step;
@@ -243,19 +249,34 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
                  entity->value_data.unit_name);
     }
     snprintf(value_name, MENU_PARAMETER_VALUE_NAME + 1, "Unknown");
-    if (entity->value_data.default_value.value == entity->value_data.current_value)
+    if (entity->value_data.default_value.value == entity->value_data.current_value) {
         snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_default);
-    else
+        *color = COLORTORGB(COLOR_DEFAULT_PARAM);
+    } else {
         snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_modified);
+        *color = COLORTORGB(COLOR_CHANGED_PARAM);
+    }
 }
 
-void FormatParamValueEntryName(menu_entry_s* entity, char* buffer) {
+void FormatParamValueEntryName(menu_entry_s* entity, char* buffer, uint32_t* color) {
     if (entity->value_data.value_type == VALUE_FIXED_SELECTION) {
-        if (entity->_id != entity->item_parent->value_data.default_value.id)
-            snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s", entity->menu_info.name, entity->menu_info.help);
-        else
-            snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s - Default", entity->menu_info.name, entity->menu_info.help);
+        if (entity->_id != entity->item_parent->value_data.default_value.id) {
+            *color = COLORTORGB(COLOR_ORANGE);
+            if (entity->menu_info.help) {
+                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s", entity->menu_info.name, entity->menu_info.help);
+            } else
+                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s", entity->menu_info.name);
+        } else {
+            *color = COLORTORGB(COLOR_BLUE);
+            if (entity->menu_info.help) {
+                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s - Default", entity->menu_info.name,
+                         entity->menu_info.help);
+            } else
+                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - Default", entity->menu_info.name, entity->menu_info.help);
+        }
+
     } else {
+        *color = COLORTORGB(COLOR_YELLOW);
         if (entity->value_data.delimiter == 1)
             snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%s - Min: %d, Max: %d, step: %d", entity->menu_info.name,
                      entity->value_data.min_value, entity->value_data.max_value, entity->value_data.step);
@@ -267,11 +288,11 @@ void FormatParamValueEntryName(menu_entry_s* entity, char* buffer) {
     }
 }
 
-void FormatParamEntryName(menu_entry_s* entity, char* buffer) {
+void FormatParamEntryName(menu_entry_s* entity, char* buffer, uint32_t* color) {
     char* param_value_curr = (char*)calloc(MENU_PARAMETER_CURR_VALUE + 1, 1);
     char* value_name = (char*)calloc(MENU_PARAMETER_VALUE_NAME + 1, 1);
     char* value_modified = (char*)calloc(MENU_PARAMETER_MODIFIED + 1, 1);
-    FindAndFormatValueNameAndValue(entity, value_name, param_value_curr, value_modified);
+    FindAndFormatValueNameAndValue(entity, value_name, param_value_curr, value_modified, color);
     snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-28s - %-11s - %-13s - %-8s", entity->menu_info.name, param_value_curr,
              value_name, value_modified);
 
@@ -281,25 +302,27 @@ void FormatParamEntryName(menu_entry_s* entity, char* buffer) {
 }
 
 void PopulateMenuEntry(menu_entry_s* entity, MenuEntry* curr_element) {
+    uint32_t color = 0;
     if (entity->menu_info.entry_type == ENTRY_FOLDER) {
-        curr_element->optionUnion = COLORTORGB(COLOR_GREEN);
-    } else if (entity->menu_info.entry_type == ENTRY_PARAM) {
-        curr_element->optionUnion = COLORTORGB(COLOR_WHITE);
-    } else {
-        if (entity->value_data.value_type == VALUE_MANUAL_SELECTION) {
-            curr_element->optionUnion = COLORTORGB(COLOR_ORANGE);
-        } else
-            curr_element->optionUnion = COLORTORGB(COLOR_GREY);
+        color = COLORTORGB(COLOR_GREEN);
     }
+    // } else if (entity->menu_info.entry_type == ENTRY_PARAM) {
+    //     curr_element->optionUnion = COLORTORGB(COLOR_WHITE);
+    // } else {
+    //     if (entity->value_data.value_type == VALUE_MANUAL_SELECTION) {
+    //         curr_element->optionUnion = COLORTORGB(COLOR_ORANGE);
+    //     } else
+    //         curr_element->optionUnion = COLORTORGB(COLOR_GREY);
+    // }
     char* out = (char*)calloc(MENU_STRING_MAX_LEN + 1, 1);
 
     if (entity->menu_info.entry_type == ENTRY_PARAM) {  //  TODO Type fix
-        FormatParamEntryName(entity, out);
+        FormatParamEntryName(entity, out, &color);
     } else if (entity->menu_info.entry_type == ENTRY_VALUE)
-        FormatParamValueEntryName(entity, out);
+        FormatParamValueEntryName(entity, out, &color);
     else
         strcpy(out, entity->menu_info.name);
-
+    curr_element->optionUnion = color;
     curr_element->entry = out;
     curr_element->type = ETLabel;
     return;
