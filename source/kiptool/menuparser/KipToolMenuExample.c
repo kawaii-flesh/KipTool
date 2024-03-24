@@ -69,6 +69,17 @@ uint8_t CheckErrors(menu_creation_res_s* str) {
     }
 }
 
+void ResetParams(menu_entry_s* head) {
+    while (head) {
+        if (head->menu_info.entry_type == ENTRY_PARAM) {
+            head->value_data.current_value = head->value_data.default_value.value;
+        } else if (head->menu_info.entry_type == ENTRY_FOLDER && head->item_inner_group != NULL) {
+            ResetParams(head->item_inner_group);
+        }
+        head = head->item_next;
+    }
+}
+
 void MenuDrawingLogic(menu_entry_s* menu) {
     menu_entry_s* current = menu;
     menu_entry_s* nav_temp = menu;
@@ -76,7 +87,8 @@ void MenuDrawingLogic(menu_entry_s* menu) {
     while (1) {  // TODO Leaks fix on return 0
     drawMenu:    // TODO Remove plz, only study purpose
         uint32_t menu_elements;
-        MenuEntry* curr_menu = CreateMenuEntity(current, &menu_elements);
+        uint32_t reset_presented;
+        MenuEntry* curr_menu = CreateMenuEntity(current, &menu_elements, &reset_presented);
         while (1) {
             gfx_clearscreenKT();
             int res = newMenuKT(curr_menu, menu_elements, start_index, NULL, printEntry);
@@ -88,9 +100,22 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                     current = nav_temp;
                     goto drawMenu;
                 } else {
-                    return 0;
+                    return;
                 }
             }
+            if (reset_presented) {
+                if (res == menu_elements - 2) {
+                    const char* message[] = {"Do you want to reset all params in this category?", NULL};
+                    enum ConfirmationDialogResult rest_ack = confirmationDialog(message, ENO);
+                    if (rest_ack == EYES) {
+                        ResetParams(current);
+                        nav_temp = current;
+                        start_index = menu_elements - 1;
+                        goto drawMenu;
+                    }
+                }
+            }
+
             nav_temp = LocateChoosenMenu(current, &res);
             if (nav_temp == NULL) {
                 nav_temp = current;
@@ -98,15 +123,13 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                 goto drawMenu;
             }
             if (nav_temp->item_inner_group) {
-                if (nav_temp->menu_info.entry_type == ENTRY_PARAM)
-                {
+                if (nav_temp->menu_info.entry_type == ENTRY_PARAM) {
                     start_index = LocateChoosenInnerMenuParam(nav_temp);
-                }
-                else
+                } else
                     start_index = 1;
                 current = nav_temp->item_inner_group;
                 nav_temp = current;
-                
+
                 goto drawMenu;
             } else {
                 if (nav_temp->menu_info.entry_type == ENTRY_VALUE) {
@@ -143,7 +166,7 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                                 current = nav_temp;
                                 goto drawMenu;
                             } else {
-                                return 0;
+                                return;
                             }
                         }
 
@@ -160,7 +183,7 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                             current = nav_temp;
                             goto drawMenu;
                         } else {
-                            return 0;
+                            return;
                         }
                     }
                 } else {

@@ -163,15 +163,27 @@ void DeleteMenuEntry(MenuEntry* menu_header, uint32_t count, menu_entry_s* nav_t
     free(menu_header);
 }
 
-MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements) {
+MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements, uint32_t* reset_presented) {
     menu_entry_s* nav_temp = current;
     *menu_elements = CalculateEntitys(current);
-    MenuEntry* curr_menu = (MenuEntry*)calloc(*menu_elements, sizeof(MenuEntry));
+    *reset_presented = 0;
+    while (nav_temp)
+    {
+        if (nav_temp->menu_info.entry_type == ENTRY_PARAM){
+            *reset_presented = 1;
+            break;
+        }
+        nav_temp = nav_temp->item_next;
+    }
+    nav_temp = current;
+
+    MenuEntry* curr_menu = (MenuEntry*)calloc(*menu_elements + *reset_presented , sizeof(MenuEntry));
     uint32_t menu_ptr = 0;
     curr_menu[menu_ptr].entry = GetMenuHeaderName(current);
     curr_menu[menu_ptr].optionUnion = COLORTORGB(COLOR_WHITE);
     curr_menu[menu_ptr].skip = 1;
     curr_menu[menu_ptr++].type = ETLabel;
+
     while (nav_temp) {
         if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_RANGE_SELECTION) {
             // gfx_printf("Min %d Max %d Step %d Ptr %d Entitys %d\r\n\0", (uint32_t)nav_temp->value_data.min_value,
@@ -190,8 +202,19 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements) {
         } else {
             PopulateMenuEntry(nav_temp, &curr_menu[menu_ptr++]);
         }
+
         nav_temp = nav_temp->item_next;
     }
+
+    if (*reset_presented)
+    {
+        curr_menu[menu_ptr].entry = calloc(MENU_STRING_MAX_LEN + 1, 1);
+        snprintf(curr_menu[menu_ptr].entry, MENU_STRING_MAX_LEN + 1, "Reset all parameters to default");
+        curr_menu[menu_ptr].optionUnion = COLORTORGB(COLOR_GREY);
+        curr_menu[menu_ptr++].type = ETLabel;
+        *menu_elements += 1;
+    }
+
     return curr_menu;
 }
 
@@ -204,8 +227,8 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
         if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_FIXED_SELECTION) {
             if (entity->value_data.current_value == nav_temp->value_data.value) {
                 if (nav_temp->value_data.delimiter == 1) {
-                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%d%s",
-                             (uint32_t)entity->value_data.current_value, nav_temp->value_data.unit_name);
+                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%lld%s",
+                             entity->value_data.current_value, nav_temp->value_data.unit_name);
                 } else {
                     snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%.2f%s",
                              (float)entity->value_data.current_value / (float)nav_temp->value_data.delimiter,
@@ -225,8 +248,8 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
             if (entity->value_data.current_value >= nav_temp->value_data.min_value &&
                 entity->value_data.current_value <= nav_temp->value_data.max_value) {
                 if (nav_temp->value_data.delimiter == 1) {
-                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%d%s",
-                             (uint32_t)entity->value_data.current_value, nav_temp->value_data.unit_name);
+                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%lld%s",
+                             entity->value_data.current_value, nav_temp->value_data.unit_name);
                 } else {
                     snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%.2f%s",
                              (float)entity->value_data.current_value / (float)nav_temp->value_data.delimiter,
@@ -248,15 +271,15 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
             while (beg <= nav_temp->value_data.max_value) {
                 if (entity->value_data.current_value == beg) {
                     if (nav_temp->value_data.delimiter == 1) {
-                        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%d%s",
-                                 (uint32_t)entity->value_data.current_value, nav_temp->value_data.unit_name);
+                        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%lld%s",
+                                 entity->value_data.current_value, nav_temp->value_data.unit_name);
                     } else {
                         snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%.2f%s",
                                  (float)entity->value_data.current_value / (float)nav_temp->value_data.delimiter,
                                  nav_temp->value_data.unit_name);
                     }
                     snprintf(value_name, MENU_PARAMETER_VALUE_NAME + 1, nav_temp->menu_info.name,
-                             (uint32_t)entity->value_data.current_value);
+                             entity->value_data.current_value);
                     if (entity->value_data.default_value.id == nav_temp->_id &&
                         entity->value_data.default_value.value == entity->value_data.current_value) {
                         snprintf(value_modified_ext, MENU_PARAMETER_MODIFIED + 1, value_default);
@@ -273,7 +296,7 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
         nav_temp = nav_temp->item_next;
     }
     if (entity->value_data.current_value < 2000) {
-        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%d%s", (uint32_t)entity->value_data.current_value,
+        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%lld%s", entity->value_data.current_value,
                  entity->value_data.unit_name);
     } else {
         snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE + 1, "%.2f%s", (float)entity->value_data.current_value / 1000.0f,
@@ -309,7 +332,7 @@ void FormatParamValueEntryName(menu_entry_s* entity, char* buffer, uint32_t* col
     } else {
         *color = COLORTORGB(COLOR_YELLOW);
         if (entity->value_data.delimiter == 1)
-            snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%s - Min: %d, Max: %d, step: %d", entity->menu_info.name,
+            snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%s - Min: %lld, Max: %lld, step: %lld", entity->menu_info.name,
                      entity->value_data.min_value, entity->value_data.max_value, entity->value_data.step);
         else
             snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%s - Min: %.2f, Max: %.2f, step: %.2f", entity->menu_info.name,
