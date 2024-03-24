@@ -69,16 +69,11 @@ uint8_t CheckErrors(menu_creation_res_s* str) {
     }
 }
 
-void ResetParams(menu_entry_s* head)
-{
-    while (head)
-    {
-        if (head->menu_info.entry_type == ENTRY_PARAM)
-        {
+void ResetParams(menu_entry_s* head) {
+    while (head) {
+        if (head->menu_info.entry_type == ENTRY_PARAM) {
             head->value_data.current_value = head->value_data.default_value.value;
-        }
-        else if (head->menu_info.entry_type == ENTRY_FOLDER && head->item_inner_group != NULL)
-        {
+        } else if (head->menu_info.entry_type == ENTRY_FOLDER && head->item_inner_group != NULL) {
             ResetParams(head->item_inner_group);
         }
         head = head->item_next;
@@ -105,18 +100,18 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                     current = nav_temp;
                     goto drawMenu;
                 } else {
-                    return 0;
+                    return;
                 }
             }
-            if (reset_presented)
-            {
-                if (res == menu_elements - 2)
-                {
+            if (reset_presented) {
+                if (res == menu_elements - 2) {
                     const char* message[] = {"Do you want to reset all params in this category?", NULL};
-                    enum ConfirmationDialogResult rest_ack = confirmationDialog( message, ENO);
-                    if (rest_ack == EYES)
-                    {
+                    enum ConfirmationDialogResult rest_ack = confirmationDialog(message, ENO);
+                    if (rest_ack == EYES) {
                         ResetParams(current);
+                        nav_temp = current;
+                        start_index = menu_elements - 1;
+                        goto drawMenu;
                     }
                 }
             }
@@ -128,15 +123,13 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                 goto drawMenu;
             }
             if (nav_temp->item_inner_group) {
-                if (nav_temp->menu_info.entry_type == ENTRY_PARAM)
-                {
+                if (nav_temp->menu_info.entry_type == ENTRY_PARAM) {
                     start_index = LocateChoosenInnerMenuParam(nav_temp);
-                }
-                else
+                } else
                     start_index = 1;
                 current = nav_temp->item_inner_group;
                 nav_temp = current;
-                
+
                 goto drawMenu;
             } else {
                 if (nav_temp->menu_info.entry_type == ENTRY_VALUE) {
@@ -173,7 +166,7 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                                 current = nav_temp;
                                 goto drawMenu;
                             } else {
-                                return 0;
+                                return;
                             }
                         }
 
@@ -190,7 +183,7 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                             current = nav_temp;
                             goto drawMenu;
                         } else {
-                            return 0;
+                            return;
                         }
                     }
                 } else {
