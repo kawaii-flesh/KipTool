@@ -316,17 +316,17 @@ void FormatParamValueEntryName(menu_entry_s* entity, char* buffer, uint32_t* col
     if (entity->value_data.value_type == VALUE_FIXED_SELECTION) {
         if (entity->_id != entity->item_parent->value_data.default_value.id) {
             *color = COLORTORGB(COLOR_ORANGE);
-            if (entity->menu_info.help) {
-                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s", entity->menu_info.name, entity->menu_info.help);
+            if (entity->menu_info.description) {
+                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s", entity->menu_info.name, entity->menu_info.description);
             } else
                 snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s", entity->menu_info.name);
         } else {
             *color = COLORTORGB(COLOR_BLUE);
-            if (entity->menu_info.help) {
+            if (entity->menu_info.description) {
                 snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - %s - Default", entity->menu_info.name,
-                         entity->menu_info.help);
+                         entity->menu_info.description);
             } else
-                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - Default", entity->menu_info.name, entity->menu_info.help);
+                snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-11s  - Default", entity->menu_info.name, entity->menu_info.description);
         }
 
     } else {
@@ -358,7 +358,10 @@ void FormatParamEntryName(menu_entry_s* entity, char* buffer, uint32_t* color) {
 void PopulateMenuEntry(menu_entry_s* entity, MenuEntry* curr_element) {
     uint32_t color = 0;
     if (entity->menu_info.entry_type == ENTRY_FOLDER) {
-        color = COLORTORGB(COLOR_GREEN);
+        if (entity->menu_info.color != 0)
+            color = COLORTORGB(entity->menu_info.color);
+        else
+            color = COLORTORGB(COLOR_GREEN);
     }
     // } else if (entity->menu_info.entry_type == ENTRY_PARAM) {
     //     curr_element->optionUnion = COLORTORGB(COLOR_WHITE);

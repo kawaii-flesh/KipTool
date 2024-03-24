@@ -51,7 +51,9 @@ typedef struct menu_entry_data_s
 {
 	char* name; // Наименование пункта, нуль-терминирован
 	char* help; // Хелпа, нуль терминирована
+	char* description; // Короткое описание, отображается рядом с параметром, 15 символов
 	entry_type_t entry_type; // Тип, в соответствии с енумом
+	uint32_t color; // Цвет
 } menu_entry_data_s;
 
 // Le Costil
@@ -85,6 +87,7 @@ struct entry_list_s
 
 typedef struct menu_creation_res_s
 {
+	char* authors;
 	uint32_t requered_jsons_size;
 	uint32_t _requered_json_allocated_size;
 	int32_t error_ptr; // Указатель на элемент по смещению N символов, в районе которого произошла ошибка. Если меньше нуля - код возврата, например связанный с OOM (-1)

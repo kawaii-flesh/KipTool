@@ -23,6 +23,7 @@
 #include "../service/session.h"
 #include "draw_helper.h"
 #include "menu_json_tools.h"
+#include "printf.h"
 
 #define DEBUG_BREAKPOINT                             \
     while (1) {                                      \
@@ -61,12 +62,11 @@ char* ReadFile(const char* path) {
     return json_data;
 }
 
-uint8_t CheckErrors(menu_creation_res_s* str) {
-    if (str->error_ptr == 0 && str->value_error == NULL)
-        return 0;
-    else {
-        gfx_printf(str->value_error);
-    }
+uint32_t CheckErrors(menu_creation_res_s* str) {
+    if (str->error_ptr == 0 && str->value_error == NULL) return 0;
+
+    gfx_printf(str->value_error);
+    return 1;
 }
 
 void ResetParams(menu_entry_s* head) {
@@ -197,9 +197,45 @@ void MenuDrawingLogic(menu_entry_s* menu) {
     }
 }
 
+char** GetKips(char* path, uint32_t* kip_count) {
+    FRESULT fr;
+    DIR dj;
+    FILINFO fno;
+    uint32_t counter = 0;
+    *kip_count = 0;
+    fr = f_findfirst(&dj, &fno, path, "*.json");
+
+    while (fr == FR_OK && fno.fname[0]) {
+        counter++;
+        gfx_printf("%s\n", fno.fname);
+        fr = f_findnext(&dj, &fno);
+    }
+
+    f_closedir(&dj);
+    if (counter == 0) return NULL;
+    uint32_t ptr = 0;
+    char** paths = (char**)calloc(counter, sizeof(char*));
+
+    fr = f_findfirst(&dj, &fno, path, "*.json"); 
+
+    while (fr == FR_OK && fno.fname[0]) {
+        paths[ptr] = (char*)calloc(256, 1);
+        snprintf(paths[ptr], 256, "%s/%s", path, fno.fname);
+        gfx_printf(paths[ptr]);
+        fr = f_findnext(&dj, &fno);
+        ptr++;
+    }
+
+    f_closedir(&dj);
+    *kip_count = counter;
+    return 0;
+}
+
 void MenuParserDemo(char* path, FSEntry_t entry) {
     char* filePath = CombinePaths(path, entry.name);
+    gfx_clearscreenKT();
 
+    gfx_printf(filePath);
     Input_t* input = hidRead();
     if (input->l) {
         if (input->r)
@@ -210,7 +246,28 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
             setHWType(COMMON);
     }
 
-    gfx_clearscreenKT();
+    char* kt_location = (char*)calloc(256, 1);
+    snprintf(kt_location, 256, "sd:/.kt");
+    uint32_t kip_count = 0;
+    char** kip_paths = GetKips(kt_location, &kip_count);
+    // char** kip_paths = GetKips(&kip_count, kip_files);
+
+    DEBUG_BREAKPOINT;
+    FIL kipFile;
+    if ((res = f_open(&kipFile, filePath, FA_READ | FA_WRITE | FA_OPEN_EXISTING))) {
+        DrawError(newErrCode(res));
+        return;
+    }
+
+    u8 cust[] = CUST;
+    const int baseOffset = searchBytesArray(cust, 4, &kipFile);
+    if (baseOffset == -1) {
+        gfx_printf("CUST section was not found! Press B to exit");
+        free(filePath);
+        while (!(hidRead()->buttons & JoyB))
+            ;
+        return;
+    }
 
     gfx_printf("Reading ");
     gfx_printf("sd:/kip21/kip21.json\r\n");
@@ -230,7 +287,7 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
     menu_creation_res_s* menu_skeleton = ReadJsonMenuFromText(json_data);
 
     // Проверяем на наличие ошибок при парсинге.
-    if (CheckErrors(menu_skeleton)) {
+    if (CheckErrors(menu_skeleton) != 0) {
         while (1) {
             input = hidRead();
 
@@ -250,7 +307,16 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
         gfx_printf("%s", (menu_skeleton->requered_jsons[menu_skeleton->requered_jsons_size]));
         gfx_printf("\r\n");
         json_data = ReadFile(menu_skeleton->requered_jsons[menu_skeleton->requered_jsons_size]);
+        if (json_data == NULL) {
+            gfx_printf("Can`t open file!");
+            while (1) {
+                input = hidRead();
 
+                if (!(input->buttons)) input = hidWait();
+                if (input->buttons & (BtnPow | JoyB)) break;
+            }
+            return;
+        }
         // После этого сразу же очищаем память и затираем указатель!!!!!!!!!!!!
         free(menu_skeleton->requered_jsons[menu_skeleton->requered_jsons_size]);
         menu_skeleton->requered_jsons[menu_skeleton->requered_jsons_size] = NULL;
@@ -258,7 +324,7 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
         // С помощью новой команды дописываем новые элементы меню в список элементов
         menu_skeleton = AppendJsonMenuFromText(json_data, menu_skeleton);
         // Проверяем на наличие ошибок при парсинге.
-        if (CheckErrors(menu_skeleton)) {
+        if (CheckErrors(menu_skeleton) != 0) {
             while (1) {
                 input = hidRead();
 
@@ -279,7 +345,7 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
     gfx_printf("Creating menu based on KIP%d\n", menu_skeleton->kip_version);
     menu_entry_s* menu = CreateMenu(menu_skeleton);
     // Проверяем на наличие ошибок при парсинге.
-    if (CheckErrors(menu_skeleton)) {
+    if (CheckErrors(menu_skeleton) != 0) {
         while (1) {
             input = hidRead();
 

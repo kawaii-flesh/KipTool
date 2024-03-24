@@ -1,3 +1,4 @@
+#pragma once
 
 #include "menu_json_tools.h"
 #include "../gfx/menus/ktMenu.h"

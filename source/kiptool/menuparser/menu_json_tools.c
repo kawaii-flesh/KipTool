@@ -5,21 +5,19 @@
 #include "menu_json_tools.h"
 #include "jsmn.h"
 #include <string.h>
-#include <mem/heap.h>
 #include <errno.h>
 #include "printf.h"
 
-// #define WINDOWS_KIP_TOOL
-
-#ifdef WINDOWS_KIP_TOOL
-#include <stdio.h>
-#define snprintf sprintf
+#ifdef _MSC_VER
+#include <malloc.h>
+#else
+#include <mem/heap.h>
 #endif
 
 #pragma warning(disable : 4996)
 
 #define JSON_TOKENS_COUNT (8096)
-#define WORK_BUFFER_SIZE (256)
+#define WORK_BUFFER_SIZE (1024)
 #define JSON_MAX_TOKENS (17)
 #define UNUSED(x) (void)(x)
 
@@ -48,9 +46,14 @@ void* LocalRealloc(void* original, size_t old_size, size_t new_size)
 
 void DeleteMenuElement(menu_entry_s* elem)
 {
-	free(elem->menu_info.help);
-	free(elem->menu_info.name);
-	free(elem->value_data.unit_name);
+	if (elem == NULL)
+		return;
+	if (elem->menu_info.help)
+		free(elem->menu_info.help);
+	if (elem->menu_info.name)
+		free(elem->menu_info.name);
+	if (elem->value_data.unit_name)
+		free(elem->value_data.unit_name);
 	free(elem);
 }
 
@@ -87,6 +90,7 @@ typedef enum _value_type_t
 }_value_type_t;
 
 #define IsDigit(c)		((c) >= '0' && (c) <= '9')
+#define IsHex(c)        (((c) >= 'a' && (c) <= 'f') || ((c) >= 'A' && (c) <= 'F'))
 
 uint64_t GetHexValue(const char* hex)
 {
@@ -94,7 +98,7 @@ uint64_t GetHexValue(const char* hex)
 	if (len > 2)
 	{
 		if (hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X'))
-			hex+=2;
+			hex += 2;
 	}
 	else
 		return 0;
@@ -115,7 +119,7 @@ uint64_t GetHexValue(const char* hex)
 int64_t GetLongInt(const char* value)
 {
 	int64_t out = 0;
-	while (value) 
+	while (value)
 	{
 		if (IsDigit(value[0]))
 			out = out * 10 + (value[0] - 48);
@@ -147,8 +151,11 @@ _value_type_t GetValueType(char* value)
 		{
 			for (size_t i = 2; i < value_len; i++) {
 				if (IsDigit(value[i]) == 0) {
-					is_number = 0;
-					break;
+					if (IsHex(value[i]) == 0)
+					{
+						is_number = 0;
+						break;
+					}
 				}
 			}
 			if (is_number)
@@ -206,7 +213,7 @@ _value_type_t GetValueType(char* value)
 				else
 					return VT_UNDEFINED;
 			}
-				
+
 		}
 		digit_counter++;
 		ptr++;
@@ -229,17 +236,15 @@ void SaveErrorData(jsmntok_t* json_tokens, uint32_t* ptr, char* json_text, menu_
 		memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 	t->error_ptr = json_tokens[*ptr].start;
 	t->value_error = (char*)calloc(256, 1);
+	if (t->value_error != 0)
+	{
+		snprintf(t->value_error, 256, "%s , shift:%ld", reason, json_tokens[*ptr].start);
+	}
 	if (elem)
 	{
 		free(elem);
 	}
-	else
-	{
-		if (t->value_error != 0)
-		{
-			snprintf(t->value_error, 256,"%s , shift:%ld", reason, json_tokens[*ptr].start);
-		}
-	}
+
 }
 
 // TODO reduce allocation count for speed-up
@@ -297,6 +302,23 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					return NULL;
 				}
 				memcpy(elem->menu_info.help, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+			}
+			else if (jsoneq(json_text, &json_tokens[*ptr], "description") == 0) 
+			{
+				*ptr += 1;
+				if (elem->menu_info.description)
+				{
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Parameter description already existed: ");
+					return NULL;
+				}
+				elem->menu_info.description = (char*)calloc(json_tokens[*ptr].end - json_tokens[*ptr].start + 1, 1);
+				if (elem->menu_info.description == NULL)
+				{
+					free(elem);
+					t->error_ptr = -1;
+					return NULL;
+				}
+				memcpy(elem->menu_info.description, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
 			}
 			else if (jsoneq(json_text, &json_tokens[*ptr], "id") == 0)
 			{
@@ -407,7 +429,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 						}
 						else
 						{
-							char** temp = (char**)LocalRealloc(t->requered_jsons, t->_requered_json_allocated_size * (sizeof(char**)),(t->_requered_json_allocated_size + 5) * (sizeof(char**)));
+							char** temp = (char**)LocalRealloc(t->requered_jsons, t->_requered_json_allocated_size * (sizeof(char**)), (t->_requered_json_allocated_size + 5) * (sizeof(char**)));
 							if (temp == NULL)
 							{
 								free(elem);
@@ -506,6 +528,39 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 				important_fileds++;
 			}
+			else if (jsoneq(json_text, &json_tokens[*ptr], "folder_color") == 0)
+			{
+				*ptr += 1;
+				if (elem->menu_info.color)
+				{
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Parameter folder_color already existed: ");
+					return NULL;
+				}
+				if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+					memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+				else
+				{
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+					return NULL;
+				}
+				_value_type_t type = GetValueType(work_buffer);
+				if (type != VT_DECIMAL && type != VT_HEX)
+				{
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "folder_color is not decimal or hex: ");
+					return NULL;
+				}
+				if (type == VT_DECIMAL)
+				{
+					elem->menu_info.color = (ptrdiff_t)GetLongInt(work_buffer);;
+				}
+				else
+				{
+					elem->menu_info.color = GetHexValue(work_buffer);
+					//int res = sscanf(work_buffer, "%tx", &elem->value_data.offset);
+				}
+
+				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
+				}
 			else if (jsoneq(json_text, &json_tokens[*ptr], "offset") == 0)
 			{
 				*ptr += 1;
@@ -783,7 +838,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "kip_tol using unknown version, template: %d.%d.%d: ");
 					return NULL;
 				}
-				
+
 				char* temp = work_buffer;
 
 				t->kip_tool_major = (int32_t)GetLongInt(temp);
@@ -798,6 +853,26 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 
 				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 				*version += 1;
+			}
+			else if (jsoneq(json_text, &json_tokens[*ptr], "kip_json_authors") == 0)
+			{
+				*ptr += 1;
+				if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+					memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+				else
+				{
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+					return NULL;
+				}	
+				t->authors = (char*)calloc(json_tokens[*ptr].end - json_tokens[*ptr].start + 1, 1);
+				if (t->authors == NULL)
+				{
+					free(elem);
+					t->error_ptr = -1;
+					return NULL;
+				}
+				memcpy(t->authors, work_buffer, json_tokens[*ptr].end - json_tokens[*ptr].start);
+				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 			}
 			else
 			{
