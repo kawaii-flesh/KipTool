@@ -125,6 +125,13 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                         ManualValueResult val = manualValueDialog(&param, -1);
                         if (val.status == EMVS_GOOD) {
                             current->item_parent->value_data.current_value = val.value;
+                            current->item_parent->value_data.delimiter = nav_temp->value_data.delimiter;
+                            free(current->item_parent->value_data.unit_name);
+                            current->item_parent->value_data.unit_name =
+                                (char*)calloc(strlen(nav_temp->value_data.unit_name) + 1, 1);
+                            memcpy(current->item_parent->value_data.unit_name, nav_temp->value_data.unit_name,
+                                   strlen(nav_temp->value_data.unit_name));
+                            current->item_parent->value_data.delimiter = nav_temp->value_data.delimiter;
                             nav_temp = LocateUpperSelectionMenu(current, &start_index);
                             if (nav_temp) {
                                 current = nav_temp;
@@ -136,6 +143,12 @@ void MenuDrawingLogic(menu_entry_s* menu) {
 
                     } else {
                         current->item_parent->value_data.current_value = GetSelectedParameterValue(nav_temp, res);
+                        current->item_parent->value_data.delimiter = nav_temp->value_data.delimiter;
+                        free(current->item_parent->value_data.unit_name);
+                        current->item_parent->value_data.unit_name =
+                            (char*)calloc(strlen(nav_temp->value_data.unit_name) + 1, 1);
+                        memcpy(current->item_parent->value_data.unit_name, nav_temp->value_data.unit_name,
+                               strlen(nav_temp->value_data.unit_name));
                         nav_temp = LocateUpperSelectionMenu(current, &start_index);
                         if (nav_temp) {
                             current = nav_temp;
@@ -288,5 +301,6 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
     //     } else if (res <= 2)
     //         functions[res](custTable, getHWType());
     // }
+    free(filePath);
     return;
 }

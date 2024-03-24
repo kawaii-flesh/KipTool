@@ -1,10 +1,11 @@
 #include "draw_helper.h"
 
+#include <string.h>
+
+#include "../../../bdk/mem/heap.h"
 #include "../../hid/hid.h"
 #include "../gfx/gfx.h"
 #include "printf.h"
-#include "../../../bdk/mem/heap.h"
-#include <string.h>
 
 #define DEBUG_BREAKPOINT                             \
     while (1) {                                      \
@@ -22,27 +23,23 @@ uint32_t GetRangeElementsCount(menu_entry_s* nav_temp) {
     }
     return menu_elements;
 }
-int64_t GetSelectedParameterValue(menu_entry_s* current, int selected){
-    if (current->value_data.value_type == VALUE_RANGE_SELECTION)
-    {
+int64_t GetSelectedParameterValue(menu_entry_s* current, int selected) {
+    if (current->value_data.value_type == VALUE_RANGE_SELECTION) {
         return current->value_data.min_value + (int64_t)selected * current->value_data.step;
-    }
-    else
+    } else
         return current->value_data.value;
 }
 
-menu_entry_s* LocateChoosenMenu(menu_entry_s* current, uint32_t *index) {
+menu_entry_s* LocateChoosenMenu(menu_entry_s* current, uint32_t* index) {
     if (current == NULL) return NULL;
     while (*index != 0) {
         if (current->menu_info.entry_type == ENTRY_VALUE && current->value_data.value_type == VALUE_RANGE_SELECTION) {
-            if (*index < GetRangeElementsCount(current)){
+            if (*index < GetRangeElementsCount(current)) {
                 return current;
-            } 
-            else{
+            } else {
                 *index -= GetRangeElementsCount(current);
             }
-        }
-        else
+        } else
             *index -= 1;
         current = current->item_next;
         if (current == NULL) return NULL;
@@ -71,13 +68,10 @@ menu_entry_s* LocateUpperSelectionMenu(menu_entry_s* current, uint32_t* index) {
 
 const char* GetMenuHeaderName(menu_entry_s* current) {
     char* out = (char*)calloc(256, 1);
-    if (current->item_parent == NULL)
-    {
+    if (current->item_parent == NULL) {
         strcpy(out, "Main menu");
         return out;
-    }
-    else
-    {
+    } else {
         strcpy(out, current->item_parent->menu_info.name);
         return out;
     }
@@ -129,8 +123,7 @@ void PopulateMenuValueRange(MenuEntry* menu_header, uint32_t count, uint32_t* me
 }
 
 void DeleteMenuEntry(MenuEntry* menu_header, uint32_t count, menu_entry_s* nav_temp) {
-    for(uint32_t i = 0; i < count; i++)
-    {
+    for (uint32_t i = 0; i < count; i++) {
         free((char*)menu_header[i].entry);
     }
     free(menu_header);
@@ -168,6 +161,107 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements) {
     return curr_menu;
 }
 
+#define MENU_PARAMETER_NAME_LEN (28)
+#define MENU_PARAMETER_CURR_VALUE (11)
+#define MENU_PARAMETER_VALUE_NAME (13)
+#define MENU_PARAMETER_MODIFIED (8)
+#define MENU_STRING_MAX_LEN \
+    (MENU_PARAMETER_NAME_LEN + 3 + MENU_PARAMETER_CURR_VALUE + 3 + MENU_PARAMETER_VALUE_NAME + 3 + MENU_PARAMETER_MODIFIED)
+
+void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char* param_value_curr, char* value_modified_ext) {
+    menu_entry_s* nav_temp = entity->item_inner_group;
+    char value_modified[] = "Modified";
+    char value_default[] = "Default";
+    while (nav_temp) {
+        if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_FIXED_SELECTION) {
+            if (entity->value_data.current_value == nav_temp->value_data.value) {
+                if (nav_temp->value_data.delimiter == 1) {
+                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%d%s", (uint32_t)entity->value_data.current_value,
+                             nav_temp->value_data.unit_name);
+                } else {
+                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%.2f%s",
+                             (float)entity->value_data.current_value / (float)nav_temp->value_data.delimiter,
+                             nav_temp->value_data.unit_name);
+                }
+                snprintf(value_name, MENU_PARAMETER_VALUE_NAME, nav_temp->menu_info.name);
+                if (entity->value_data.default_value.id == nav_temp->_id)
+                    snprintf(value_modified_ext, 8, value_default);
+                else
+                    snprintf(value_modified_ext, 8, value_modified);
+                return;
+            }
+        } else if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_MANUAL_SELECTION) {
+            if (entity->value_data.current_value >= nav_temp->value_data.min_value &&
+                entity->value_data.current_value <= nav_temp->value_data.max_value) {
+                if (nav_temp->value_data.delimiter == 1) {
+                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%d%s", (uint32_t)entity->value_data.current_value,
+                             nav_temp->value_data.unit_name);
+                } else {
+                    snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%.2f%s",
+                             (float)entity->value_data.current_value / (float)nav_temp->value_data.delimiter,
+                             nav_temp->value_data.unit_name);
+                }
+                snprintf(value_name, MENU_PARAMETER_VALUE_NAME, nav_temp->menu_info.name);
+                if (entity->value_data.default_value.id == nav_temp->_id &&
+                    entity->value_data.default_value.value == entity->value_data.current_value)
+                    snprintf(value_modified_ext, 8, value_default);
+                else
+                    snprintf(value_modified_ext, 8, value_modified);
+                return;
+            }
+        } else if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_RANGE_SELECTION) {
+            int64_t beg = nav_temp->value_data.min_value;
+            while (beg <= nav_temp->value_data.max_value) {
+                if (entity->value_data.current_value == beg) {
+                    if (nav_temp->value_data.delimiter == 1) {
+                        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%d%s",
+                                 (uint32_t)entity->value_data.current_value, nav_temp->value_data.unit_name);
+                    } else {
+                        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%.2f%s",
+                                 (float)entity->value_data.current_value / (float)nav_temp->value_data.delimiter,
+                                 nav_temp->value_data.unit_name);
+                    }
+                    snprintf(value_name, MENU_PARAMETER_VALUE_NAME, nav_temp->menu_info.name,
+                             (uint32_t)entity->value_data.current_value);
+                    if (entity->value_data.default_value.id == nav_temp->_id &&
+                        entity->value_data.default_value.value == entity->value_data.current_value)
+                        snprintf(value_modified_ext, 8, value_default);
+                    else
+                        snprintf(value_modified_ext, 8, value_modified);
+                    return;
+                }
+                beg += nav_temp->value_data.step;
+            }
+        }
+        nav_temp = nav_temp->item_next;
+    }
+    if (entity->value_data.current_value < 2000) {
+        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%d%s", (uint32_t)entity->value_data.current_value,
+                 entity->value_data.unit_name);
+    } else {
+        snprintf(param_value_curr, MENU_PARAMETER_CURR_VALUE, "%.2f%s", (float)entity->value_data.current_value / 1000.0f,
+                 entity->value_data.unit_name);
+    }
+    snprintf(value_name, MENU_PARAMETER_VALUE_NAME, "Unknown");
+    if (entity->value_data.default_value.value == entity->value_data.current_value)
+        snprintf(value_modified_ext, 8, value_default);
+    else
+        snprintf(value_modified_ext, 8, value_modified);
+}
+
+void FormatParamEntryName(menu_entry_s* entity, char* buffer) {
+    char* param_value_curr = (char*)calloc(MENU_PARAMETER_CURR_VALUE + 1, 1);
+    char* value_name = (char*)calloc(MENU_PARAMETER_VALUE_NAME + 1, 1);
+    char* value_modified = (char*)calloc(MENU_PARAMETER_MODIFIED + 1, 1);
+    FindAndFormatValueNameAndValue(entity, value_name, param_value_curr, value_modified);
+    snprintf(buffer, MENU_STRING_MAX_LEN + 1, "%-28s | %-11s | %-13s | %-8s", entity->menu_info.name, param_value_curr, value_name,
+             value_modified);
+
+    free(param_value_curr);
+    free(value_name);
+    free(value_modified);
+}
+
 void PopulateMenuEntry(menu_entry_s* entity, MenuEntry* curr_element) {
     if (entity->menu_info.entry_type == ENTRY_FOLDER) {
         curr_element->optionUnion = COLORTORGB(COLOR_GREEN);
@@ -179,13 +273,11 @@ void PopulateMenuEntry(menu_entry_s* entity, MenuEntry* curr_element) {
         } else
             curr_element->optionUnion = COLORTORGB(COLOR_GREY);
     }
-    char* out = (char*)calloc(256, 1);
-    
-    if (entity->menu_info.entry_type == ENTRY_PARAM)
-    {//  TODO Type fix
-        snprintf(out, 256, "%s: %d", entity->menu_info.name, (int32_t)entity->value_data.current_value);
-    }
-    else
+    char* out = (char*)calloc(MENU_STRING_MAX_LEN + 1, 1);
+
+    if (entity->menu_info.entry_type == ENTRY_PARAM) {  //  TODO Type fix
+        FormatParamEntryName(entity, out);
+    } else
         strcpy(out, entity->menu_info.name);
 
     curr_element->entry = out;

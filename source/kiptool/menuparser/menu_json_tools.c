@@ -963,6 +963,7 @@ void SetUpperEntryFirstItem(menu_entry_s* first_item, menu_entry_s* inner_entry)
 				if (inner_entry->value_data.value_type == VALUE_FIXED_SELECTION)
 				{
 					inner_entry->item_parent->value_data.default_value.value = inner_entry->value_data.value;
+					inner_entry->item_parent->value_data.current_value = inner_entry->value_data.value;
 				}
 			}
 		}
@@ -1145,6 +1146,7 @@ menu_entry_s* SetDependencies(entry_list_s* map, menu_creation_res_s* res)
 							current_ptr->elem->value_data.delimiter = 1;
 						else
 							current_ptr->elem->value_data.delimiter = 1000;
+						current_ptr->elem->item_parent->value_data.delimiter = 1;// TODO RECHECK
 					}
 					else
 						current_ptr->elem->value_data.delimiter = current_ptr->elem->item_parent->value_data.delimiter;
