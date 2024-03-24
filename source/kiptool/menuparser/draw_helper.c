@@ -54,6 +54,37 @@ menu_entry_s* LocateChoosenMenu(menu_entry_s* current, uint32_t* index) {
     return current;
 }
 
+uint32_t LocateChoosenInnerMenuParam(menu_entry_s* current)
+{
+    uint32_t counter = 1;
+    menu_entry_s* nav_temp = current->item_inner_group;
+    while (nav_temp)
+    {
+        if(nav_temp->menu_info.entry_type = ENTRY_VALUE)
+        {
+            if (nav_temp->value_data.value_type == VALUE_FIXED_SELECTION)
+            {
+                if (current->value_data.current_value == nav_temp->value_data.value)
+                    return counter;
+                counter++;
+            }
+            else if (nav_temp->value_data.value_type == VALUE_RANGE_SELECTION)
+            {
+                int64_t beg = nav_temp->value_data.min_value;
+                while (beg <= nav_temp->value_data.max_value)
+                {
+                    if (beg == current->value_data.current_value)
+                        return counter;
+                    counter++;
+                    beg += nav_temp->value_data.step;
+                }
+            }
+        }
+        nav_temp = nav_temp->item_next;
+    }
+    return 1;
+}
+
 menu_entry_s* LocateUpperSelectionMenu(menu_entry_s* current, uint32_t* index) {
     *index = 1;
     if (current->item_upper_group) {

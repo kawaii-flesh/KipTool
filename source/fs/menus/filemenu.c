@@ -10,7 +10,7 @@
 #include "../../gfx/gfxutils.h"
 #include "../../gfx/menu.h"
 #include "../../hid/hid.h"
-#include "../../kiptool/menuparser/KipToolMenuExample.h"
+#include "../../kiptool/kiptoolMenu.h"
 #include "../../tegraexplorer/tconf.h"
 #include "../../utils/utils.h"
 #include "../fsutils.h"
@@ -82,7 +82,7 @@ void RenameFile(char* path, FSEntry_t entry) {
     free(renameTo);
 }
 
-fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, LaunchPayload, MenuParserDemo};
+fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, LaunchPayload, drawKipToolMenu};
 
 void FileMenu(char* path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;

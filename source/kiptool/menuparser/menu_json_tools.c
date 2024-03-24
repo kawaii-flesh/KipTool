@@ -965,6 +965,10 @@ void SetUpperEntryFirstItem(menu_entry_s* first_item, menu_entry_s* inner_entry)
 					inner_entry->item_parent->value_data.default_value.value = inner_entry->value_data.value;
 					inner_entry->item_parent->value_data.current_value = inner_entry->value_data.value;
 				}
+				else if (inner_entry->value_data.value_type == VALUE_RANGE_SELECTION)
+				{
+					inner_entry->item_parent->value_data.current_value = inner_entry->item_parent->value_data.default_value.value;
+				}
 			}
 		}
 		inner_entry->item_upper_group = first_item;

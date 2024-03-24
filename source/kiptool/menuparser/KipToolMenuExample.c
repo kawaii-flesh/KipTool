@@ -98,9 +98,15 @@ void MenuDrawingLogic(menu_entry_s* menu) {
                 goto drawMenu;
             }
             if (nav_temp->item_inner_group) {
+                if (nav_temp->menu_info.entry_type == ENTRY_PARAM)
+                {
+                    start_index = LocateChoosenInnerMenuParam(nav_temp);
+                }
+                else
+                    start_index = 1;
                 current = nav_temp->item_inner_group;
                 nav_temp = current;
-                start_index = 1;
+                
                 goto drawMenu;
             } else {
                 if (nav_temp->menu_info.entry_type == ENTRY_VALUE) {
