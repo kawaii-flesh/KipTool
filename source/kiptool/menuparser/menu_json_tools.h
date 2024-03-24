@@ -15,27 +15,27 @@ typedef enum entry_type_t
 	ENTRY_VALUE = 3, // Значение параметра
 } entry_type_t;
 
-// Перечисление типов параметров
-typedef enum param_type_t
+// Перечисление типов значений
+typedef enum value_type_t
 {
-	PARAM_FIXED_SELECTION = 1, // Фиксированное значение, пресет
-	PARAM_MANUAL_SELECTION = 2, // Ручной выбор, диапазон min-max
-	PARAM_RANGE_SELECTION = 3, // Диапазон параметров с min по max, генерация силами фронта
-} param_type_t;
+	VALUE_FIXED_SELECTION = 1, // Фиксированное значение, пресет
+	VALUE_MANUAL_SELECTION = 2, // Ручной выбор, диапазон min-max
+	VALUE_RANGE_SELECTION = 3, // Диапазон параметров с min по max, генерация силами фронта
+} value_type_t;
 
 // Структура описания значения по умолчанию для параметра
 typedef struct default_value_s
 {
 	uint32_t id; // Айди параметря, являющийся дефолтным
-	int64_t value; // Значение дефолтного параметра
+	int64_t value; // Дефолтное значение
 } default_value_s;
 
 // Структура описания параметров значения, в т.ч. диапазоны
 typedef struct value_data_s
 {
-	uint32_t param_size; // длинна параметра
-	param_type_t param_type; // Тип параметра (преднастройка или ручной выбор)
-	ptrdiff_t offset; // Смещение по кипу параметра
+	uint32_t value_size; // длинна значения
+	value_type_t value_type; // Тип значения (преднастройка или ручной выбор)
+	ptrdiff_t offset; // Смещение по кипу значения
 	int64_t delimiter; // Делитель значения (для мегагерц, к примеру)
 	int64_t value; // Значение
 	int64_t min_value; // Минимальное значение

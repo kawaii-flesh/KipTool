@@ -35,7 +35,7 @@ extern int launch_payload(char* path);
 
 void LaunchPayload(char* path, FSEntry_t entry) { launch_payload(CombinePaths(path, entry.name)); }
 
-void KipTool(char* path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
+//void KipTool(char* path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
 
 void CopyClipboard(char* path, FSEntry_t entry) {
     char* thing = CombinePaths(path, entry.name);

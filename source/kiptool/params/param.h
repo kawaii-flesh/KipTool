@@ -19,7 +19,7 @@ typedef struct {
     const unsigned int offset;
     const unsigned int defaultValue;
     const unsigned int limitsCount;
-    const Limit limits[];
+    const Limit *limits;
 } Param;
 
 typedef struct {

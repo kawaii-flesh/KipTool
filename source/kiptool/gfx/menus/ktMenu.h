@@ -17,7 +17,7 @@ typedef struct MenuEntry {
         u32 optionUnion;
     };
     enum MenuEntryType type;
-    const void* entry;
+    void* entry;
     u8 icon;
 } MenuEntry;
 
