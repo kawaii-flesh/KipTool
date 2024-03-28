@@ -125,7 +125,7 @@ const Param eBAL = {.name = "EMC BALLANCE ADVANCED LOGIC",
                     .description = NULL,
                     .offset = getOffset(defaultCustTable.eBAL),
                     .defaultValue = defaultCustTable.eBAL,
-                    .limitsCount = 2,
+                    .limitsCount = 1,
                     .limits = {{.type = EFixedValues, .values = &eBALFV}}};
 
 const FixedValues eBASFV = {.valuesCount = 6,
@@ -148,7 +148,7 @@ const Param eBAS = {.name = "EBA-SHIFT",
                     .description = NULL,
                     .offset = getOffset(defaultCustTable.eBAS),
                     .defaultValue = defaultCustTable.eBAS,
-                    .limitsCount = 2,
+                    .limitsCount = 1,
                     .limits = {{.type = EFixedValues, .values = &eBASFV}}};
 
 const FixedRange pMeh0FR = {.start = 0, .end = 1};

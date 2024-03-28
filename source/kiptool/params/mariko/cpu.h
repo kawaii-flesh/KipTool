@@ -74,7 +74,7 @@ const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
                             .description = NULL,
                             .offset = getOffset(defaultCustTable.marikoCpuHUV),
                             .defaultValue = defaultCustTable.marikoCpuHUV,
-                            .limitsCount = 2,
+                            .limitsCount = 1,
                             .limits = {{.type = EFixedValues, .values = &marikoCpuHUVFV}}};
 
 const FixedValues marikoCpuMaxVoltFV = {.valuesCount = 4,
