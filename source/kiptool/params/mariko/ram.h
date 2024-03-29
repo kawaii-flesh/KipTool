@@ -31,37 +31,32 @@ const FixedLimits marikoEmcMaxClockFL = {.min = 1333000, .max = 2733000, .stepSi
 // L-C4C 2933 / 2934400 / eBAL 5 4 4 3
 // MICRON E/H eBAL 4 < 3.8GHz // SAMSUNG B eBAL 4 < 3.9GHz // HYNIX CJR/DJR eBAL 4 < 3.8GHz
 // MANUAL 1333000-2733000 STEP 38.4MHz
-const Param marikoEmcMaxClock = {
-    .name = "EMC Max Clock",
-    .measure = "MHz",
-    .description = NULL,
-    .offset = getOffset(defaultCustTable.marikoEmcMaxClock),
-    .defaultValue = defaultCustTable.marikoEmcMaxClock,
-    .limitsCount = 2,
-    .limits = {{.type = EFixedValues, .values = &marikoEmcMaxClockFV}, {.type = EFixedLimits, .values = &marikoEmcMaxClockFL}}};
+const Param marikoEmcMaxClock = {.name = "EMC Max Clock",
+                                 .measure = "MHz",
+                                 .description = NULL,
+                                 .offset = getOffset(defaultCustTable.marikoEmcMaxClock),
+                                 .defaultValue = defaultCustTable.marikoEmcMaxClock,
+                                 .limitsCount = 2,
+                                 .limits = {{.type = EFixedValues, .values = &marikoEmcMaxClockFV}, {.type = EFixedLimits, .values = &marikoEmcMaxClockFL}}};
 
-const FixedValues marikoEmcVddqVoltFV = {
-    .valuesCount = 3, .values = {{.value = 500000, .label = "ECO"}, {.value = 650000}, {.value = 700000, .label = "SRT"}}};
+const FixedValues marikoEmcVddqVoltFV = {.valuesCount = 3, .values = {{.value = 500000, .label = "ECO"}, {.value = 650000}, {.value = 700000, .label = "SRT"}}};
 const FixedLimits marikoEmcVddqVoltFL = {.min = 300000, .max = 800000, .stepSize = 100000};
 // RAM VDDQ MODE
 // 500'000 ECO
 // 650'000 DEFAULT
 // 700'000 SRT
 // MANUAL 300'000-800'000
-const Param marikoEmcVddqVolt = {
-    .name = "RAM VDDQ MODE",
-    .measure = "mV",
-    .description = NULL,
-    .offset = getOffset(defaultCustTable.marikoEmcVddqVolt),
-    .defaultValue = defaultCustTable.marikoEmcVddqVolt,
-    .limitsCount = 2,
-    .limits = {{.type = EFixedValues, .values = &marikoEmcVddqVoltFV}, {.type = EFixedLimits, .values = &marikoEmcVddqVoltFL}}};
+const Param marikoEmcVddqVolt = {.name = "RAM VDDQ MODE",
+                                 .measure = "mV",
+                                 .description = NULL,
+                                 .offset = getOffset(defaultCustTable.marikoEmcVddqVolt),
+                                 .defaultValue = defaultCustTable.marikoEmcVddqVolt,
+                                 .limitsCount = 2,
+                                 .limits = {{.type = EFixedValues, .values = &marikoEmcVddqVoltFV}, {.type = EFixedLimits, .values = &marikoEmcVddqVoltFL}}};
 
-const FixedValues marikoEmcDvbShiftFV = {.valuesCount = 4,
-                                         .values = {{.value = 3, .label = "AUTO"},
-                                                    {.value = 2, .label = "ECO ST1"},
-                                                    {.value = 1, .label = "ECO ST2"},
-                                                    {.value = 0, .label = "ECO ST3"}}};
+const FixedValues marikoEmcDvbShiftFV = {
+    .valuesCount = 4,
+    .values = {{.value = 3, .label = "AUTO"}, {.value = 2, .label = "ECO ST1"}, {.value = 1, .label = "ECO ST2"}, {.value = 0, .label = "ECO ST3"}}};
 const FixedLimits marikoEmcDvbShiftFL = {.min = 300, .max = 1150, .stepSize = 50, .measure = "mV"};  // TODO ? Step size
 // EMB ECO LOGIC
 // 3 AUTO
@@ -69,14 +64,13 @@ const FixedLimits marikoEmcDvbShiftFL = {.min = 300, .max = 1150, .stepSize = 50
 // 1 AUTO ECO ST2
 // 0 AUTO ECO ST3
 // MANUAL 300-1150 mV
-const Param marikoEmcDvbShift = {
-    .name = "EMB ECO LOGIC",
-    .measure = NULL,
-    .description = NULL,
-    .offset = getOffset(defaultCustTable.marikoEmcDvbShift),
-    .defaultValue = defaultCustTable.marikoEmcDvbShift,
-    .limitsCount = 2,
-    .limits = {{.type = EFixedValues, .values = &marikoEmcDvbShiftFV}, {.type = EFixedLimits, .values = &marikoEmcDvbShiftFL}}};
+const Param marikoEmcDvbShift = {.name = "EMB ECO LOGIC",
+                                 .measure = NULL,
+                                 .description = NULL,
+                                 .offset = getOffset(defaultCustTable.marikoEmcDvbShift),
+                                 .defaultValue = defaultCustTable.marikoEmcDvbShift,
+                                 .limitsCount = 2,
+                                 .limits = {{.type = EFixedValues, .values = &marikoEmcDvbShiftFV}, {.type = EFixedLimits, .values = &marikoEmcDvbShiftFL}}};
 
 const Params mRAMParams = {.count = 3, .params = {&marikoEmcMaxClock, &marikoEmcVddqVolt, &marikoEmcDvbShift}};
 const Tables mRAMTables = {};

@@ -75,7 +75,6 @@ void vecRem(Vector_t* vec, int idx) {
         return;
     }
 
-    memcpy((u8*)vec->data + (vec->elemSz * idx), (u8*)vec->data + (vec->elemSz * (idx + 1)),
-           (vec->count - idx - 1) * vec->elemSz);
+    memcpy((u8*)vec->data + (vec->elemSz * idx), (u8*)vec->data + (vec->elemSz * (idx + 1)), (vec->count - idx - 1) * vec->elemSz);
     vec->count--;
 }

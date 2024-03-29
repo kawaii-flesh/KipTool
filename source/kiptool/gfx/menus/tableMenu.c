@@ -21,9 +21,8 @@ void newTableMenu(const u8* custTable, const Table* table) {
     unsigned int menuEntriesIndex = 1;
     for (unsigned int paramI = 0; paramI < paramsCount; ++paramI) {
         const Param* param = table->params[paramI];
-        menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == getParamValueFromBuffer(custTable, param)
-                                                        ? COLORTORGB(COLOR_DEFAULT_PARAM)
-                                                        : COLORTORGB(COLOR_CHANGED_PARAM);
+        menuEntries[menuEntriesIndex].optionUnion =
+            param->defaultValue == getParamValueFromBuffer(custTable, param) ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
         menuEntries[menuEntriesIndex].type = ETParam;
         menuEntries[menuEntriesIndex].entry = param;
         ++menuEntriesIndex;
@@ -38,9 +37,8 @@ void newTableMenu(const u8* custTable, const Table* table) {
         menuEntriesIndex = 1;
         for (unsigned int paramI = 0; paramI < paramsCount; ++paramI) {
             const Param* param = table->params[paramI];
-            menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == getParamValueFromBuffer(custTable, param)
-                                                            ? COLORTORGB(COLOR_DEFAULT_PARAM)
-                                                            : COLORTORGB(COLOR_CHANGED_PARAM);
+            menuEntries[menuEntriesIndex].optionUnion =
+                param->defaultValue == getParamValueFromBuffer(custTable, param) ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
             menuEntries[menuEntriesIndex].type = ETParam;
             menuEntries[menuEntriesIndex].entry = param;
             const unsigned int paramNameLen = strlen(param->name);

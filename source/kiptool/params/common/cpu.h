@@ -4,10 +4,8 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues CPUvFV = {
-    .valuesCount = 4,
-    .values = {
-        {.value = 620}, {.value = 3, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 1, .label = "ECO ST3"}}};
+const FixedValues CPUvFV = {.valuesCount = 4,
+                            .values = {{.value = 620}, {.value = 3, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 1, .label = "ECO ST3"}}};
 const FixedLimits CPUvFL = {.min = 430, .max = 670, .stepSize = 5, .measure = "mV"};
 // CPU UNDER LOGIC
 // 3 AUTO ECO ST1

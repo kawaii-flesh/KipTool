@@ -110,8 +110,7 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
     return;
 }
 
-void getFormatingData(FormatingData* formatingData, const u8* custTable, const unsigned int paramsCount,
-                      const Param* params[]) {
+void getFormatingData(FormatingData* formatingData, const u8* custTable, const unsigned int paramsCount, const Param* params[]) {
     char* displayBuff = calloc(1024, 1);
     char* start = displayBuff;
     unsigned int nameLen = 0;
@@ -162,7 +161,7 @@ void getFormatingData(FormatingData* formatingData, const u8* custTable, const u
 char* getFormattedBuff(FormatingData* formatingData, char* buff) {
     char* newBuff = calloc(1024, 1);
     char* start = newBuff;
-    char *oldBuff = buff;
+    char* oldBuff = buff;
     unsigned int tmp = 0;
     bool space = false;
     unsigned int partsCount = 0;
