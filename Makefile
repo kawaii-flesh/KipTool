@@ -20,7 +20,6 @@ KTVERSION_MAJOR := 3
 KTVERSION_MINOR := 0
 KTVERSION_BUGFX := 0
 KTCUST_VERSION := 23
-KTVERSION := \"$(KTVERSION_MAJOR).$(KTVERSION_MINOR).$(KTVERSION_BUGFX)-$(KTCUST_VERSION)\"
 
 ################################################################################
 
