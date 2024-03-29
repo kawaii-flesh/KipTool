@@ -72,6 +72,4 @@ void setParamValue(const u8* buffer, const Param* param, unsigned int value) {
     free(message);
 }
 
-void setParamValueWithoutSaveSession(const u8* buffer, const Param* param, unsigned int value) {
-    *(unsigned int*)(buffer + param->offset) = value;
-}
+void setParamValueWithoutSaveSession(const u8* buffer, const Param* param, unsigned int value) { *(unsigned int*)(buffer + param->offset) = value; }

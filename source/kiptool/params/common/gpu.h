@@ -3,9 +3,7 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues GPUvFV = {
-    .valuesCount = 3,
-    .values = {{.value = 3, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 1, .label = "ECO ST3"}}};
+const FixedValues GPUvFV = {.valuesCount = 3, .values = {{.value = 3, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 1, .label = "ECO ST3"}}};
 const FixedLimits GPUvFL = {.min = 430, .max = 970, .stepSize = 5, .measure = "mV"};
 // GPU UNDER LOGIC
 // 3 AUTO ECO ST1

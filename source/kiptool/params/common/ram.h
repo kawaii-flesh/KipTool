@@ -4,22 +4,20 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues commonEmcMemVoltFV = {
-    .valuesCount = 3, .values = {{.value = 1175000, .label = "ECO"}, {.value = 1275000}, {.value = 1375000, .label = "SRT"}}};
+const FixedValues commonEmcMemVoltFV = {.valuesCount = 3, .values = {{.value = 1175000, .label = "ECO"}, {.value = 1275000}, {.value = 1375000, .label = "SRT"}}};
 const FixedLimits commonEmcMemVoltFL = {.min = 950000, .max = 1400000, .stepSize = 12500};
 // RAM VDD MODE
 // 1175'000 ECO
 // 1275'000 DEFAULT
 // 1375'000 SRT
 // MANUAL 950'000-1400'000 STEP 12'500uV
-const Param commonEmcMemVolt = {
-    .name = "RAM VDD MODE",
-    .measure = "mV",
-    .description = NULL,
-    .offset = getOffset(defaultCustTable.commonEmcMemVolt),
-    .defaultValue = defaultCustTable.commonEmcMemVolt,
-    .limitsCount = 2,
-    .limits = {{.type = EFixedValues, .values = &commonEmcMemVoltFV}, {.type = EFixedLimits, .values = &commonEmcMemVoltFL}}};
+const Param commonEmcMemVolt = {.name = "RAM VDD MODE",
+                                .measure = "mV",
+                                .description = NULL,
+                                .offset = getOffset(defaultCustTable.commonEmcMemVolt),
+                                .defaultValue = defaultCustTable.commonEmcMemVolt,
+                                .limitsCount = 2,
+                                .limits = {{.type = EFixedValues, .values = &commonEmcMemVoltFV}, {.type = EFixedLimits, .values = &commonEmcMemVoltFL}}};
 
 const FixedRange drochr01FR = {.start = 0, .end = 9};
 // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
@@ -169,8 +167,7 @@ const Param pMeh1 = {.name = "pMeh 1  divMB Supressor",
                      .defaultValue = defaultCustTable.pMEH[1],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedRange, .values = &pMeh1FR}}};
-const FixedValues pMeh2FV = {
-    .valuesCount = 3, .values = {{.value = 0, .label = "1333"}, {.value = 1, .label = "1065"}, {.value = 2, .label = "800"}}};
+const FixedValues pMeh2FV = {.valuesCount = 3, .values = {{.value = 0, .label = "1333"}, {.value = 1, .label = "1065"}, {.value = 2, .label = "800"}}};
 // 2 1333>1065>800 0-2
 const Param pMeh2 = {.name = "pMeh 2",
                      .measure = NULL,
@@ -269,8 +266,8 @@ const Param pMeh12 = {.name = "pMeh 12 E-Enhance P",
                       .defaultValue = defaultCustTable.pMEH[12],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh12FR}}};
-const FixedRange pMeh13FR = {.start = 0, .end = 5};
-// 13 DR Debug 0-5
+const FixedRange pMeh13FR = {.start = 0, .end = 8};
+// 13 DR Debug 0-8
 const Param pMeh13 = {.name = "pMeh 13 DR Debug",
                       .measure = NULL,
                       .description = NULL,
@@ -332,14 +329,33 @@ const Param pMeh19 = {.name = "pMeh 19 vMINetune",
                       .defaultValue = defaultCustTable.pMEH[19],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh19FR}}};
-// DEF =  0  2  0  2  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  3  >> RESERVED >>
+const FixedRange pMeh20FR = {.start = 0, .end = 8};
+// 20 rVDDick 0-8
+const Param pMeh20 = {.name = "pMeh 20 rVDDick",
+                      .measure = NULL,
+                      .description = NULL,
+                      .offset = getOffset(defaultCustTable.pMEH[20]),
+                      .defaultValue = defaultCustTable.pMEH[20],
+                      .limitsCount = 1,
+                      .limits = {{.type = EFixedRange, .values = &pMeh20FR}}};
+const FixedRange pMeh21FR = {.start = 0, .end = 4};
+// 21 gVMINDick 0-4
+const Param pMeh21 = {.name = "pMeh 21 gVMINDick",
+                      .measure = NULL,
+                      .description = NULL,
+                      .offset = getOffset(defaultCustTable.pMEH[21]),
+                      .defaultValue = defaultCustTable.pMEH[21],
+                      .limitsCount = 1,
+                      .limits = {{.type = EFixedRange, .values = &pMeh21FR}}};
+
+// DEF =  0  2  0  2  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  3  4  2  >> RESERVED >>
 // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 const Table pMehTable = {.name = "pMeh Table",
                          .description = NULL,
                          .baseOffset = getOffset(defaultCustTable.pMEH),
-                         .paramsCount = 20,  // 16-23 RESERVED
-                         .params = {&pMeh0,  &pMeh1,  &pMeh2,  &pMeh3,  &pMeh4,  &pMeh5,  &pMeh6,  &pMeh7,  &pMeh8,  &pMeh9,
-                                    &pMeh10, &pMeh11, &pMeh12, &pMeh13, &pMeh14, &pMeh15, &pMeh16, &pMeh17, &pMeh18, &pMeh19}};
+                         .paramsCount = 22,  // 22-23 RESERVED
+                         .params = {&pMeh0,  &pMeh1,  &pMeh2,  &pMeh3,  &pMeh4,  &pMeh5,  &pMeh6,  &pMeh7,  &pMeh8,  &pMeh9,  &pMeh10,
+                                    &pMeh11, &pMeh12, &pMeh13, &pMeh14, &pMeh15, &pMeh16, &pMeh17, &pMeh18, &pMeh19, &pMeh20, &pMeh21}};
 
 const FixedRange sMeh0FR = {.start = 1, .end = 9};
 // 0 ARB-Boost 1-9
@@ -413,8 +429,8 @@ const Param sMeh7 = {.name = "sMeh 7  trDVFS",
                      .defaultValue = defaultCustTable.sMEH[7],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedRange, .values = &sMeh7FR}}};
-const FixedRange sMeh8FR = {.start = 0, .end = 1};
-// 8 E-Boost 0-1
+const FixedRange sMeh8FR = {.start = 0, .end = 2};
+// 8 E-Boost 0-2
 const Param sMeh8 = {.name = "sMeh 8  E-Boost",
                      .measure = NULL,
                      .description = NULL,
@@ -442,8 +458,8 @@ const Param sMeh10 = {.name = "sMeh 10 Latent",
                       .limits = {{.type = EFixedRange, .values = &sMeh10FR}}};
 
 const FixedRange sMeh11FR = {.start = 0, .end = 4};
-// 11 FEH-NEH 0-4
-const Param sMeh11 = {.name = "sMeh 11 FEH-NEH",
+// 11 REF-NEH 0-4
+const Param sMeh11 = {.name = "sMeh 11 REF-NEH",
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.sMEH[11]),
@@ -476,8 +492,7 @@ const Table sMehTable = {.name = "sMeh Table",
                          .description = NULL,
                          .baseOffset = getOffset(defaultCustTable.sMEH),
                          .paramsCount = 14,
-                         .params = {&sMeh0, &sMeh1, &sMeh2, &sMeh3, &sMeh4, &sMeh5, &sMeh6, &sMeh7, &sMeh8, &sMeh9, &sMeh10,
-                                    &sMeh11, &sMeh12, &sMeh13}};
+                         .params = {&sMeh0, &sMeh1, &sMeh2, &sMeh3, &sMeh4, &sMeh5, &sMeh6, &sMeh7, &sMeh8, &sMeh9, &sMeh10, &sMeh11, &sMeh12, &sMeh13}};
 
 const Params cRAMParams = {.count = 3, .params = {&commonEmcMemVolt, &eBAL, &eBAS}};
 const Tables cRAMTables = {.count = 3, .tables = {&drochrsTable, &pMehTable, &sMehTable}};

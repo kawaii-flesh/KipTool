@@ -130,9 +130,7 @@ u32 YLeftConfig = YLEFT;
 
 void gfx_clear_grey(u8 color) { memset(gfx_ctxt.fb, color, gfx_ctxt.width * gfx_ctxt.height * 4); }
 
-void gfx_clear_partial_grey(u8 color, u32 pos_x, u32 height) {
-    memset(gfx_ctxt.fb + pos_x * gfx_ctxt.stride, color, height * 4 * gfx_ctxt.stride);
-}
+void gfx_clear_partial_grey(u8 color, u32 pos_x, u32 height) { memset(gfx_ctxt.fb + pos_x * gfx_ctxt.stride, color, height * 4 * gfx_ctxt.stride); }
 
 void gfx_clear_color(u32 color) {
     for (u32 i = 0; i < gfx_ctxt.width * gfx_ctxt.height; i++) gfx_ctxt.fb[i] = color;
@@ -490,7 +488,6 @@ void gfx_set_rect_argb(const u32* buf, u32 size_x, u32 size_y, u32 pos_x, u32 po
 
 void gfx_render_bmp_argb(const u32* buf, u32 size_x, u32 size_y, u32 pos_x, u32 pos_y) {
     for (u32 y = pos_y; y < (pos_y + size_y); y++) {
-        for (u32 x = pos_x; x < (pos_x + size_x); x++)
-            gfx_ctxt.fb[x + y * gfx_ctxt.stride] = buf[(size_y + pos_y - 1 - y) * size_x + x - pos_x];
+        for (u32 x = pos_x; x < (pos_x + size_x); x++) gfx_ctxt.fb[x + y * gfx_ctxt.stride] = buf[(size_y + pos_y - 1 - y) * size_x + x - pos_x];
     }
 }

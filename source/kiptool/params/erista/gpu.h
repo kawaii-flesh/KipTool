@@ -4,9 +4,8 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues eristaGpuUVFV = {
-    .valuesCount = 3,
-    .values = {{.value = 0, .label = "ECO ST1"}, {.value = 1, .label = "ECO ST2"}, {.value = 2, .label = "ECO ST3"}}};
+const FixedValues eristaGpuUVFV = {.valuesCount = 3,
+                                   .values = {{.value = 0, .label = "ECO ST1"}, {.value = 1, .label = "ECO ST2"}, {.value = 2, .label = "ECO ST3"}}};
 // GPU ECO LOGIC
 // 0 AUTO ECO ST1
 // 1 AUTO ECO ST2
@@ -25,13 +24,12 @@ const FixedLimits eristaHGPUvFL = {.min = 850, .max = 1300, .stepSize = 50, .mea
 // GPU OVER LOGIC
 // 0 AUTO
 // ERISTA: 850-1300 MANUAL
-const Param eristaHGPUv = {
-    .name = "GPU OVER MODE",
-    .description = NULL,
-    .offset = getOffset(defaultCustTable.hGPUv),
-    .defaultValue = defaultCustTable.hGPUv,
-    .limitsCount = 2,
-    .limits = {{.type = EFixedValues, .values = &eristaHGPUvFV}, {.type = EFixedLimits, .values = &eristaHGPUvFL}}};
+const Param eristaHGPUv = {.name = "GPU OVER MODE",
+                           .description = NULL,
+                           .offset = getOffset(defaultCustTable.hGPUv),
+                           .defaultValue = defaultCustTable.hGPUv,
+                           .limitsCount = 2,
+                           .limits = {{.type = EFixedValues, .values = &eristaHGPUvFV}, {.type = EFixedLimits, .values = &eristaHGPUvFL}}};
 
 const FixedLimits eristaGpuDvfsTable192mhzFL = {.min = defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0 - 75000,
                                                 .max = defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0 + 75000,
@@ -284,11 +282,10 @@ const Table eristaGpuDvfsTable = {
     .description = NULL,
     .baseOffset = getOffset(defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0),
     .paramsCount = 24,
-    .params = {&eristaGpuDvfsTable192mhz,  &eristaGpuDvfsTable230mhz,  &eristaGpuDvfsTable307mhz,  &eristaGpuDvfsTable384mhz,
-               &eristaGpuDvfsTable460mhz,  &eristaGpuDvfsTable537mhz,  &eristaGpuDvfsTable614mhz,  &eristaGpuDvfsTable691mhz,
-               &eristaGpuDvfsTable768mhz,  &eristaGpuDvfsTable844mhz,  &eristaGpuDvfsTable921mhz,  &eristaGpuDvfsTable998mhz,
-               &eristaGpuDvfsTable1075mhz, &eristaGpuDvfsTable1152mhz, &eristaGpuDvfsTable1228mhz, &eristaGpuDvfsTable1305mhz,
-               &eristaGpuDvfsTable1344mhz, &eristaGpuDvfsTable1382mhz, &eristaGpuDvfsTable1420mhz, &eristaGpuDvfsTable1459mhz,
+    .params = {&eristaGpuDvfsTable192mhz,  &eristaGpuDvfsTable230mhz,  &eristaGpuDvfsTable307mhz,  &eristaGpuDvfsTable384mhz,  &eristaGpuDvfsTable460mhz,
+               &eristaGpuDvfsTable537mhz,  &eristaGpuDvfsTable614mhz,  &eristaGpuDvfsTable691mhz,  &eristaGpuDvfsTable768mhz,  &eristaGpuDvfsTable844mhz,
+               &eristaGpuDvfsTable921mhz,  &eristaGpuDvfsTable998mhz,  &eristaGpuDvfsTable1075mhz, &eristaGpuDvfsTable1152mhz, &eristaGpuDvfsTable1228mhz,
+               &eristaGpuDvfsTable1305mhz, &eristaGpuDvfsTable1344mhz, &eristaGpuDvfsTable1382mhz, &eristaGpuDvfsTable1420mhz, &eristaGpuDvfsTable1459mhz,
                &eristaGpuDvfsTable1497mhz, &eristaGpuDvfsTable1536mhz, &eristaGpuDvfsTable1574mhz, &eristaGpuDvfsTable1612mhz}};
 
 const Params eGPUParams = {.count = 2, .params = {&eristaGpuUV, &eristaHGPUv}};

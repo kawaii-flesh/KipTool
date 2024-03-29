@@ -40,8 +40,7 @@ void FileExplorer(const char* path) {
     if (TConf.explorerCopyMode == CMODE_Move || TConf.explorerCopyMode == CMODE_MoveFolder) ResetCopyParams();
 
     while (1) {
-        topEntries[2].optionUnion =
-            (TConf.explorerCopyMode != CMODE_None) ? (COLORTORGB(COLOR_ORANGE)) : (COLORTORGB(COLOR_GREY) | SKIPBIT);
+        topEntries[2].optionUnion = (TConf.explorerCopyMode != CMODE_None) ? (COLORTORGB(COLOR_ORANGE)) : (COLORTORGB(COLOR_GREY) | SKIPBIT);
         topEntries[1].name = (!strcmp(SD_ROOT, storedPath)) ? "<- Exit explorer" : "<- Folder back";
 
         gfx_clearscreen();

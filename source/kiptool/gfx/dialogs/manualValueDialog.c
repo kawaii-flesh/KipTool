@@ -48,8 +48,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     const char* measure = param->measure != NULL ? param->measure : fixedLimits->measure != NULL ? fixedLimits->measure : "";
     const unsigned int minMaxDif = numPlaces(max) - numPlaces(min);
     unsigned int maxStringLen = 16 + numPlaces(min > 1500 ? min / 1000 : min) + numPlaces(max > 1500 ? max / 1000 : max) * 2 +
-                                numPlaces(stepSize > 1500 ? stepSize / 1000 : stepSize) +
-                                (measure != NULL ? strlen(measure) : 0) + minMaxDif + 6;
+                                numPlaces(stepSize > 1500 ? stepSize / 1000 : stepSize) + (measure != NULL ? strlen(measure) : 0) + minMaxDif + 6;
     if (strlen(help) + 2 > maxStringLen) maxStringLen = strlen(help) + 2;
     unsigned int fontSize = gfx_con.fntsz;
     unsigned int boxWidth = (maxStringLen * fontSize) + fontSize * 2;
@@ -103,8 +102,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
             gfx_box(boxX0Position, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
             gfx_con_setpos(selectorX0Position, selectorY0Position);
-            gfx_printf("min=%s %k%s%k %s=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr,
-                       measure);
+            gfx_printf("min=%s %k%s%k %s=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr, measure);
             free(minStr);
             free(currentStr);
             free(maxStr);
@@ -138,8 +136,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                     continue;
                 }
             } else {
-                const char* message[] = {"Oops... The selected value cannot be used O_o", "Do you want to continue editing?",
-                                         NULL};
+                const char* message[] = {"Oops... The selected value cannot be used O_o", "Do you want to continue editing?", NULL};
                 if (confirmationDialog(message, ENO) == ENO) {
                     const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
                     return invalidValue;

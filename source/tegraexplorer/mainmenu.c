@@ -134,8 +134,7 @@ void EnterMainMenu() {
         gfx_clearscreen();
         gfx_putc('\n');
 
-        res = newMenu(&ent, res, 79, 30,
-                      (ent.count == ARRAY_SIZE(mainMenuEntries)) ? ALWAYSREDRAW : ALWAYSREDRAW | ENABLEPAGECOUNT,
+        res = newMenu(&ent, res, 79, 30, (ent.count == ARRAY_SIZE(mainMenuEntries)) ? ALWAYSREDRAW : ALWAYSREDRAW | ENABLEPAGECOUNT,
                       ent.count - ARRAY_SIZE(mainMenuEntries));
         if (res < 12 && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
 

@@ -23,14 +23,13 @@ const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSi
 // L-C4C 2366 / 2361600 / eBAL 4 4 4 4
 // 1600000-2366000 MANUAL 38.4MHz STEP
 // 2278400 2240000 2201600 2163200 2124800 TODO Is actual min-max for manual?
-const Param eristaEmcMaxClock = {
-    .name = "EMC Max Clock",
-    .measure = "MHz",
-    .description = NULL,
-    .offset = getOffset(defaultCustTable.eristaEmcMaxClock),
-    .defaultValue = defaultCustTable.eristaEmcMaxClock,
-    .limitsCount = 2,
-    .limits = {{.type = EFixedValues, .values = &eristaEmcMaxClockFV}, {.type = EFixedLimits, .values = &eristaEmcMaxClockFL}}};
+const Param eristaEmcMaxClock = {.name = "EMC Max Clock",
+                                 .measure = "MHz",
+                                 .description = NULL,
+                                 .offset = getOffset(defaultCustTable.eristaEmcMaxClock),
+                                 .defaultValue = defaultCustTable.eristaEmcMaxClock,
+                                 .limitsCount = 2,
+                                 .limits = {{.type = EFixedValues, .values = &eristaEmcMaxClockFV}, {.type = EFixedLimits, .values = &eristaEmcMaxClockFL}}};
 
 const Params eRAMParams = {.count = 1, .params = {&eristaEmcMaxClock}};
 const Tables eRAMTables = {};
