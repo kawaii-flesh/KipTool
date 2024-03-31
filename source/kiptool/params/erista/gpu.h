@@ -11,7 +11,7 @@ const FixedValues eristaGpuUVFV = {.valuesCount = 3,
 // 1 AUTO ECO ST2
 // 2 AUTO ECO ST3
 // ERISTA = eristaGpuDvfsTable uV - (12500 uV *marikoGpuUV)
-const Param eristaGpuUV = {.name = "GPU ECO LOGIC ",
+const Param eristaGpuUV = {.name = "GPU ECO LOGIC",
                            .measure = NULL,
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoGpuUV),
