@@ -37,10 +37,10 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
         gfx_puts_limit(displayBuff, maxLen);
         free(displayBuff);
     } else if (entry->type == ETFixedRange) {
-        char* buff = malloc(8);
-        utoa((unsigned int)entry->entry, buff, 10);  // It is not a bug. entry->entry is an unsigned int value
-        gfx_puts_limit(buff, maxLen);
-        free((void*)buff);
+        char* displayBuff = malloc(256);
+        getDisplayValue(editorAdditionalData->param, displayBuff, (unsigned int)entry->entry, 0);
+        gfx_puts_limit(displayBuff, maxLen);
+        free((void*)displayBuff);
     } else if (entry->type == ETValue) {
         char* displayBuff = malloc(256);
         const Value* value = entry->entry;

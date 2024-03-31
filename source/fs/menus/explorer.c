@@ -17,6 +17,7 @@
 #include "../readers/folderReader.h"
 #include "filemenu.h"
 #include "foldermenu.h"
+#include "../../kiptool/gfx/dialogs/confirmationDialog.h"
 
 #define SD_ROOT "sd:/"
 
@@ -91,11 +92,19 @@ void FileExplorer(const char* path) {
                 if (TConf.explorerCopyMode == CMODE_Move || TConf.explorerCopyMode == CMODE_MoveFolder) {
                     if ((err.err = f_rename(TConf.srcCopy, dst))) err = newErrCode(err.err);
                 } else if (TConf.explorerCopyMode == CMODE_Copy) {
+                    if (FileExists(dst)) {
+                        const char* fileMessage[] = {"The file already exists.", "Do you want to overwrite it?", NULL};
+                        if (confirmationDialog(fileMessage, ENO) == ENO) continue;
+                    }
                     gfx_clearscreen();
                     RESETCOLOR;
                     gfx_printf("Hold vol+/- to cancel\nCopying %s... ", filename);
                     err = FileCopy(TConf.srcCopy, dst, COPY_MODE_CANCEL | COPY_MODE_PRINT);
                 } else {
+                    if (DirExists(dst)) {
+                        const char* dirMessage[] = {"The dir already exists.", "Do you want to overwrite it?", NULL};
+                        if (confirmationDialog(dirMessage, ENO) == ENO) continue;
+                    }
                     gfx_clearscreen();
                     RESETCOLOR;
                     gfx_printf("\nCopying folder... ");

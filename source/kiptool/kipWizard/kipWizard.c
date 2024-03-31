@@ -162,6 +162,7 @@ int kipWizard(char* path, FSEntry_t entry) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         overwriteCUST(&kipFile, baseOffset, (const u8*)custTable);
+                        removeSession();
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
                     }
                 } else if (res == 4) {

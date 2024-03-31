@@ -36,3 +36,12 @@ bool saveSession(const CustomizeTable* customizeTable) {
 
     return true;
 }
+
+bool removeSession() {
+    FIL file;
+
+    FRESULT res = f_unlink(KTSESSION);
+    if (res != FR_OK) return false;
+
+    return true;
+}

@@ -12,7 +12,7 @@ const FixedValues marikoGpuUVFV = {
 // 1 AUTO ECO ST2
 // 2 AUTO ECO ST3
 // 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV STEP
-const Param marikoGpuUV = {.name = "GPU ECO LOGIC ",
+const Param marikoGpuUV = {.name = "GPU ECO LOGIC",
                            .measure = NULL,
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoGpuUV),
