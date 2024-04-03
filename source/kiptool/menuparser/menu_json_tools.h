@@ -103,33 +103,32 @@ typedef struct menu_creation_res_s
 
 
 
-
-// Чтение JSON и складирование всех элементов в список, первый этап создания меню
-// input: char* json_text - нуль-терминированное содержимое файла json, весь файл
-// 
-// return: структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню. 
+/// @brief Чтение JSON и складирование всех элементов в список, первый этап создания меню
+/// @param json_text нуль-терминированное содержимое файла json, весь файл
+/// @return структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню. 
 //         Эти пункты не пригодны для создания меню. Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
 menu_creation_res_s* ReadJsonMenuFromText(char* json_text);
 
-// Чтение JSON и добавление элементов в конец списка JSON-элементов
-// input: char* json_text - нуль-терминированное содержимое файла json, весь файл
-//        menu_creation_res_s* menu_creation_res - по сути результат работы функции ReadJsonMenuFromText
-// 
-// return: структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню. 
+/// @brief Чтение JSON и добавление элементов в конец списка JSON-элементов
+/// @param json_text нуль-терминированное содержимое файла json, весь файл
+/// @param menu_creation_res menu_creation_res - по сути результат работы функции ReadJsonMenuFromText
+/// @return структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню. 
 //         Эти пункты не пригодны для создания меню. Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
 menu_creation_res_s* AppendJsonMenuFromText(char* json_text, menu_creation_res_s* menu_creation_res);
 
-// Создание меню, проставление зависимостей и добавление избыточной информации
-// input: menu_creation_res_s* menu_creation_res - по сути результат работы функции ReadJsonMenuFromText
-//        
-// return: Указатель на голову меню
+/// @brief Создание меню, проставление зависимостей и добавление избыточной информации
+/// @param menu_creation_res menu_creation_res_s* menu_creation_res - по сути результат работы функции ReadJsonMenuFromText
+/// @return Указатель на голову меню
 //         Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
 menu_entry_s* CreateMenu(menu_creation_res_s* menu_creation_res);
 
-void DeleteMenuCreationRes(menu_creation_res_s*);
+/// @brief Удаление структуры с результатами парсинга
+/// @param str Указатель на структуру с результатами парсинга
+void DeleteMenuCreationRes(menu_creation_res_s* str);
 
+
+/// @brief Удаление меню и всех его элементов
+/// @param header Указатель на голову меню, самый верхний уровень, самый первый пункт меню
 void DeleteJsonMenu(menu_entry_s* header);
-
-char* GetCurrentValue(menu_entry_s* folder_with_params, int64_t readed_value);
 
 

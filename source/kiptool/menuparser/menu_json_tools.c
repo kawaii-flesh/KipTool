@@ -1339,8 +1339,3 @@ void DeleteJsonMenu(menu_entry_s* header)
 	}
 
 }
-
-char* GetCurrentValue(menu_entry_s* folder_with_params, int64_t readed_value)
-{
-	return NULL;
-}

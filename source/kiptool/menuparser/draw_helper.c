@@ -21,6 +21,9 @@
 #define MENU_STRING_MAX_LEN \
     (MENU_PARAMETER_NAME_LEN + 3 + MENU_PARAMETER_CURR_VALUE + 3 + MENU_PARAMETER_VALUE_NAME + 3 + MENU_PARAMETER_MODIFIED)
 
+/// @brief Calculate size of RANGE_SELECTION items
+/// @param nav_temp ptr to current menu_entry_s
+/// @return Size of RANGE_SELECTION menus
 uint32_t GetRangeElementsCount(menu_entry_s* nav_temp) {
     uint32_t menu_elements = 0;
     int64_t temp = nav_temp->value_data.min_value;
@@ -115,13 +118,14 @@ const char* GetMenuHeaderName(menu_entry_s* current) {
     }
 }
 
+/// @brief Calculating size of MenuEntry future array, including all entrys of menu
+/// @param nav_temp Head of current menu
+/// @return size of MenuEntrys
 uint32_t CalculateEntitys(menu_entry_s* nav_temp) {
     uint32_t menu_elements = 1;
     while (nav_temp) {
         if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_RANGE_SELECTION) {
             menu_elements += GetRangeElementsCount(nav_temp);
-            // menu_elements += abs((nav_temp->value_data.max_value - nav_temp->value_data.min_value) /
-            // nav_temp->value_data.step) + 1;
         } else {
             menu_elements++;
         }
@@ -130,14 +134,15 @@ uint32_t CalculateEntitys(menu_entry_s* nav_temp) {
     return menu_elements;
 }
 
+/// @brief Populate MenuEntry, specific code for RANGE_SELECTION
+/// @param menu_header Pointer to first MenuEntry, which we populating
+/// @param count Currently unused, size of menu_header array
+/// @param menu_ptr External index of first non-filled MenuEntry, will be modified in this function
+/// @param nav_temp Ptr to current menu_entry_s. Fill menu_header based on data in nav_temp
 void PopulateMenuValueRange(MenuEntry* menu_header, uint32_t count, uint32_t* menu_ptr, menu_entry_s* nav_temp) {
-    // gfx_printf("Min %d Max %d Step %d\r\n\0", (uint32_t)nav_temp->value_data.min_value,
-    // (uint32_t)nav_temp->value_data.max_value,
-    //            (uint32_t)nav_temp->value_data.step);
     for (int32_t i = nav_temp->value_data.min_value; i <= nav_temp->value_data.max_value; i += nav_temp->value_data.step) {
-        // gfx_printf("i on step %d ptr %d\r\n\0", (uint32_t)i, *menu_ptr);
         menu_header[*menu_ptr].entry = calloc(MENU_STRING_MAX_LEN + 1, 1);
-        // gfx_printf("Text = %s\r\n\0", nav_temp->menu_info.name);
+        // Если делитель 1 - целочисленые операции, просто помещаем имя
         if (nav_temp->value_data.delimiter == 1) {
             snprintf(menu_header[*menu_ptr].entry, MENU_STRING_MAX_LEN + 1, nav_temp->menu_info.name, i);
         } else {
@@ -167,7 +172,7 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements, uint
     menu_entry_s* nav_temp = current;
     *menu_elements = CalculateEntitys(current);
     *reset_presented = 0;
-    while (nav_temp)
+    while (nav_temp) // If we have ENTRY_PARAM - add reset entry
     {
         if (nav_temp->menu_info.entry_type == ENTRY_PARAM){
             *reset_presented = 1;
@@ -178,27 +183,15 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements, uint
     nav_temp = current;
 
     MenuEntry* curr_menu = (MenuEntry*)calloc(*menu_elements + *reset_presented , sizeof(MenuEntry));
-    uint32_t menu_ptr = 0;
+    uint32_t menu_ptr = 0; // Header of menu
     curr_menu[menu_ptr].entry = GetMenuHeaderName(current);
     curr_menu[menu_ptr].optionUnion = COLORTORGB(COLOR_WHITE);
     curr_menu[menu_ptr].skip = 1;
     curr_menu[menu_ptr++].type = ETLabel;
 
-    while (nav_temp) {
+    while (nav_temp) { // Filling menu
         if (nav_temp->menu_info.entry_type == ENTRY_VALUE && nav_temp->value_data.value_type == VALUE_RANGE_SELECTION) {
-            // gfx_printf("Min %d Max %d Step %d Ptr %d Entitys %d\r\n\0", (uint32_t)nav_temp->value_data.min_value,
-            // (uint32_t)nav_temp->value_data.max_value,
-            //            (uint32_t)nav_temp->value_data.step, menu_ptr, *menu_elements);
             PopulateMenuValueRange(curr_menu, *menu_elements, &menu_ptr, nav_temp);
-            // gfx_printf("Min %d Max %d Step %d Ptr %d Entitys %d\r\n\0", (uint32_t)nav_temp->value_data.min_value,
-            // (uint32_t)nav_temp->value_data.max_value,
-            //            (uint32_t)nav_temp->value_data.step, menu_ptr,*menu_elements);
-            // while (1) {
-            //     Input_t* input = hidRead();
-            //
-            //   if (!(input->buttons)) input = hidWait();
-            //   if (input->buttons & (BtnPow | JoyB)) break;
-            //}
         } else {
             PopulateMenuEntry(nav_temp, &curr_menu[menu_ptr++]);
         }
@@ -206,7 +199,7 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements, uint
         nav_temp = nav_temp->item_next;
     }
 
-    if (*reset_presented)
+    if (*reset_presented) // If we have resetable params - add entry for this
     {
         curr_menu[menu_ptr].entry = calloc(MENU_STRING_MAX_LEN + 1, 1);
         snprintf(curr_menu[menu_ptr].entry, MENU_STRING_MAX_LEN + 1, "Reset all parameters to default");
@@ -218,6 +211,12 @@ MenuEntry* CreateMenuEntity(menu_entry_s* current, uint32_t* menu_elements, uint
     return curr_menu;
 }
 
+/// @brief Filling char data for creating MenuEntry string. Nearly all arguments used as return params
+/// @param entity Current menu entry
+/// @param value_name Pointer to external char array, used for value name, size MENU_PARAMETER_NAME_LEN + 1
+/// @param param_value_curr Pointer to external char array, used for current paramenet value, size MENU_PARAMETER_CURR_VALUE + 1
+/// @param value_modified_ext  Pointer to external char array, used for modified string, size MENU_PARAMETER_MODIFIED + 1
+/// @param color Pointer to external uint32_t value, cointains color data for Entry.
 void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char* param_value_curr, char* value_modified_ext,
                                     uint32_t* color) {
     menu_entry_s* nav_temp = entity->item_inner_group;
@@ -312,6 +311,10 @@ void FindAndFormatValueNameAndValue(menu_entry_s* entity, char* value_name, char
     }
 }
 
+/// @brief Creanting MenuEntry string for ValueEntry menu element
+/// @param entity  Current menu_entry_s
+/// @param buffer Work buffer, size at least MENU_STRING_MAX_LEN + 1
+/// @param color Pointer to external uint32_t value, cointains color data for Entry.
 void FormatParamValueEntryName(menu_entry_s* entity, char* buffer, uint32_t* color) {
     if (entity->value_data.value_type == VALUE_FIXED_SELECTION) {
         if (entity->_id != entity->item_parent->value_data.default_value.id) {
@@ -342,6 +345,10 @@ void FormatParamValueEntryName(menu_entry_s* entity, char* buffer, uint32_t* col
     }
 }
 
+/// @brief Creanting MenuEntry string for ParamEntry menu element
+/// @param entity Current menu_entry_s
+/// @param buffer Work buffer, size at least MENU_STRING_MAX_LEN + 1
+/// @param color Pointer to external uint32_t value, cointains color data for Entry.
 void FormatParamEntryName(menu_entry_s* entity, char* buffer, uint32_t* color) {
     char* param_value_curr = (char*)calloc(MENU_PARAMETER_CURR_VALUE + 1, 1);
     char* value_name = (char*)calloc(MENU_PARAMETER_VALUE_NAME + 1, 1);
@@ -355,6 +362,9 @@ void FormatParamEntryName(menu_entry_s* entity, char* buffer, uint32_t* color) {
     free(value_modified);
 }
 
+/// @brief Filling MenuEntry element based on entity data
+/// @param entity Current pointer to menu_entry_s element
+/// @param curr_element Current pointer to MenuEntry element
 void PopulateMenuEntry(menu_entry_s* entity, MenuEntry* curr_element) {
     uint32_t color = 0;
     if (entity->menu_info.entry_type == ENTRY_FOLDER) {
