@@ -23,7 +23,11 @@
 
 int32_t error_ptr;
 
-//*
+/// @brief Compare json entity to string
+/// @param json pointer to JSON char array
+/// @param tok ptr to jsmntok_t structure of current json element
+/// @param s compare string
+/// @return 0 if strings are the same, -1 if not
 static int jsoneq(const char* json, jsmntok_t* tok, const char* s) {
 	if (tok->type == JSMN_STRING && (int)strlen(s) == tok->end - tok->start &&
 		strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
@@ -31,8 +35,12 @@ static int jsoneq(const char* json, jsmntok_t* tok, const char* s) {
 	}
 	return -1;
 }
-//*/
 
+/// @brief Local implementation of realloc, well, kinda
+/// @param original ptr to original memory
+/// @param old_size size of original malloc/calloc, bytes
+/// @param new_size size of new array, bytes
+/// @return ptr to new array or NULL if failed to calloc memory. If success, original pointer will be deleted
 void* LocalRealloc(void* original, size_t old_size, size_t new_size)
 {
 	void* ptr = calloc(new_size, 1);
@@ -44,6 +52,8 @@ void* LocalRealloc(void* original, size_t old_size, size_t new_size)
 	return ptr;
 }
 
+/// @brief Deleting menu_entry_s element and all strings inside
+/// @param elem Ptr to element for delete
 void DeleteMenuElement(menu_entry_s* elem)
 {
 	if (elem == NULL)
@@ -92,6 +102,9 @@ typedef enum _value_type_t
 #define IsDigit(c)		((c) >= '0' && (c) <= '9')
 #define IsHex(c)        (((c) >= 'a' && (c) <= 'f') || ((c) >= 'A' && (c) <= 'F'))
 
+/// @brief Convert ASCII-Hex (0x89AB) to uint64_t
+/// @param hex pointer to char string
+/// @return Value
 uint64_t GetHexValue(const char* hex)
 {
 	size_t len = strlen(hex);
@@ -116,6 +129,9 @@ uint64_t GetHexValue(const char* hex)
 	return val;
 }
 
+/// @brief Convert ascii number ("1245") to int64_t
+/// @param value Char string
+/// @return int64_t number
 int64_t GetLongInt(const char* value)
 {
 	int64_t out = 0;
@@ -130,6 +146,10 @@ int64_t GetLongInt(const char* value)
 	return out;
 }
 
+
+/// @brief Determin ascii string type
+/// @param value Char string
+/// @return Type
 _value_type_t GetValueType(char* value)
 {
 	uint8_t is_number = 1;
@@ -634,12 +654,12 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 				}
 				memcpy(elem->value_data.unit_name, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
 			}
-			else if (jsoneq(json_text, &json_tokens[*ptr], "parameter_type") == 0)
+			else if (jsoneq(json_text, &json_tokens[*ptr], "value_type") == 0)
 			{
 				*ptr += 1;
 				if (elem->value_data.value_type)
 				{
-					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Parameter parameter_type already existed: ");
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Parameter value_type already existed: ");
 					return NULL;
 				}
 				if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
@@ -652,7 +672,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 				_value_type_t type = GetValueType(work_buffer);
 				if (type != VT_FIXED && type != VT_RANGE && type != VT_MANUAL)
 				{
-					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "parameter_type is not Fixed, Manual or Range: ");
+					SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "value_type is not Fixed, Manual or Range: ");
 					return NULL;
 				}
 				if (type == VT_FIXED)
