@@ -9,6 +9,7 @@
 #include "../../gfx/gfxutils.h"
 #include "../../gfx/menu.h"
 #include "../../hid/hid.h"
+#include "../../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../../tegraexplorer/tconf.h"
 #include "../../utils/utils.h"
 #include "../../utils/vector.h"
@@ -17,7 +18,6 @@
 #include "../readers/folderReader.h"
 #include "filemenu.h"
 #include "foldermenu.h"
-#include "../../kiptool/gfx/dialogs/confirmationDialog.h"
 
 #define SD_ROOT "sd:/"
 
