@@ -10,6 +10,7 @@
 #include "../../gfx/gfx.h"
 #include "../../gfx/gfxutils.h"
 #include "../../gfx/menu.h"
+#include "../../helpers/fs.h"
 #include "../../hid/hid.h"
 #include "../gfx/dialogs/confirmationDialog.h"
 #include "../gfx/gfx.h"

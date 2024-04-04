@@ -6,6 +6,11 @@
 #include "../hid/hid.h"
 #include "gfx.h"
 
+// #define ALLOC_DEBUG
+#ifdef ALLOC_DEBUG
+#include <mem/heap.h>
+#endif
+
 void gfx_printTopInfo() {
     int battery = 0;
     max17050_get_property(MAX17050_RepSOC, &battery);
@@ -14,7 +19,17 @@ void gfx_printTopInfo() {
     bq24193_get_property(BQ24193_ChargeStatus, &current_charge_status);
     SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
     gfx_con_setpos(0, 0);
+
+#ifndef ALLOC_DEBUG
     gfx_printf("Tegraexplorer %d.%d.%d | Battery: %d%% %c\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, battery >> 8, ((current_charge_status) ? 129 : 32));
+#endif
+#ifdef ALLOC_DEBUG
+    heap_monitor_t mon = {};
+    heap_monitor(&mon, 0);
+
+    gfx_printf("Tegraexplorer %d.%d.%d | usedMem: %d\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, mon.used);
+
+#endif
     RESETCOLOR;
 }
 

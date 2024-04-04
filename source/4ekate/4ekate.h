@@ -13,6 +13,6 @@ typedef struct {
     unsigned int p3;
 } CHEKATEParams;
 
-char* getCurrentStageTitle();
+const char* getCurrentStageTitle();
 
 void chekate();

@@ -3,6 +3,11 @@
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
 
+#include "../err.h"
+#include "../fs/fscopy.h"
+#include "../fs/fsutils.h"
+#include "../helpers/mem.h"
+#include "../kiptool/gfx/gfx.h"
 #include "../kiptool/gfx/menus/ktMenu.h"
 
 #define CHEKATE_STAGES_COUNT 3
@@ -29,7 +34,7 @@ bool load4EKATEParams(CHEKATEParams* params) {
     return bytesRead == sizeof(CHEKATEParams);
 }
 
-bool set4EKATEParams(CHEKATEParams* params) {
+bool set4EKATEParams(const CHEKATEParams* params) {
     FIL file;
     FRESULT res;
     unsigned int bytesWritten;
@@ -58,7 +63,7 @@ int getCurrentStageId() {
     return -1;
 }
 
-char* getCurrentStageTitle() {
+const char* getCurrentStageTitle() {
     const int stageId = getCurrentStageId();
     if (stageId == -1) return CHEKATE_UNKNOWN_STAGE;
     return stagesTitles[stageId];
@@ -66,15 +71,15 @@ char* getCurrentStageTitle() {
 
 bool createPayloadBackup() {
     if (!FileExists(CHEKATE_PAYLOAD_BACKUP_PATH)) {
-        int res = f_rename(CHEKATE_PAYLOAD_PATH, CHEKATE_PAYLOAD_BACKUP_PATH);
-        if (res) {
-            DrawError(newErrCode(res));
-        }
+        ErrCode_t res = FileCopy(CHEKATE_PAYLOAD_PATH, CHEKATE_PAYLOAD_BACKUP_PATH, 0);
+        if (res.err != 0) return false;
     }
+    return true;
 }
 
 void chekate() {
     createKTDirIfNotExist();
+    createPayloadBackup();
     MenuEntry* menuEntries = calloc(1 + CHEKATE_STAGES_COUNT, sizeof(MenuEntry));
     int currentStageId = getCurrentStageId();
     int startIndex = currentStageId + 1;
