@@ -17,7 +17,7 @@
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
-#define SLEEP_TIME_MS 5
+#define SLEEP_TIME_MS 15
 
 Input_t* hidRead() {
     msleep(SLEEP_TIME_MS);
