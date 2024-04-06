@@ -70,16 +70,18 @@ const char* getCurrentStageTitle() {
 }
 
 bool createPayloadBackup() {
-    if (!FileExists(CHEKATE_PAYLOAD_BACKUP_PATH)) {
-        ErrCode_t res = FileCopy(CHEKATE_PAYLOAD_PATH, CHEKATE_PAYLOAD_BACKUP_PATH, 0);
-        if (res.err != 0) return false;
-    }
+    ErrCode_t res = FileCopy(CHEKATE_PAYLOAD_PATH, CHEKATE_PAYLOAD_BACKUP_PATH, 0);
+    if (res.err != 0) return false;
     return true;
 }
 
 void chekate() {
     createKTDirIfNotExist();
-    createPayloadBackup();
+    if (!FileExists(CHEKATE_PAYLOAD_BACKUP_PATH)) {
+        gfx_clearscreenKT();
+        gfx_printf("Creating a backup ...");
+        createPayloadBackup();
+    }
     MenuEntry* menuEntries = calloc(1 + CHEKATE_STAGES_COUNT, sizeof(MenuEntry));
     int currentStageId = getCurrentStageId();
     int startIndex = currentStageId + 1;
