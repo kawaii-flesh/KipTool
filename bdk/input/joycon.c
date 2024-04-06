@@ -741,7 +741,7 @@ static void jc_init_conn(joycon_ctxt_t *jc)
 			gpio_config(GPIO_PORT_D, GPIO_PIN_1, GPIO_MODE_SPIO);
 		}
 
-		uart_init(jc->uart, 1000000);
+		c_uart_init(jc->uart, 1000000);
 		uart_invert(jc->uart, true, UART_INVERT_TXD);
 		uart_set_IIR(jc->uart);
 

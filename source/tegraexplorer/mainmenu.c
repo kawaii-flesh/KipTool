@@ -2,7 +2,7 @@
 
 #include <mem/heap.h>
 #include <soc/fuse.h>
-#include <storage/nx_sd.h>
+#include <storage/sd.h>
 #include <string.h>
 #include <utils/btn.h>
 #include <utils/util.h>
@@ -16,7 +16,7 @@
 #include "../gfx/gfxutils.h"
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
-#include "../hid/touch.h"
+#include "../hid/touchutils.h"
 #include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../utils/utils.h"
 #include "tconf.h"
@@ -83,7 +83,6 @@ void ViewCredits() {
     hidWait();
 }
 
-extern bool sd_mounted;
 extern bool is_sd_inited;
 extern int launch_payload(char* path);
 
@@ -95,7 +94,7 @@ void RebootToUpdate() { launch_payload("sd:/bootloader/update.bin"); }
 
 void MountOrUnmountSD() {
     gfx_clearscreen();
-    if (sd_mounted)
+    if (sd_get_card_mounted())
         sd_unmount();
     else if (!sd_mount())
         hidWait();
@@ -124,7 +123,7 @@ void EnterMainMenu() {
     int res = 0;
     while (1) {
         if (sd_get_card_removed()) sd_unmount();
-
+        bool sd_mounted = sd_get_card_mounted();
         mainMenuEntries[MainBrowseSd].hide = !sd_mounted;
         mainMenuEntries[MainMountSd].name = (sd_mounted) ? "Unmount SD" : "Mount SD";
 

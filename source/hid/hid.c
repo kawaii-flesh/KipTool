@@ -2,6 +2,7 @@
 
 #include <display/di.h>
 #include <input/joycon.h>
+#include <input/touch.h>
 #include <utils/btn.h>
 #include <utils/types.h>
 #include <utils/util.h>
@@ -10,12 +11,10 @@
 #include "../tegraexplorer/tconf.h"
 #include "../tegraexplorer/tools.h"
 #include "../utils/utils.h"
-#include "touch.h"
+#include "touchutils.h"
 
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
-
-void hidInit() { jc_init_hw(); }
 
 Input_t* hidRead() {
     jc_gamepad_rpt_t* controller = joycon_poll();
@@ -44,7 +43,6 @@ Input_t* hidRead() {
             LbaseX = controller->lstick_x;
             LbaseY = controller->lstick_y;
         }
-
         inputs.up = (controller->up || inputs.volp || (controller->lstick_y > LbaseY + 500)) ? 1 : 0;
         inputs.down = (controller->down || inputs.volm || (controller->lstick_y < LbaseY - 500)) ? 1 : 0;
         inputs.left = (controller->left || (controller->lstick_x < LbaseX - 500)) ? 1 : 0;

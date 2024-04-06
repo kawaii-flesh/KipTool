@@ -17,7 +17,7 @@ LPVERSION := \"$(LPVERSION_MAJOR).$(LPVERSION_MINOR).$(LPVERSION_BUGFX)\"
 ################################################################################
 
 KTVERSION_MAJOR := 3
-KTVERSION_MINOR := 2
+KTVERSION_MINOR := 3
 KTVERSION_BUGFX := 0
 KTCUST_VERSION := 23
 
@@ -43,7 +43,7 @@ OBJS +=	$(patsubst $(BDKDIR)/%.S, $(BUILDDIR)/$(TARGET)/%.o, \
 		$(call rwildcard, $(BDKDIR), *.S *.c)))
 
 GFX_INC   := '"../$(SOURCEDIR)/gfx/gfx.h"'
-FFCFG_INC := '"../$(SOURCEDIR)/libs/fatfs/ffconf.h"'
+FFCFG_INC := '"../$(SOURCEDIR)/libs/fatfs/fatfs_conf.h"'
 
 ################################################################################
 

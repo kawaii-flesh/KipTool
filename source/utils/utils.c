@@ -15,6 +15,8 @@
 
 extern int launch_payload(char* path);
 
+#define ALWAYS_INLINE inline __attribute__((always_inline))
+
 void ALWAYS_INLINE power_off() { power_set_state(POWER_OFF_RESET); }
 
 void ALWAYS_INLINE reboot_rcm() { power_set_state(REBOOT_RCM); }

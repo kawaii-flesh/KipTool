@@ -1,6 +1,6 @@
 /*
 * Copyright (c) 2018 naehrwert
-* Copyright (c) 2018-2021 CTCaer
+* Copyright (c) 2018-2022 CTCaer
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms and conditions of the GNU General Public License,
@@ -46,22 +46,10 @@ typedef volatile unsigned short vu16;
 typedef volatile unsigned int vu32;
 
 #ifdef __aarch64__
-typedef u64 uptr;
+typedef unsigned long long uptr;
 #else /* __arm__ or __thumb__ */
-typedef u32 uptr;
+typedef unsigned long uptr;
 #endif
-
-/* Colors */
-#define COLOR_RED    0xFFE70000
-#define COLOR_ORANGE 0xFFFF8C00
-#define COLOR_YELLOW 0xFFFFFF40
-#define COLOR_GREEN  0xFF40FF00
-#define COLOR_BLUE   0xFF00DDFF
-#define COLOR_VIOLET 0xFF8040FF
-#define COLOR_DEFAULT_PARAM COLOR_VIOLET
-#define COLOR_CHANGED_PARAM COLOR_ORANGE
-
-static const u32 colors[6] = {COLOR_RED, COLOR_ORANGE, COLOR_YELLOW, COLOR_GREEN, COLOR_BLUE, COLOR_VIOLET};
 
 /* Important */
 #define false 0
@@ -99,25 +87,20 @@ static const u32 colors[6] = {COLOR_RED, COLOR_ORANGE, COLOR_YELLOW, COLOR_GREEN
 #define SZ_PAGE SZ_4K
 
 /* Macros */
-#define ALWAYS_INLINE inline __attribute__((always_inline))
 #define ALIGN(x, a) (((x) + (a) - 1) & ~((a) - 1))
 #define ALIGN_DOWN(x, a) ((x) & ~((a) - 1))
 #define BIT(n) (1U << (n))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define DIV_ROUND_UP(a, b) ((a + b - 1) / b)
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
-#define LOG2(n) (32 - __builtin_clz(n) - 1)
-#define CLZ(n) __builtin_clz(n)
-#define CLO(n) __builtin_clz(~n)
 
 #define OFFSET_OF(t, m) ((uptr)&((t *)NULL)->m)
 #define CONTAINER_OF(mp, t, mn) ((t *)((uptr)mp - OFFSET_OF(t, mn)))
 
 #define byte_swap_16(num) ((((num) >> 8) & 0xff) | (((num) << 8) & 0xff00))
 #define byte_swap_32(num) ((((num) >> 24) & 0xff) | (((num) << 8) & 0xff0000) | \
-						(((num) >> 8 )& 0xff00) | (((num) << 24) & 0xff000000))
+						(((num) >> 8 ) & 0xff00) | (((num) << 24) & 0xff000000))
 
 
 /* Bootloader/Nyx */
@@ -154,8 +137,8 @@ typedef struct __attribute__((__packed__)) _boot_cfg_t
 	{
 		struct
 		{
-			char id[8]; // 7 char ASCII null teminated.
-			char emummc_path[0x78]; // emuMMC/XXX, ASCII null teminated.
+			char id[8]; // 7 char ASCII null terminated.
+			char emummc_path[0x78]; // emuMMC/XXX, ASCII null terminated.
 		};
 		u8 ums; // nyx_ums_type.
 		u8 xt_str[0x80];
@@ -179,21 +162,5 @@ typedef struct __attribute__((__packed__)) _reloc_meta_t
 	u32 end;
 	u32 ep;
 } reloc_meta_t;
-
-typedef enum
-{
-	VALIDITY_UNCHECKED = 0,
-	VALIDITY_INVALID,
-	VALIDITY_VALID
-} validity_t;
-
-typedef enum
-{
-	OPEN_MODE_READ          = 1,
-	OPEN_MODE_WRITE         = 2,
-	OPEN_MODE_ALLOW_APPEND  = 4,
-	OPEN_MODE_READ_WRITE    = OPEN_MODE_READ | OPEN_MODE_WRITE,
-	OPEN_MODE_ALL           = OPEN_MODE_READ | OPEN_MODE_WRITE | OPEN_MODE_ALLOW_APPEND
-} open_mode_t;
 
 #endif
