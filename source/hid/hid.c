@@ -3,6 +3,7 @@
 #include <display/di.h>
 #include <input/joycon.h>
 #include <input/touch.h>
+#include <soc/timer.h>
 #include <utils/btn.h>
 #include <utils/types.h>
 #include <utils/util.h>
@@ -16,7 +17,10 @@
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
+#define SLEEP_TIME_MS 15
+
 Input_t* hidRead() {
+    msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
 
     inputs.buttons = 0;
@@ -100,6 +104,7 @@ Input_t* hidWait() {
 }
 
 bool hidConnected() {
+    msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
     return (controller->conn_l && controller->conn_r) ? 1 : 0;
 }

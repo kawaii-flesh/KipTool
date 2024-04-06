@@ -31,8 +31,8 @@
 #include <storage/sdmmc_driver.h>
 #include <utils/btn.h>
 #include <utils/sprintf.h>
-#include <mem/minerva.h>
 #include <storage/emmc.h>
+#include <mem/minerva.h>
 
 #include <memory_map.h>
 

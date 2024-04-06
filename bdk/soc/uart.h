@@ -100,10 +100,8 @@ typedef enum _uart_mode_t
 	//UART_HW_TX_AO_RX = UART_MCR_CTS_EN,
 } uart_mode_t;
 
-void c_uart_init(u32 idx, u32 baud);
 void uart_init(u32 idx, u32 baud, u32 mode);
 void uart_wait_xfer(u32 idx, u32 which);
-void uart_wait_idle(u32 idx, u32 which);
 void uart_send(u32 idx, const u8 *buf, u32 len);
 u32  uart_recv(u32 idx, u8 *buf, u32 len);
 void uart_invert(u32 idx, bool enable, u32 invert_mask);

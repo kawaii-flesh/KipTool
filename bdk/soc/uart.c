@@ -23,39 +23,6 @@
 /* UART A, B, C, D and E. */
 static const u16 _uart_base_offsets[5] = { 0, 0x40, 0x200, 0x300, 0x400 };
 
-void c_uart_init(u32 idx, u32 baud)
-{
-	uart_t *uart = (uart_t *)(UART_BASE + _uart_base_offsets[idx]);
-
-	// Make sure no data is being sent.
-	uart_wait_idle(idx, UART_TX_IDLE);
-
-	// Set clock.
-	bool clk_type = clock_uart_use_src_div(idx, baud);
-
-	// Misc settings.
-	u32 div = clk_type ? ((8 * baud + 408000000) / (16 * baud)) : 1; // DIV_ROUND_CLOSEST.
-	uart->UART_IER_DLAB = 0; // Disable interrupts.
-	uart->UART_LCR = UART_LCR_DLAB | UART_LCR_WORD_LENGTH_8; // Enable DLAB & set 8n1 mode.
-	uart->UART_THR_DLAB = (u8)div; // Divisor latch LSB.
-	uart->UART_IER_DLAB = (u8)(div >> 8); // Divisor latch MSB.
-	uart->UART_LCR = UART_LCR_WORD_LENGTH_8; // Disable DLAB.
-	(void)uart->UART_SPR;
-
-	// Setup and flush fifo.
-	uart->UART_IIR_FCR = UART_IIR_FCR_EN_FIFO;
-	(void)uart->UART_SPR;
-	usleep(20);
-	uart->UART_MCR = 0; // Disable hardware flow control.
-	usleep(96);
-	uart->UART_IIR_FCR = UART_IIR_FCR_EN_FIFO | UART_IIR_FCR_TX_CLR | UART_IIR_FCR_RX_CLR;
-
-	// Wait 3 symbols for baudrate change.
-	usleep(3 * ((baud + 999999) / baud));
-	uart_wait_idle(idx, UART_TX_IDLE | UART_RX_RDYR);
-}
-
-
 void uart_init(u32 idx, u32 baud, u32 mode)
 {
 	uart_t *uart = (uart_t *)(UART_BASE + (u32)_uart_base_offsets[idx]);
@@ -125,21 +92,6 @@ void uart_send(u32 idx, const u8 *buf, u32 len)
 		while (!(uart->UART_LSR & UART_LSR_THRE))
 			;
 		uart->UART_THR_DLAB = buf[i];
-	}
-}
-
-void uart_wait_idle(u32 idx, u32 which)
-{
-	uart_t *uart = (uart_t *)(UART_BASE + _uart_base_offsets[idx]);
-	if (UART_TX_IDLE & which)
-	{
-		while (!(uart->UART_LSR & UART_LSR_TMTY))
-			;
-	}
-	if (UART_RX_RDYR & which)
-	{
-		while (uart->UART_LSR & UART_LSR_RDR)
-			;
 	}
 }
 
