@@ -22,11 +22,9 @@ u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 Input_t* hidRead() {
     msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
-    // Hoag has inverted Y axis.
-    if (controller->sio_mode) {
+    // Hoag has inverted Y axis (only the left stick O_o)
+    if (controller->sio_mode)
         controller->lstick_y *= -1;
-        controller->rstick_y *= -1;
-    }
 
     inputs.buttons = 0;
     u8 left_connected = 0;
