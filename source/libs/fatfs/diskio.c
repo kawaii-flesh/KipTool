@@ -25,7 +25,7 @@
 
 #include <libs/fatfs/diskio.h> /* FatFs lower layer API */
 #include <memory_map.h>
-#include <storage/nx_sd.h>
+#include <storage/sd.h>
 #include <storage/sdmmc.h>
 #include <string.h>
 

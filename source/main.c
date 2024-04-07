@@ -31,7 +31,8 @@
 #include <soc/hw_init.h>
 #include <soc/pmc.h>
 #include <soc/t210.h>
-#include <storage/nx_sd.h>
+#include <soc/timer.h>
+#include <storage/sd.h>
 #include <storage/sdmmc.h>
 #include <string.h>
 #include <utils/btn.h>
@@ -48,7 +49,7 @@
 #include "gfx/gfxutils.h"
 #include "gfx/menu.h"
 #include "hid/hid.h"
-#include "hid/touch.h"
+#include "hid/touchutils.h"
 #include "tegraexplorer/mainmenu.h"
 #include "tegraexplorer/tconf.h"
 #include "utils/vector.h"
@@ -205,7 +206,7 @@ static inline void _show_errors() {
 void ipl_main() {
     // Do initial HW configuration. This is compatible with consecutive reruns without a reset.
     hw_init();
-    hidInit();
+    jc_init_hw();
 
     // Pivot the stack so we have enough space.
     pivot_stack(IPL_STACK_TOP);
@@ -216,13 +217,21 @@ void ipl_main() {
     // Mount SD Card.
     TConf.errors |= !sd_mount() ? ERR_SD_BOOT_EN : 0;
 
+    // Enable watchdog protection to avoid SD corruption based hanging in LP0/Minerva config.
+    watchdog_start(5000000 / 2, TIMER_FIQENABL_EN);  // 5 seconds.
     TConf.minervaEnabled = !minerva_init();
+    // Disable watchdog protection.
+    watchdog_end();
     TConf.FSBuffSize = (TConf.minervaEnabled) ? 0x800000 : 0x10000;
     TConf.isMariko = hw_get_chip_id() == GP_HIDREV_MAJOR_T210B01;
 
     if (!TConf.minervaEnabled)  //! TODO: Add Tegra210B01 support to minerva.
         TConf.errors |= ERR_LIBSYS_MTC;
 
+    // Prep RTC regs for read. Needed for T210B01 R2P.
+    max77620_rtc_prep_read();
+
+    // Initialize display.
     display_init();
 
     u32* fb = display_init_framebuffer_pitch();
@@ -239,11 +248,12 @@ void ipl_main() {
     }
 
     // Overclock BPMP.
-    bpmp_clk_rate_set(BPMP_CLK_DEFAULT_BOOST);
-    minerva_change_freq(FREQ_800);
+    bpmp_clk_rate_set(TConf.isMariko ? BPMP_CLK_DEFAULT_BOOST : BPMP_CLK_LOWER_BOOST);
 
     _show_errors();
 
+    // Set ram to a freq that doesn't need periodic training.
+    minerva_change_freq(FREQ_800);
     gfx_clearscreen();
     gfx_printf("Waiting for the JoyCons to be ready. Or press power button to continue ...");
     while (!hidConnected() && !*isTouchEnabled() && !hidRead()->power) {

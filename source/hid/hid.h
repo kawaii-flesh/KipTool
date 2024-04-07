@@ -28,7 +28,6 @@
 
 #define WAITBUTTONS (JoyY | JoyX | JoyB | JoyA | JoyLDown | JoyLUp | JoyLRight | JoyLLeft)
 
-void hidInit();
 Input_t* hidRead();
 Input_t* hidWait();
 Input_t* hidWaitMask(u32 mask);

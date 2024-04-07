@@ -263,4 +263,12 @@
 /  SemaphoreHandle_t and etc. A header file for O/S definitions needs to be
 /  included somewhere in the scope of ff.h. */
 
+#define FF_USE_MKFS 1
+/* This option switches f_mkfs() function. (0:Disable or 1:Enable) */
+
+#if FF_USE_MKFS
+#define FF_MKFS_LABEL "SWITCH SD  "
+#endif
+/* This sets FAT/FAT32 label. Exactly 11 characters, all caps. */
+
 /*--- End of configuration options ---*/

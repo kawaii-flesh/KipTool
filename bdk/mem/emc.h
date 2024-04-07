@@ -698,6 +698,8 @@
 
 typedef enum _emc_mr_t
 {
+	MR0_FEAT    = 0,
+	MR4_TEMP    = 4,
 	MR5_MAN_ID  = 5,
 	MR6_REV_ID1 = 6,
 	MR7_REV_ID2 = 7,
@@ -710,7 +712,7 @@ enum
 	EMC_CHAN1 = 1
 };
 
-typedef struct _emc_mr_data_t
+typedef struct _emc_mr_chip_data_t
 {
 	// Device 0.
 	u8 rank0_ch0;
@@ -719,6 +721,12 @@ typedef struct _emc_mr_data_t
 	// Device 1.
 	u8 rank1_ch0;
 	u8 rank1_ch1;
+} emc_mr_chip_data_t;
+
+typedef struct _emc_mr_data_t
+{
+	emc_mr_chip_data_t chip0;
+	emc_mr_chip_data_t chip1;
 } emc_mr_data_t;
 
 #endif

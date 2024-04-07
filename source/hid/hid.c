@@ -2,6 +2,8 @@
 
 #include <display/di.h>
 #include <input/joycon.h>
+#include <input/touch.h>
+#include <soc/timer.h>
 #include <utils/btn.h>
 #include <utils/types.h>
 #include <utils/util.h>
@@ -10,15 +12,19 @@
 #include "../tegraexplorer/tconf.h"
 #include "../tegraexplorer/tools.h"
 #include "../utils/utils.h"
-#include "touch.h"
+#include "touchutils.h"
 
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
-void hidInit() { jc_init_hw(); }
+#define SLEEP_TIME_MS 15
 
 Input_t* hidRead() {
+    msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
+    // Hoag has inverted Y axis (only the left stick O_o)
+    if (controller->sio_mode)
+        controller->lstick_y *= -1;
 
     inputs.buttons = 0;
     u8 left_connected = 0;
@@ -44,7 +50,6 @@ Input_t* hidRead() {
             LbaseX = controller->lstick_x;
             LbaseY = controller->lstick_y;
         }
-
         inputs.up = (controller->up || inputs.volp || (controller->lstick_y > LbaseY + 500)) ? 1 : 0;
         inputs.down = (controller->down || inputs.volm || (controller->lstick_y < LbaseY - 500)) ? 1 : 0;
         inputs.left = (controller->left || (controller->lstick_x < LbaseX - 500)) ? 1 : 0;
@@ -102,6 +107,7 @@ Input_t* hidWait() {
 }
 
 bool hidConnected() {
+    msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
     return (controller->conn_l && controller->conn_r) ? 1 : 0;
 }
