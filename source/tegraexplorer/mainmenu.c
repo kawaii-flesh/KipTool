@@ -24,6 +24,7 @@
 
 enum {
     MainExplore = 0,
+    MainKipWizard,
     MainBrowseSd,
     MainMountSd,
     MainViewCredits,
@@ -41,6 +42,7 @@ enum {
 
 MenuEntry_t mainMenuEntries[] = {
     [MainExplore] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- Explore --"},
+    [MainKipWizard] = {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "KIP Wizard atmosphere/kips/loader.kip"},
     [MainBrowseSd] = {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Browse SD"},
     [MainMountSd] = {.optionUnion = COLORTORGB(COLOR_YELLOW)},  // To mount/unmount the SD
     [MainViewCredits] = {.optionUnion = COLORTORGB(COLOR_YELLOW), .name = "Credits"},
@@ -66,6 +68,12 @@ void HandleSD() {
         const char loaderKipPath[] = "sd:/atmosphere/kips";
         FileExplorer(DirExists(loaderKipPath) ? loaderKipPath : "sd:/");
     }
+}
+
+void OpenKipWizard() {
+    gfx_clearscreen();
+    FSEntry_t loaderKip = {.name = "loader.kip"};
+    kipWizard("sd:/atmosphere/kips", loaderKip);
 }
 
 void ViewCredits() {
@@ -115,9 +123,9 @@ void ActivateTouchMode() {
 }
 
 menuPaths mainMenuPaths[] = {
-    [MainBrowseSd] = HandleSD,       [MainMountSd] = MountOrUnmountSD,   [MainActivateTouchMode] = ActivateTouchMode, [Main4EKATE] = chekate,
-    [MainViewCredits] = ViewCredits, [MainRebootAMS] = RebootToAMS,      [MainRebootUpdate] = RebootToUpdate,         [MainRebootRCM] = reboot_rcm,
-    [MainPowerOff] = power_off,      [MainRebootNormal] = reboot_normal, [MainReboot4EKATE] = RebootTo4EKATE};
+    [MainBrowseSd] = HandleSD,    [MainKipWizard] = OpenKipWizard, [MainMountSd] = MountOrUnmountSD,   [MainActivateTouchMode] = ActivateTouchMode,
+    [Main4EKATE] = chekate,       [MainViewCredits] = ViewCredits, [MainRebootAMS] = RebootToAMS,      [MainRebootUpdate] = RebootToUpdate,
+    [MainRebootRCM] = reboot_rcm, [MainPowerOff] = power_off,      [MainRebootNormal] = reboot_normal, [MainReboot4EKATE] = RebootTo4EKATE};
 
 void EnterMainMenu() {
     int res = 0;
@@ -125,6 +133,7 @@ void EnterMainMenu() {
         if (sd_get_card_removed()) sd_unmount();
         bool sd_mounted = sd_get_card_mounted();
         mainMenuEntries[MainBrowseSd].hide = !sd_mounted;
+        mainMenuEntries[MainKipWizard].hide = !sd_mounted || !FileExists("sd:/atmosphere/kips/loader.kip");
         mainMenuEntries[MainMountSd].name = (sd_mounted) ? "Unmount SD" : "Mount SD";
 
         // -- Exit --
@@ -132,10 +141,11 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin"));
         mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
-        if (TConf.isMariko) {
+        if (TConf.isMariko && sd_mounted) {
             const char* stageTitle = getCurrentStageTitle();
             mainMenuEntries[Main4EKATE].name = stageTitle;
             if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0) mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
+            else mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
         } else
             mainMenuEntries[Main4EKATE].hide = 1;
         mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";
@@ -148,7 +158,7 @@ void EnterMainMenu() {
 
         res = newMenu(&ent, res, 79, 30, (ent.count == ARRAY_SIZE(mainMenuEntries)) ? ALWAYSREDRAW : ALWAYSREDRAW | ENABLEPAGECOUNT,
                       ent.count - ARRAY_SIZE(mainMenuEntries));
-        if (res < 15 && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
+        if (res < 16 && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
 
         free(ent.data);
     }
