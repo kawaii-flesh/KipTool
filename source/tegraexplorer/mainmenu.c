@@ -128,8 +128,13 @@ menuPaths mainMenuPaths[] = {
     [MainRebootRCM] = reboot_rcm, [MainPowerOff] = power_off,      [MainRebootNormal] = reboot_normal, [MainReboot4EKATE] = RebootTo4EKATE};
 
 void EnterMainMenu() {
+    const char* message1[] = {"Text on Page 1", "Text", "Large teeeeeeeeeeeeeeeeeeeeext", NULL};
+    const char* message2[] = {"Text on Page 2", "Text2", "Larger teeeeeeeeeeeeeeeeeeeeext11111", NULL};
+    const char* message3[] = {"Text on Page 3", "Text3", "Text3", "Text3", "Text3", "Text3", "Text3", "Text3", "Larger teeeeeee11", NULL};
+    const char** message[] = {message1, message2, message3, NULL};
     int res = 0;
     while (1) {
+        informationDialog(message);
         if (sd_get_card_removed()) sd_unmount();
         bool sd_mounted = sd_get_card_mounted();
         mainMenuEntries[MainBrowseSd].hide = !sd_mounted;
@@ -144,8 +149,10 @@ void EnterMainMenu() {
         if (TConf.isMariko && sd_mounted) {
             const char* stageTitle = getCurrentStageTitle();
             mainMenuEntries[Main4EKATE].name = stageTitle;
-            if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0) mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
-            else mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
+            if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0)
+                mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
+            else
+                mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
         } else
             mainMenuEntries[Main4EKATE].hide = 1;
         mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";
