@@ -284,6 +284,8 @@ parameter_type, из таблицы, может иметь 3 значения:
   "entries": ["./CPU/cpu_example.json"],
 ...
 ```
+Итоговая структура папок представлена ниже:
+```
 .kt
 │   kip21.json   
 │   kip22.json    
