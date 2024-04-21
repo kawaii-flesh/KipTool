@@ -18,6 +18,7 @@
 #include "../hid/hid.h"
 #include "../hid/touchutils.h"
 #include "../kiptool/gfx/dialogs/confirmationDialog.h"
+#include "../kiptool/kipWizard/kipWizard.h"
 #include "../utils/utils.h"
 #include "tconf.h"
 #include "tools.h"
@@ -143,9 +144,11 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
         if (TConf.isMariko && sd_mounted) {
             const char* stageTitle = getCurrentStageTitle();
-            mainMenuEntries[Main4EKATE].name = stageTitle;
-            if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0) mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
-            else mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
+            mainMenuEntries[Main4EKATE].name = (char*)stageTitle;
+            if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0)
+                mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
+            else
+                mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
         } else
             mainMenuEntries[Main4EKATE].hide = 1;
         mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";

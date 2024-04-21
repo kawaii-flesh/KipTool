@@ -1,6 +1,7 @@
 #include "menu.h"
 
 #include <mem/minerva.h>
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/btn.h>
 #include <utils/sprintf.h>

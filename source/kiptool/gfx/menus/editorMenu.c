@@ -63,7 +63,7 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
         char* stepStr = malloc(8);
         formatValueDiv(stepStr, stepSize, div);
         const char* measure = editorAdditionalData->param->measure != NULL ? editorAdditionalData->param->measure : fixedLimits->measure;
-        s_printf(displayBuff, "Manual value - min: %s curVal: %s max: %s step: %s", minStr,
+        s_printf(displayBuff, "Manual value - min: %s curVal: %s max: %s step: %s%s", minStr,
                  validateValueByFixedLimits(fixedLimits, editorAdditionalData->currentValue) ? curValStr : "preset", maxStr, stepStr,
                  measure != NULL ? measure : "");
         gfx_puts_limit(displayBuff, maxLen);
