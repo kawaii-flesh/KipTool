@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include <mem/heap.h>
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/types.h>
 #include <utils/util.h>

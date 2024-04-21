@@ -2,6 +2,7 @@
 
 #include <power/bq24193.h>
 #include <power/max17050.h>
+#include <soc/timer.h>
 
 #include "../hid/hid.h"
 #include "gfx.h"

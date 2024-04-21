@@ -212,7 +212,7 @@ void ipl_main() {
     pivot_stack(IPL_STACK_TOP);
 
     // Tegra/Horizon configuration goes to 0x80000000+, package2 goes to 0xA9800000, we place our heap in between.
-    heap_init(IPL_HEAP_START);
+    heap_init((void*)IPL_HEAP_START);
 
     // Mount SD Card.
     TConf.errors |= !sd_mount() ? ERR_SD_BOOT_EN : 0;

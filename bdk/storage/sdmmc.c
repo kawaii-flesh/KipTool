@@ -26,6 +26,7 @@
 #include <storage/sd_def.h>
 #include <memory_map.h>
 #include <gfx_utils.h>
+#include <mem/mc.h>
 
 //#define SDMMC_DEBUG_PRINT_SD_REGS
 //#define DPRINTF(...) gfx_printf(__VA_ARGS__)

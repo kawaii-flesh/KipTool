@@ -3,6 +3,7 @@
 #include <mem/heap.h>
 #include <utils/sprintf.h>
 
+#include "../../helpers/mem.h"
 #include "../gfx/gfx.h"
 #include "../params/param.h"
 #include "../service/session.h"

@@ -3,6 +3,7 @@
 #include <display/di.h>
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
+#include <soc/timer.h>
 #include <storage/sd.h>
 #include <string.h>
 #include <utils/sprintf.h>

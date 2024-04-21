@@ -238,7 +238,7 @@ const Param marikoGpuVoltArray1612mhz = {.name = "1612mhz",
                                          .limits = {{.type = EFixedLimits, .values = &marikoGpuVoltArray1612mhzFL}}};
 
 const Table marikoGpuVoltArray = {
-    .name = "GPU Volt Table",
+    .name = "GPU Manual Mode Volt Table",
     .description = NULL,
     .baseOffset = getOffset(defaultCustTable.marikoGpuVoltArray),
     .paramsCount = 24,

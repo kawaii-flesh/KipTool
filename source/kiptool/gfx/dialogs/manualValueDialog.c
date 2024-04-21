@@ -1,6 +1,7 @@
 #include "manualValueDialog.h"
 
 #include <mem/heap.h>
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/sprintf.h>
 #include <utils/util.h>
@@ -67,7 +68,8 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
 
     unsigned int lastPress = 1000 + get_tmr_ms();
     unsigned int lastResult = currentValue;
-    const int mult = (max - min) / (stepSize * 10);
+    int mult = (max - min) / (stepSize * 10);
+    if (mult < 2) mult = 2;
     bool redraw = true;
     bool fullRedraw = true;
     Input_t* input = hidRead();
@@ -83,7 +85,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     formatValueDiv(stepStr, stepSize, div);
     char* buff = malloc(256);
     while (1) {
-        if (redraw) {
+        if (redraw || fullRedraw) {
             gfx_printTopInfoKT();
             SETCOLOR(COLOR_WHITE, COLOR_GREY);
             if (fullRedraw) {
@@ -95,13 +97,16 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 gfx_puts(help);
                 fullRedraw = false;
             }
-            redraw = false;
             div = div || currentValue > 1500;
             formatValueDiv(currentStr, currentValue, div);
             s_printf(buff, "min=%s %s %s=max step=%s%s", minStr, currentStr, maxStr, stepStr, measure);
             maxStringLen = strlen(buff);
             unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
-            gfx_box(selectorX0Position, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
+            if (redraw) {
+                gfx_box(selectorX0Position - 2 * fontSize, selectorY0Position, selectorX0Position, selectorY0Position + fontSize, COLOR_GREY);
+                gfx_box(selectorX0Position + maxStringLen * fontSize, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
+                redraw = false;
+            }
             gfx_con_setpos(selectorX0Position, selectorY0Position);
             gfx_printf("min=%s %k%s%k %s=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr, measure);
         }
@@ -131,7 +136,6 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                     return good;
                 } else {
                     fullRedraw = true;
-                    redraw = true;
                     isFromConfirmDialog = true;
                     oldButtons = *input;
                     continue;
@@ -163,7 +167,6 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 return exit;
             } else {
                 fullRedraw = true;
-                redraw = true;
                 isFromConfirmDialog = true;
                 oldButtons = *input;
                 continue;
