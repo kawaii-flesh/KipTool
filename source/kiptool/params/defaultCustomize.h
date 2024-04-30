@@ -654,7 +654,7 @@ const CustomizeTable defaultCustTable = {
 
     // MARIKO CPU-HI ECO LOGIC // 0 ECO ALT-MODE (low=0 & high=0) // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-7
     // MANUAL
-    .marikoCpuHUV = 1,
+    .marikoCpuHUV = 0,
 
     // GPU OVER LOGIC // 0 AUTO // MARIKO: 750-1200 MANUAL // ERISTA: 850-1300 MANUAL
     .hGPUv = 0,
