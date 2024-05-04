@@ -73,6 +73,7 @@ void memcpy_kt(u8* dst, const u8* src, const unsigned int size) {
 }
 
 int kipWizard(char* path, FSEntry_t entry) {
+    createKTDirIfNotExist();
     char* filePath = CombinePaths(path, entry.name);
 
     FIL kipFile;
