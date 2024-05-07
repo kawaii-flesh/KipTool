@@ -649,7 +649,7 @@ const CustomizeTable defaultCustTable = {
         },
 
     // SPEEDSHIFT ECO LOGIC // 0 DEFAULT // 1 AUTO // 50 SRT ST1 // 100 ECO ST1 // 125 ECO ST2 // 150 ECO ST3 // 25-175 MANUAL
-    .SpeedShift = 0,
+    .SpeedShift = 1,
     // Ov << 100 >> uV
 
     // MARIKO CPU-HI ECO LOGIC // 0 ECO ALT-MODE (low=0 & high=0) // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-7
@@ -669,7 +669,7 @@ const CustomizeTable defaultCustTable = {
     .drochr08 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-12 AUTO STAGE
 
     // EBA-SHIFT // 0 DEFAULT // 1 AUTO ST1 // 2 SYK-LOH // 3 AUTO ST3 // 4 AUTO ST4 // 5 LOH-C4C
-    .eBAS = 0,
+    .eBAS = 1,
     // TRADE MAX FREQ FOR EFFICIENCY // FREQUENCY << PRIORITY >> EFFICIENCY
 
     // PRIMARY MICRO-ENHANCE LOGIC			 	    // 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2
