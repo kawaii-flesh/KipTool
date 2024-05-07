@@ -76,7 +76,7 @@ bool createPayloadBackup() {
 }
 
 void chekate() {
-    createKTDirIfNotExist();
+    createDirIfNotExist(KT_DIR);
     if (!FileExists(CHEKATE_PAYLOAD_BACKUP_PATH)) {
         gfx_clearscreenKT();
         gfx_printf("Creating a backup ...");

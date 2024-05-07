@@ -12,5 +12,5 @@ typedef struct PrintParamAdditionalData {
 
 void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, PrintParamAdditionalData* printParamAdditionalData);
 
-void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount, const Tables* tables[],
-                   unsigned int tablesArraysCount);
+void newParamsMenu(const u8* custTable, const u8* ktSection, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount,
+                   const Tables* tables[], unsigned int tablesArraysCount);

@@ -3,7 +3,14 @@
 #include <libs/fatfs/ff.h>
 #include <stdbool.h>
 
-#define KTDIR "sd:/.kt"
+#define KT_DIR "sd:/.kt"
+#define KT_MAGIC \
+    { '.', 'K', 'I', 'P', 'T', 'O', 'O', 'L' }
 
-FRESULT createKTDirIfNotExist();
-FRESULT overwriteCUST(FIL* kipFile, const unsigned int custOffset, const u8* custTable);
+typedef struct {
+    const char magic[8];
+    u32 idSession;
+    u32 idHistory;
+} KTSection;
+
+FRESULT addKTSection(const char kipFilePath[], KTSection* buffer);
