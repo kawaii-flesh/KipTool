@@ -18,7 +18,7 @@ LPVERSION := \"$(LPVERSION_MAJOR).$(LPVERSION_MINOR).$(LPVERSION_BUGFX)\"
 
 KTVERSION_MAJOR := 4
 KTVERSION_MINOR := 0
-KTVERSION_BUGFX := 1
+KTVERSION_BUGFX := 2
 KTCUST_VERSION  := 24
 
 ################################################################################

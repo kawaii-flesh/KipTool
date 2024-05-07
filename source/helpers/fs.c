@@ -32,7 +32,7 @@ int searchBytesArray(const u8* array, const unsigned int size, FIL* file) {
             free(buff);
             return fileOffset + offset;
         }
-        endOfFile = BUFF_SIZE != currentBuffSize;
+        endOfFile = size >= currentBuffSize;
         ++offset;
     }
 }
