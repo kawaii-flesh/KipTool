@@ -44,6 +44,7 @@ const FixedLimits SpeedShiftFL = {.min = 25, .max = 175, .stepSize = 25};
 // 125 ECO ST2
 // 150 ECO ST3
 // 25-175 MANUAL
+// Ov << 100 >> uV
 const Param SpeedShift = {.name = "SPEEDSHIFT",
                           .measure = NULL,
                           .description = NULL,
@@ -64,7 +65,7 @@ const FixedValues marikoCpuHUVFV = {.valuesCount = 8,
                                         {.value = 7},
                                     }};
 // MARIKO CPU-HI ECO LOGIC
-// 0 ECO ALT-MODE (low=0 & high=0)
+// 0 ECO ALT-MODE
 // 1 AUTO ECO ST1
 // 3 AUTO ECO ST2
 // 5 AUTO ECO ST3
@@ -102,7 +103,7 @@ const FixedValues marikoCpuUVFV = {.valuesCount = 7,
                                               {.value = 5, .label = "ECO ST3"},
                                               {.value = 6}}};
 // CPU-LOW ECO LOGIC
-// 0 ECO ALT-MODE (low=0 & high=0)
+// 0 ECO ALT-MODE
 // 1 AUTO ECO ST1
 // 3 AUTO ECO ST2
 // 5 AUTO ECO ST3

@@ -2,24 +2,41 @@
 
 #include "customize.h"
 
-#define getOffset(param) (int)((const void*)&param - (const void*)defaultCustTable.cust)
+#define getOffset(param) (int)((const void *)&param - (const void *)defaultCustTable.cust)
+
 const CustomizeTable defaultCustTable = {
     .cust = CUST,
     .custRev = KT_CUST_VER,
 
-    .mtcConf = 0,  // eBAMATIC; LEGACY; DEBUG; ALTMODE
-    // eBAMATIC	MHz = 120 133 146 160 173 186 200 213 226 240 253 266 280 293 306 320 333 346 360 373
-    // MARIKO eBAL = [	1,	1, 	1,	1, 	2, 	2, 	2, 	2, 	3, 	3, 	3, 	4, 	4, 	5, 	5, 	5, 	5, 5, 5, 5 ]
-    // ERISTA eBAL = [	1,	1, 	1,	1, 	1, 	2, 	3, 	4, 	5, 	5,  5,  5,  5,  5 ]
+    // eBAMATIC; LEGACY; DEBUG; ALTMODE
+    .mtcConf = eBAMATIC,
+    // eBAMATIC	MHz
+    // MARIKO eBAL
+    // ERISTA eBAL
+    //  120 133 146 160 173 186 200 213 226 240 253 266 280 293 306 320 333 346 360 373
+    //  1,	1, 	1,	1, 	2, 	2, 	2, 	2, 	3, 	3, 	3, 	4, 	4, 	5, 	5, 	5, 	5, 	5,  5,  5
+    //  1,	1, 	1,	1, 	1, 	2, 	3, 	4, 	5, 	5, 	5, 	5, 	5, 	5
 
-    // CPU LAUNCH CONTROL TARGET // 1428000 CPU-HI uV DEBUG // 1785000 CPU-LOW uV DEBUG // 2000000 E // 2500000 D // 3000000 S
-    // // 1400000-3000000 MANUAL 100000 STEP
+    // CPU LAUNCH CONTROL TARGET
+    // 1428000 CPU-HI uV DEBUG
+    // 1785000 CPU-LOW uV DEBUG
+    // 2000000 E
+    // 2500000 D
+    // 3000000 S
+    // 1400000-3000000 MANUAL 100000 STEP
     .commonCpuBoostClock = 3000000,
 
-    // RAM VDD MODE // 1175'000 ECO // 1275'000 DEFAULT // 1375'000 SRT // 950'000-1400'000 MANUAL 12'500uV STEP
+    // RAM VDD MODE
+    // 1175'000 ECO
+    // 1275'000 DEFAULT
+    // 1375'000 SRT
+    // 950'000-1400'000 MANUAL 12'500uV STEP
     .commonEmcMemVolt = 1350000,
 
-    // ERISTA CPU VMAX MODE // 1200 ECO // 1250-1350 STAGE 1-3 // 1180-1350 MANUAL 5mV STEP
+    // ERISTA CPU VMAX MODE
+    // 1200 ECO
+    // 1250-1350 STAGE 1-3
+    // 1180-1350 MANUAL 5mV STEP
     .eristaCpuMaxVolt = 1235,
 
     // 4IFIR MODE ON ERISTA
@@ -33,7 +50,10 @@ const CustomizeTable defaultCustTable = {
     .eristaEmcMaxClock = 2124800,  // 2278400 2240000 2201600 2163200 2124800
     // 1600000-2366000 MANUAL 38.4MHz STEP
 
-    // MARIKO CPU VMAX MODE // 1150 ECO // 1180-1250 STAGE 1-3 // 1130-1280 MANUAL 5mV STEP
+    // MARIKO CPU VMAX MODE
+    // 1150 ECO
+    // 1180-1250 STAGE 1-3
+    // 1130-1280 MANUAL 5mV STEP
     .marikoCpuMaxVolt = 1150,
 
     // 4IFIR MODE ON MARIKO
@@ -48,29 +68,61 @@ const CustomizeTable defaultCustTable = {
     // S ST2 2666 / 2665600
     // S ST3 2800 / 2800000
     // L-C4C 2933 / 2934400
-    .marikoEmcMaxClock = 2400000,  // MICRON E/H eBAL 4 < 3.8GHz // SAMSUNG B eBAL 4 < 3.9GHz // HYNIX CJR/DJR eBAL 4 < 3.8GHz
+    .marikoEmcMaxClock = 2400000,
+    // MICRON E/H eBAL 4 < 3.8GHz
+    // SAMSUNG B eBAL 4 < 3.9GHz
+    // HYNIX CJR/DJR eBAL 4 < 3.8GHz
     // 1333000-2733000 MANUAL 38.4MHz STEP
 
-    // RAM VDDQ MODE // 500'000 ECO // 650'000 DEFAULT // 700'000 SRT // 300'000-800'000 MANUAL
+    // RAM VDDQ MODE
+    // 500'000 ECO
+    // 650'000 DEFAULT
+    // 700'000 SRT
+    // 300'000-800'000 MANUAL
     .marikoEmcVddqVolt = 650000,
 
-    // CPU-LOW ECO LOGIC // 0 ECO ALT-MODE (low=0 & high=0) // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-6 MANUAL
+    // CPU-LOW ECO LOGIC
+    // 0 ECO ALT-MODE
+    // 1 AUTO ECO ST1
+    // 3 AUTO ECO ST2
+    // 5 AUTO ECO ST3
+    // 1-6 MANUAL
     .marikoCpuUV = 0,
 
-    // GPU ECO LOGIC // 0 AUTO ECO ST1 // 1 AUTO ECO ST2 // 2 AUTO ECO ST3
+    // GPU ECO LOGIC
+    // 0 AUTO ECO ST1
+    // 1 AUTO ECO ST2
+    // 2 AUTO ECO ST3
     .marikoGpuUV = 0,
-    // 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV STEP // ERISTA = eristaGpuDvfsTable uV - (12500 uV *
-    // marikoGpuUV)
+    // 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV STEP
+    // ERISTA = eristaGpuDvfsTable uV - (12500 uV * marikoGpuUV)
 
-    // CPU UNDER LOGIC // 3 AUTO ECO ST1 // 2 AUTO ECO ST2 // 1 AUTO ECO ST3 // 430-670 MANUAL 5-10mV STEP
+    // CPU UNDER LOGIC
+    // 3 AUTO ECO ST1
+    // 2 AUTO ECO ST2
+    // 1 AUTO ECO ST3
+    // 430-670 MANUAL 5-10mV STEP
     .CPUv = 3,
-    // 620mV DEFAULT // MARIKO CPU VOLT MIN = CPUv, ERISTA CPU VOLT MIN = CPUv + 205mV
+    // 620mV DEFAULT
+    // MARIKO CPU VOLT MIN = CPUv
+    // ERISTA CPU VOLT MIN = CPUv + 205mV
 
-    // GPU UNDER LOGIC // 3 AUTO ECO ST1 // 2 AUTO ECO ST2 // 1 AUTO ECO ST3 // 430-970 MANUAL mV 5-10mV STEP
+    // GPU UNDER LOGIC
+    // 3 AUTO ECO ST1
+    // 2 AUTO ECO ST2
+    // 1 AUTO ECO ST3
+    // 430-970 MANUAL mV 5-10mV STEP
     .GPUv = 3,
-    // 610mV DEFAULT // MARIKO GPU VOLT MIN = CPUv, ERISTA GPU VOLT MIN = CPUv + 100mV
+    // 610mV DEFAULT
+    // MARIKO GPU VOLT MIN = CPUv
+    // ERISTA GPU VOLT MIN = CPUv + 100mV
 
-    // EMB ECO LOGIC // 3 AUTO // 2 AUTO ECO ST1 // 1 AUTO ECO ST2 // 0 AUTO ECO ST3 // 300-1150 MANUAL mV
+    // EMB ECO LOGIC
+    // 3 AUTO
+    // 2 AUTO ECO ST1
+    // 1 AUTO ECO ST2
+    // 0 AUTO ECO ST3
+    // 300-1150 MANUAL mV
     .marikoEmcDvbShift = 3,
 
     // DERIVATIVE TIMINGS ORCHESTRATORs // SAMSUNG D/E 2666 eBAL 2 RCD 12
@@ -145,8 +197,11 @@ const CustomizeTable defaultCustTable = {
             //{ 3111000, { 2063382, -39771, 113 }, { 1235000 } },
         },
 
-    // ERISTA GPU ECO LOGIC // ECO ST1 = -12500uV // ECO ST2 = -25000uV // ECO ST3 = -37500uV // MANUAL = -75000uV << Default >>
-    // +75000uV
+    // ERISTA GPU ECO LOGIC
+    // ECO ST1 = -12500uV
+    // ECO ST2 = -25000uV
+    // ECO ST3 = -37500uV
+    // MANUAL = -75000uV << Default >> +75000uV
     .eristaGpuDvfsTable =
         {
             // Freq KHz  	// Volt uV
@@ -190,7 +245,7 @@ const CustomizeTable defaultCustTable = {
              {
                  762500,
              }},
-            {499200,
+            {500000,
              {},
              {
                  775000,
@@ -210,7 +265,7 @@ const CustomizeTable defaultCustTable = {
              {
                  812500,
              }},
-            {652800,
+            {653000,
              {},
              {
                  825000,
@@ -230,7 +285,7 @@ const CustomizeTable defaultCustTable = {
              {
                  862500,
              }},
-            {806400,
+            {805400,
              {},
              {
                  875000,
@@ -290,90 +345,146 @@ const CustomizeTable defaultCustTable = {
              {
                  1125000,
              }},
-            {1267200,
+            {1266200,
              {},
              {
                  1150000,
              }},
         },
 
+    // Freq KHz // Volt uV
     .marikoGpuDvfsTable =
         {
             // Freq KHz  	// Volt uV
-            {192000,
-             {},
-             {
-                 430000,
-             }},
-            {230400,
-             {},
-             {
-                 445000,
-             }},
             {307200,
              {},
              {
-                 465000,
+                 485000,
              }},
-            {384000,
+            {345600,
              {},
              {
                  490000,
              }},
-            {460800,
+            {384000,
+             {},
+             {
+                 500000,
+             }},
+            {422400,
              {},
              {
                  510000,
              }},
+            {460800,
+             {},
+             {
+                 520000,
+             }},
+            {499200,
+             {},
+             {
+                 530000,
+             }},
             {537600,
              {},
              {
-                 535000,
+                 540000,
+             }},
+            {576000,
+             {},
+             {
+                 550000,
              }},
             {614400,
              {},
              {
                  560000,
              }},
+            {652800,
+             {},
+             {
+                 570000,
+             }},
             {691200,
              {},
              {
                  585000,
+             }},
+            {729600,
+             {},
+             {
+                 595000,
              }},
             {768000,
              {},
              {
                  610000,
              }},
+            {806400,
+             {},
+             {
+                 620000,
+             }},
             {844800,
              {},
              {
                  635000,
+             }},
+            {883200,
+             {},
+             {
+                 645000,
              }},
             {921600,
              {},
              {
                  660000,
              }},
+            {960000,
+             {},
+             {
+                 670000,
+             }},
             {998400,
              {},
              {
                  685000,
+             }},
+            {1036800,
+             {},
+             {
+                 700000,
              }},
             {1075200,
              {},
              {
                  715000,
              }},
+            {1113600,
+             {},
+             {
+                 730000,
+             }},
             {1152000,
              {},
              {
                  750000,
              }},
+            {1190400,
+             {},
+             {
+                 765000,
+             }},
             {1228800,
              {},
              {
                  785000,
+             }},
+            {1267200,
+             {},
+             {
+                 815000,
              }},
             {1305600,
              {},
@@ -400,148 +511,189 @@ const CustomizeTable defaultCustTable = {
              {
                  960000,
              }},
-            //{ 1497600, {}, { 1000000, } },
-            //{ 1536000, {}, { 1050000, } },
-            //{ 1574400, {}, { 1100000, } },
-            //{ 1612800, {}, { 1150000, } },
         },
 
     .marikoGpuDvfsTableSLT =
         {
             // Freq KHz  	// Volt uV
-            {192000,
-             {},
-             {
-                 410000,
-             }},
-            {230400,
-             {},
-             {
-                 425000,
-             }},
             {307200,
-             {},
-             {
-                 445000,
-             }},
-            {384000,
              {},
              {
                  465000,
              }},
+            {345600,
+             {},
+             {
+                 470000,
+             }},
+            {384000,
+             {},
+             {
+                 475000,
+             }},
+            {422400,
+             {},
+             {
+                 480000,
+             }},
             {460800,
              {},
              {
-                 490000,
+                 495000,
+             }},
+            {499200,
+             {},
+             {
+                 505000,
              }},
             {537600,
              {},
              {
                  520000,
              }},
+            {576000,
+             {},
+             {
+                 530000,
+             }},
             {614400,
              {},
              {
                  545000,
+             }},
+            {652800,
+             {},
+             {
+                 555000,
              }},
             {691200,
              {},
              {
                  565000,
              }},
+            {729600,
+             {},
+             {
+                 575000,
+             }},
             {768000,
              {},
              {
-                 590000,
+                 585000,
+             }},
+            {806400,
+             {},
+             {
+                 595000,
              }},
             {844800,
              {},
              {
-                 615000,
+                 610000,
+             }},
+            {883200,
+             {},
+             {
+                 625000,
              }},
             {921600,
              {},
              {
-                 640000,
+                 635000,
+             }},
+            {960000,
+             {},
+             {
+                 650000,
              }},
             {998400,
              {},
              {
-                 665000,
+                 660000,
+             }},
+            {1036800,
+             {},
+             {
+                 675000,
              }},
             {1075200,
              {},
              {
-                 695000,
+                 690000,
+             }},
+            {1113600,
+             {},
+             {
+                 710000,
              }},
             {1152000,
              {},
              {
-                 735000,
+                 730000,
+             }},
+            {1190400,
+             {},
+             {
+                 750000,
              }},
             {1228800,
              {},
              {
-                 775000,
+                 770000,
+             }},
+            {1267200,
+             {},
+             {
+                 785000,
              }},
             {1305600,
              {},
              {
-                 805000,
+                 800000,
              }},
             {1344000,
              {},
              {
-                 840000,
+                 825000,
              }},
             {1382400,
              {},
              {
-                 865000,
+                 850000,
              }},
             {1420800,
              {},
              {
-                 890000,
+                 880000,
              }},
-            {1458200,
-             {},
-             {
-                 915000,
-             }},
-            {1497600,
-             {},
-             {
-                 940000,
-             }},
+            //{ 1459200, {}, { 905000, } },
+            //{ 1497600, {}, { 935000, } },
             {1536000,
              {},
              {
                  960000,
              }},
-            //{ 1574400, {}, {  985000, } },
-            //{ 1612800, {}, { 1020000, } },
         },
 
     .marikoGpuDvfsTableHiOPT =
         {
             // Freq KHz  	// Volt uV
-            {192000,
-             {},
-             {
-                 400000,
-             }},
-            {230400,
-             {},
-             {
-                 420000,
-             }},
             {307200,
              {},
              {
-                 435000,
+                 445000,
+             }},
+            {345600,
+             {},
+             {
+                 450000,
              }},
             {384000,
+             {},
+             {
+                 455000,
+             }},
+            {422400,
              {},
              {
                  460000,
@@ -549,98 +701,137 @@ const CustomizeTable defaultCustTable = {
             {460800,
              {},
              {
-                 480000,
+                 465000,
+             }},
+            {499200,
+             {},
+             {
+                 475000,
              }},
             {537600,
              {},
              {
-                 505000,
+                 485000,
+             }},
+            {576000,
+             {},
+             {
+                 495000,
              }},
             {614400,
              {},
              {
-                 530000,
+                 510000,
+             }},
+            {652800,
+             {},
+             {
+                 525000,
              }},
             {691200,
              {},
              {
-                 550000,
+                 540000,
+             }},
+            {729600,
+             {},
+             {
+                 555000,
              }},
             {768000,
              {},
              {
-                 575000,
+                 570000,
+             }},
+            {806400,
+             {},
+             {
+                 585000,
              }},
             {844800,
              {},
              {
-                 600000,
+                 595000,
+             }},
+            {883200,
+             {},
+             {
+                 605000,
              }},
             {921600,
              {},
              {
-                 625000,
+                 615000,
+             }},
+            {960000,
+             {},
+             {
+                 630000,
              }},
             {998400,
              {},
              {
-                 650000,
+                 640000,
+             }},
+            {1036800,
+             {},
+             {
+                 655000,
              }},
             {1075200,
              {},
              {
-                 675000,
+                 670000,
+             }},
+            {1113600,
+             {},
+             {
+                 690000,
              }},
             {1152000,
              {},
              {
                  700000,
              }},
+            {1190400,
+             {},
+             {
+                 720000,
+             }},
             {1228800,
              {},
              {
-                 725000,
+                 745000,
              }},
-            {1305600,
+            {1267200,
              {},
              {
                  760000,
              }},
+            {1305600,
+             {},
+             {
+                 775000,
+             }},
             {1344000,
              {},
              {
-                 785000,
+                 800000,
              }},
             {1382400,
              {},
              {
-                 810000,
+                 825000,
              }},
             {1420800,
              {},
              {
-                 835000,
+                 850000,
              }},
-            {1458200,
-             {},
-             {
-                 860000,
-             }},
-            {1497600,
-             {},
-             {
-                 885000,
-             }},
-            {1534000,
-             {},
-             {
-                 910000,
-             }},
-            {1574400,
-             {},
-             {
-                 935000,
-             }},
+            //{ 1459200, {}, { 870000, } },
+            //{ 1497600, {}, { 890000, } },
+            //{ 1536000, {}, { 910000, } },
+            //{ 1574400, {}, { 935000, } },
             {1612800,
              {},
              {
@@ -648,59 +839,88 @@ const CustomizeTable defaultCustTable = {
              }},
         },
 
-    // SPEEDSHIFT ECO LOGIC // 0 DEFAULT // 1 AUTO // 50 SRT ST1 // 100 ECO ST1 // 125 ECO ST2 // 150 ECO ST3 // 25-175 MANUAL
+    // SPEEDSHIFT ECO LOGIC
+    // 0 DEFAULT
+    // 1 AUTO
+    // 50 SRT ST1
+    // 100 ECO ST1
+    // 125 ECO ST2
+    // 150 ECO ST3
+    // 25-175 MANUAL
     .SpeedShift = 1,
     // Ov << 100 >> uV
 
-    // MARIKO CPU-HI ECO LOGIC // 0 ECO ALT-MODE (low=0 & high=0) // 1 AUTO ECO ST1 // 3 AUTO ECO ST2 // 5 AUTO ECO ST3 // 1-7
-    // MANUAL
+    // MARIKO CPU-HI ECO LOGIC
+    // 0 ECO ALT-MODE
+    // 1 AUTO ECO ST1
+    // 3 AUTO ECO ST2
+    // 5 AUTO ECO ST3
+    // 1-7 MANUAL
     .marikoCpuHUV = 0,
 
-    // GPU OVER LOGIC // 0 AUTO // MARIKO: 750-1200 MANUAL // ERISTA: 850-1300 MANUAL
+    // GPU OVER LOGIC
+    // 0 AUTO
+    // MARIKO: 750-1200 MANUAL
+    // ERISTA: 850-1300 MANUAL
     .hGPUv = 0,
 
-    // MARIKO CPU MIN-HIGH LOGIC // 0 AUTO // 1 AUTO ECO ST1 // 2 AUTO ECO ST2 // 3 AUTO ECO ST3 // 750-850 MANUAL
+    // MARIKO CPU MIN-HIGH LOGIC
+    // 0 AUTO
+    // 1 AUTO ECO ST1
+    // 2 AUTO ECO ST2
+    // 3 AUTO ECO ST3
+    // 750-850 MANUAL
     .dCPUv = 0,
 
-    // EMC BALLANCE ADVANCED LOGIC // 0 eBAMATIC // 1 SYK-LOH // 2 ECO ST1 // 3 DEFAULT // 4 SRT ST1 // 5 SRT ST2
+    // EMC BALLANCE ADVANCED LOGIC
+    // 0 eBAMATIC
+    // 1 SYK-LOH
+    // 2 ECO ST1
+    // 3 DEFAULT
+    // 4 SRT ST1
+    // 5 SRT ST2
     .eBAL = 0,
-    // TRADE MAX FREQ FOR EFFICIENCY // EFFICIENCY << PRIORITY >> FREQUENCY
+    // TRADE MAX FREQ FOR EFFICIENCY
+    // EFFICIENCY << PRIORITY >> FREQUENCY
 
-    .drochr08 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-12 AUTO STAGE
+    // 0 DEBUG
+    // 1 AUTO SAFE
+    // 2-12 AUTO STAGE
+    .drochr08 = 1,
 
-    // EBA-SHIFT // 0 DEFAULT // 1 AUTO ST1 // 2 SYK-LOH // 3 AUTO ST3 // 4 AUTO ST4 // 5 LOH-C4C
+    // EBA-SHIFT
+    // 0 DEFAULT
+    // 1 AUTO ST1
+    // 2 SYK-LOH
+    // 3 AUTO ST3
+    // 4 AUTO ST4
+    // 5 LOH-C4C
     .eBAS = 1,
-    // TRADE MAX FREQ FOR EFFICIENCY // FREQUENCY << PRIORITY >> EFFICIENCY
+    // TRADE MAX FREQ FOR EFFICIENCY
+    // FREQUENCY << PRIORITY >> EFFICIENCY
 
-    // PRIMARY MICRO-ENHANCE LOGIC			 	    // 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2
-    // 1333>1065>800
-    // 0-2
-    // 3 eBAW Shift 0-4		// 4 eBAR Shift 0-4     // 5 RTW Crement 0-4	 // 6 WTR Crement 0-4 	   // 7 WTP Crement 0-4
-    // 8 RCD Decret 0-4 	// 9 RP Decret 0-4      // 10 RAS Decret 0-8	 // 11 SRPD 0-15 		   // 12 E-Enhance
-    // P
-    // 0-1
-    // 13 DR Debug 0-8		// 14 GameChanger 0-24	// 15 Eri-Bump 0-1		 // 16 lovec 0-1		   // 17
-    // DBI
-    // 0-3
-    // 18 eBAMATIC ST 0-3	// 19 vMINetune ST 0-5	// 20 rVDDick 0-8		 // 21 gVMINDick 0-4
+    // PRIMARY MICRO-ENHANCE LOGI15C			 	// 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2 1333>1065>800 0-3
+    // 3 eBAW Shift 0-4		// 4 eBAR Shift 0-4     // 5 eBAW Crement 0-4	 // 6 eBAR Crement 0-4 	   // 7 eBAS Crement 0-4
+    // 8 RCD Decret 0-4 	// 9 RP Decret 0-4      // 10 RAS Decret 0-8	 // 11 SRPD 0-15 		   // 12 E-Enhance P 0-1
+    // 13 DR Debug 0-8		// 14 GameChanger 0-24	// 15 eFOS MK 0-1		 // 16 lovec 0-1		   // 17 DBI 0-3
+    // 18 eBAMATIC ST 0-3	// 19 vMINetune ST 0-5	// 20 rVDDick 0-8		 // 21 gVMINDick 0-8
     .pMEH = {0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 2, 0, 0},
     // DEF =  0  2  0  2  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  3  4  2  >> RESERVED >>
     // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
-    // SECONDARY MICRO-ENHANCE LOGIC (SAFE)	// 0 ARB-Boost 1-9		// 1 ARB-BCD 0-4	// 2 ARB-BRP 0-4	// 3
-    // ARB-RTR
-    // 0-4
-    // 4 ARB-RTW 0-4	// 5 ARB-WTR 0-4	// 6 eZQ Override 0-7	// 7 trDVFS 0-1		// 8 E-Boost 0-2	// 9 SSC
-    // Logic
-    // 0-1
-    // 10 Latent 0-8  	// 11 REF-NEH 0-4	// 12 Clatok 0-1		// 13 CPriora 0-1
+    // SECONDARY MICRO-ENHANCE LOGIC (SAFE)	// 0 ARB-Boost 1-9		// 1 ARB-BCD 0-4	// 2 ARB-BRP 0-4	// 3 ARB-RTR 0-4
+    // 4 ARB-RTW 0-4	// 5 ARB-WTR 0-4	// 6 eZQ Override 0-7	// 7 trDVFS 0-1		// 8 E-Boost 0-2	// 9 SSC Logic 0-1
+    // 10 Latent 0-8  	// 11 REF-NEH 0-4	// 12 Clatok 0-1		// 13 CPriora 0-4	// 14 GetLow 0-3	// 15 GetHigh 0-3
     .sMEH = {4, 2, 2, 2, 2, 2, 0, 1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // DEF =  4  2  2  2  2  2  0  1  0  1  0  2  0  0  >> RESERVED >>
+    // DEF =  4  2  2  2  2  2  0  1  0  1  0  2  0  0  0  0  0 >> RESERVED >>
     // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
     // Secret Hardware Assisted Integration Tool 4 Advanced Necessities
     // SPELL = [S][   SLOT1   ][   SLOT2   ][   SLOT3   ][R]
     .SHAITAN = {0, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 0},  //! DANGER
     // NUM 	 =  0   1  2  3  4   5  6  7  8   9 10 11 12 13
-    // Magic numbers - right combination adds feautures from the futur
+    // Magic numbers - right combination adds feautures from the future
+
+    // .eristaMtcTable = const_cast<EristaMtcTable *>(&EristaMtcTablePlaceholder),
+    // .marikoMtcTable = const_cast<MarikoMtcTable *>(&MarikoMtcTablePlaceholder),
 };

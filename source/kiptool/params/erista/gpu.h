@@ -10,7 +10,7 @@ const FixedValues eristaGpuUVFV = {.valuesCount = 3,
 // 0 AUTO ECO ST1
 // 1 AUTO ECO ST2
 // 2 AUTO ECO ST3
-// ERISTA = eristaGpuDvfsTable uV - (12500 uV *marikoGpuUV)
+// ERISTA = eristaGpuDvfsTable uV - (12500 uV * marikoGpuUV)
 const Param eristaGpuUV = {.name = "GPU ECO LOGIC",
                            .measure = NULL,
                            .description = NULL,
@@ -275,8 +275,7 @@ const Param eristaGpuDvfsTable1612mhz = {.name = "1612mhz",
 // ECO ST1 = -12500uV
 // ECO ST2 = -25000uV
 // ECO ST3 = -37500uV
-// MANUAL = -75000uV << Default >>
-// +75000uV
+// MANUAL = -75000uV << Default >> +75000uV
 const Table eristaGpuDvfsTable = {
     .name = "GPU Volt Table",
     .description = NULL,
