@@ -17,19 +17,21 @@ const FixedValues marikoEmcMaxClockFV = {.valuesCount = 11,
                                                     {.value = 2800000, .label = "S ST3"},
                                                     {.value = 2934400, .label = "L-C4C"}}};
 const FixedLimits marikoEmcMaxClockFL = {.min = 1333000, .max = 2733000, .stepSize = 200};  // STEP GCD
-// 4IFIR MODE / eBAMATIC STAGE 0-1-2-3
-// S-LOH 1600 / 1600000 / eBAL 1 1 1 1
-// E ST3 1733 / 1734400 / eBAL 1 1 1 1
-// E ST2 1866 / 1868800 / eBAL 2 1 1 1
-// E ST1 2000 / 1996800 / eBAL 2 2 1 1
-// D ST1 2133 / 2131200 / eBAL 2 2 2 1
-// D ST2 2266 / 2265600 / eBAL 2 2 2 2
-// D ST3 2400 / 2400000 / eBAL 3 2 2 2
-// S ST1 2533 / 2534400 / eBAL 3 3 2 2
-// S ST2 2666 / 2665600 / eBAL 4 3 3 2
-// S ST3 2800 / 2800000 / eBAL 4 4 3 3
-// L-C4C 2933 / 2934400 / eBAL 5 4 4 3
-// MICRON E/H eBAL 4 < 3.8GHz // SAMSUNG B eBAL 4 < 3.9GHz // HYNIX CJR/DJR eBAL 4 < 3.8GHz
+// 4IFIR MODE ON MARIKO
+// S-LOH 1600 / 1600000
+// E ST3 1733 / 1734400
+// E ST2 1866 / 1868800
+// E ST1 2000 / 1996800
+// D ST1 2133 / 2131200
+// D ST2 2266 / 2265600
+// D ST3 2400 / 2400000
+// S ST1 2533 / 2534400
+// S ST2 2666 / 2665600
+// S ST3 2800 / 2800000
+// L-C4C 2933 / 2934400
+// MICRON E/H eBAL 4 < 3.8GHz
+// SAMSUNG B eBAL 4 < 3.9GHz
+// HYNIX CJR/DJR eBAL 4 < 3.8GHz
 // MANUAL 1333000-2733000 STEP 38.4MHz
 const Param marikoEmcMaxClock = {.name = "EMC Max Clock",
                                  .measure = "MHz",

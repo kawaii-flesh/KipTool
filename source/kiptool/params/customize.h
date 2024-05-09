@@ -22,10 +22,17 @@ typedef struct cvb_entry_t {
     cvb_coefficients cvb_pll_param;   // 24
 } cvb_entry_t;                        // 56
 
+enum MtcConfig : u32 {
+    eBAMATIC = 0,
+    CUSTOM_ADJ_ALL = 1,
+    NO_ADJ_ALL = 2,
+    CUSTOMIZED_ALL = 4,
+};
+
 typedef struct {
     u8 cust[4];                                                // 0        CUST
     u32 custRev;                                               // 4        KIP version
-    u32 mtcConf;                                               // 8        MTC_MAGIC
+    u32 mtcConf;                                               // 8        MtcConfig
     u32 commonCpuBoostClock;                                   // 12       MARIKO - CPU
     u32 commonEmcMemVolt;                                      // 16       COMMON - RAM
     u32 eristaCpuMaxVolt;                                      // 20       ERISTA - CPU
@@ -63,4 +70,6 @@ typedef struct {
     u32 pMEH[24];                                              // 12364    COMMON - RAM
     u32 sMEH[24];                                              // 12460    COMMON - RAM
     u32 SHAITAN[14];                                           // 12556    SOON
+    // EristaMtcTable* eristaMtcTable;
+    // MarikoMtcTable* marikoMtcTable;
 } CustomizeTable;
