@@ -89,7 +89,7 @@ const Param drochr07 = {.name = "DROCHR07",
                         .limitsCount = 1,
                         .limits = {{.type = EFixedRange, .values = &drochr07FR}}};
 const FixedRange drochr08FR = {.start = 0, .end = 12};
-// 0 DEBUG // 1 AUTO DEFAULT // 2-12 AUTO
+// 0 DEBUG // 1 AUTO SAFE // 2-12 AUTO STAGE
 const Param drochr08 = {.name = "DROCHR08",
                         .measure = NULL,
                         .description = NULL,
@@ -118,6 +118,8 @@ const FixedValues eBALFV = {.valuesCount = 6,
 // 3 DEFAULT
 // 4 SRT ST1
 // 5 SRT ST2
+// TRADE MAX FREQ FOR EFFICIENCY
+// EFFICIENCY << PRIORITY >> FREQUENCY
 const Param eBAL = {.name = "EMC BALLANCE ADVANCED LOGIC",
                     .measure = NULL,
                     .description = NULL,
@@ -140,7 +142,8 @@ const FixedValues eBASFV = {.valuesCount = 6,
 // 3 AUTO ST3
 // 4 AUTO ST4
 // 5 LOH-C4C
-// TRADE MAX FREQ FOR EFFICIENCY // FREQUENCY << PRIORITY >> EFFICIENCY
+// TRADE MAX FREQ FOR EFFICIENCY
+// FREQUENCY << PRIORITY >> EFFICIENCY
 const Param eBAS = {.name = "EBA-SHIFT",
                     .measure = NULL,
                     .description = NULL,
@@ -167,15 +170,15 @@ const Param pMeh1 = {.name = "pMeh 1  divMB Supressor",
                      .defaultValue = defaultCustTable.pMEH[1],
                      .limitsCount = 1,
                      .limits = {{.type = EFixedRange, .values = &pMeh1FR}}};
-const FixedValues pMeh2FV = {.valuesCount = 3, .values = {{.value = 0, .label = "1333"}, {.value = 1, .label = "1065"}, {.value = 2, .label = "800"}}};
-// 2 1333>1065>800 0-2
-const Param pMeh2 = {.name = "pMeh 2",
+const FixedRange pMeh2FR = {.start = 0, .end = 3};
+// 2 1333>1065>800 0-3
+const Param pMeh2 = {.name = "pMeh 2  1333>1065>800",
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[2]),
                      .defaultValue = defaultCustTable.pMEH[2],
                      .limitsCount = 1,
-                     .limits = {{.type = EFixedValues, .values = &pMeh2FV}}};
+                     .limits = {{.type = EFixedRange, .values = &pMeh2FR}}};
 const FixedRange pMeh3FR = {.start = 0, .end = 4};
 // 3 eBAW Shift 0-4
 const Param pMeh3 = {.name = "pMeh 3  eBAW Shift",
@@ -195,8 +198,8 @@ const Param pMeh4 = {.name = "pMeh 4  eBAR Shift",
                      .limitsCount = 1,
                      .limits = {{.type = EFixedRange, .values = &pMeh4FR}}};
 const FixedRange pMeh5FR = {.start = 0, .end = 4};
-// 5 RTW Crement 0-4
-const Param pMeh5 = {.name = "pMeh 5  RTW Crement",
+// 5 eBAW Crement 0-4
+const Param pMeh5 = {.name = "pMeh 5  eBAW Crement",
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[5]),
@@ -204,8 +207,8 @@ const Param pMeh5 = {.name = "pMeh 5  RTW Crement",
                      .limitsCount = 1,
                      .limits = {{.type = EFixedRange, .values = &pMeh5FR}}};
 const FixedRange pMeh6FR = {.start = 0, .end = 4};
-// 6 WTR Crement 0-4
-const Param pMeh6 = {.name = "pMeh 6  WTR Crement",
+// 6 eBAR Crement 0-4
+const Param pMeh6 = {.name = "pMeh 6  eBAR Crement",
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[6]),
@@ -213,8 +216,8 @@ const Param pMeh6 = {.name = "pMeh 6  WTR Crement",
                      .limitsCount = 1,
                      .limits = {{.type = EFixedRange, .values = &pMeh6FR}}};
 const FixedRange pMeh7FR = {.start = 0, .end = 4};
-// 7 WTP Crement 0-4
-const Param pMeh7 = {.name = "pMeh 7  WTP Crement",
+// 7 eBAS Crement 0-4
+const Param pMeh7 = {.name = "pMeh 7  eBAS Crement",
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.pMEH[7]),
@@ -285,8 +288,8 @@ const Param pMeh14 = {.name = "pMeh 14 GameChanger",
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh14FR}}};
 const FixedRange pMeh15FR = {.start = 0, .end = 1};
-// 15 Eri-Bump 0-1
-const Param pMeh15 = {.name = "pMeh 15 Eri-Bump",
+// 15 eFOS MK 0-1
+const Param pMeh15 = {.name = "pMeh 15 eFOS MK",
                       .measure = NULL,
                       .description = NULL,
                       .offset = getOffset(defaultCustTable.pMEH[15]),
@@ -338,8 +341,8 @@ const Param pMeh20 = {.name = "pMeh 20 rVDDick",
                       .defaultValue = defaultCustTable.pMEH[20],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh20FR}}};
-const FixedRange pMeh21FR = {.start = 0, .end = 4};
-// 21 gVMINDick 0-4
+const FixedRange pMeh21FR = {.start = 0, .end = 8};
+// 21 gVMINDick 0-8
 const Param pMeh21 = {.name = "pMeh 21 gVMINDick",
                       .measure = NULL,
                       .description = NULL,
@@ -475,8 +478,8 @@ const Param sMeh12 = {.name = "sMeh 12 Clatok",
                       .defaultValue = defaultCustTable.sMEH[12],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &sMeh12FR}}};
-const FixedRange sMeh13FR = {.start = 0, .end = 1};
-// 13 CPriora 0-1
+const FixedRange sMeh13FR = {.start = 0, .end = 4};
+// 13 CPriora 0-4
 const Param sMeh13 = {.name = "sMeh 13 CPriora",
                       .measure = NULL,
                       .description = NULL,
@@ -484,15 +487,34 @@ const Param sMeh13 = {.name = "sMeh 13 CPriora",
                       .defaultValue = defaultCustTable.sMEH[13],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &sMeh13FR}}};
+const FixedRange sMeh14FR = {.start = 0, .end = 3};
+// 14 GetLow 0-3
+const Param sMeh14 = {.name = "sMeh 14 GetLow",
+                      .measure = NULL,
+                      .description = NULL,
+                      .offset = getOffset(defaultCustTable.sMEH[14]),
+                      .defaultValue = defaultCustTable.sMEH[14],
+                      .limitsCount = 1,
+                      .limits = {{.type = EFixedRange, .values = &sMeh14FR}}};
+const FixedRange sMeh15FR = {.start = 0, .end = 3};
+// 15 GetHigh 0-3
+const Param sMeh15 = {.name = "sMeh 15 GetHigh",
+                      .measure = NULL,
+                      .description = NULL,
+                      .offset = getOffset(defaultCustTable.sMEH[15]),
+                      .defaultValue = defaultCustTable.sMEH[15],
+                      .limitsCount = 1,
+                      .limits = {{.type = EFixedRange, .values = &sMeh15FR}}};
 
 // SECONDARY MICRO-ENHANCE LOGIC (SAFE)
-// DEF =  4  2  2  2  2  2  0  1  0  1  0  2  0  0  >> RESERVED >>
+// DEF =  4  2  2  2  2  2  0  1  0  1  0  2  0  0  0  0  0 >> RESERVED >>
 // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-const Table sMehTable = {.name = "sMeh Table",
-                         .description = NULL,
-                         .baseOffset = getOffset(defaultCustTable.sMEH),
-                         .paramsCount = 14,
-                         .params = {&sMeh0, &sMeh1, &sMeh2, &sMeh3, &sMeh4, &sMeh5, &sMeh6, &sMeh7, &sMeh8, &sMeh9, &sMeh10, &sMeh11, &sMeh12, &sMeh13}};
+const Table sMehTable = {
+    .name = "sMeh Table",
+    .description = NULL,
+    .baseOffset = getOffset(defaultCustTable.sMEH),
+    .paramsCount = 16,
+    .params = {&sMeh0, &sMeh1, &sMeh2, &sMeh3, &sMeh4, &sMeh5, &sMeh6, &sMeh7, &sMeh8, &sMeh9, &sMeh10, &sMeh11, &sMeh12, &sMeh13, &sMeh14, &sMeh15}};
 
 const Params cRAMParams = {.count = 3, .params = {&commonEmcMemVolt, &eBAL, &eBAS}};
 const Tables cRAMTables = {.count = 3, .tables = {&drochrsTable, &pMehTable, &sMehTable}};
