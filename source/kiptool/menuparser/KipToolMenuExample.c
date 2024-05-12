@@ -72,7 +72,7 @@ uint32_t CheckErrors(menu_creation_res_s* str) {
 void ResetParams(menu_entry_s* head) {
     while (head) {
         if (head->menu_info.entry_type == ENTRY_PARAM) {
-            head->value_data.current_value = head->value_data.default_value.value;
+            head->value_data.current_value = head->value_data.default_value.value_common;
         } else if (head->menu_info.entry_type == ENTRY_FOLDER && head->item_inner_group != NULL) {
             ResetParams(head->item_inner_group);
         }
@@ -246,28 +246,28 @@ void MenuParserDemo(char* path, FSEntry_t entry) {
             setHWType(COMMON);
     }
 
-    char* kt_location = (char*)calloc(256, 1);
-    snprintf(kt_location, 256, "sd:/.kt");
-    uint32_t kip_count = 0;
-    char** kip_paths = GetKips(kt_location, &kip_count);
+    // char* kt_location = (char*)calloc(256, 1);
+    // snprintf(kt_location, 256, "sd:/.kt");
+    // uint32_t kip_count = 0;
+    // char** kip_paths = GetKips(kt_location, &kip_count);
     // char** kip_paths = GetKips(&kip_count, kip_files);
 
-    DEBUG_BREAKPOINT;
-    FIL kipFile;
-    if ((res = f_open(&kipFile, filePath, FA_READ | FA_WRITE | FA_OPEN_EXISTING))) {
-        DrawError(newErrCode(res));
-        return;
-    }
+    //DEBUG_BREAKPOINT;
+    // FIL kipFile;
+    // if ((res = f_open(&kipFile, filePath, FA_READ | FA_WRITE | FA_OPEN_EXISTING))) {
+    //     DrawError(newErrCode(res));
+    //     return;
+    // }
 
-    u8 cust[] = CUST;
-    const int baseOffset = searchBytesArray(cust, 4, &kipFile);
-    if (baseOffset == -1) {
-        gfx_printf("CUST section was not found! Press B to exit");
-        free(filePath);
-        while (!(hidRead()->buttons & JoyB))
-            ;
-        return;
-    }
+    // u8 cust[] = CUST;
+    // const int baseOffset = searchBytesArray(cust, 4, &kipFile);
+    // if (baseOffset == -1) {
+    //     gfx_printf("CUST section was not found! Press B to exit");
+    //     free(filePath);
+    //     while (!(hidRead()->buttons & JoyB))
+    //         ;
+    //     return;
+    // }
 
     gfx_printf("Reading ");
     gfx_printf("sd:/kip21/kip21.json\r\n");

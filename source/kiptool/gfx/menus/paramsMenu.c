@@ -32,8 +32,7 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
         char* displayBuff = malloc(1024);
         const Param* param = (const Param*)entry->entry;
         s_printf(displayBuff, "%s - ", param->name);
-        getDisplayValue(param, displayBuff + strlen(displayBuff),
-                        getParamValueFromBuffer(printParamAdditionalData->custTable, param), 1);
+        getDisplayValue(param, displayBuff + strlen(displayBuff), getParamValueFromBuffer(printParamAdditionalData->custTable, param), 1);
         const char* formattedBuff = getFormattedBuff(printParamAdditionalData->formatingData, displayBuff);
         gfx_puts_limit(formattedBuff, maxLen);
         free((void*)formattedBuff);
@@ -45,8 +44,8 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
     gfx_putc('\n');
 }
 
-void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount,
-                   const Tables* tables[], unsigned int tablesArraysCount) {
+void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount, const Tables* tables[],
+                   unsigned int tablesArraysCount) {
     unsigned int totalEntriesCount = 2;
     unsigned int startIndex = 0;
     for (unsigned int i = 0; i < paramsArraysCount; ++i) totalEntriesCount += params[i]->count;
@@ -61,9 +60,8 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         for (unsigned int paramArrayIndex = 0; paramArrayIndex < paramsArraysCount; ++paramArrayIndex) {
             for (unsigned int paramI = 0; paramI < params[paramArrayIndex]->count; ++paramI) {
                 const Param* param = params[paramArrayIndex]->params[paramI];
-                menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == getParamValueFromBuffer(custTable, param)
-                                                                ? COLORTORGB(COLOR_DEFAULT_PARAM)
-                                                                : COLORTORGB(COLOR_CHANGED_PARAM);
+                menuEntries[menuEntriesIndex].optionUnion =
+                    param->defaultValue == getParamValueFromBuffer(custTable, param) ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
                 menuEntries[menuEntriesIndex].type = ETParam;
                 menuEntries[menuEntriesIndex].entry = param;
                 ++menuEntriesIndex;
@@ -108,8 +106,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                 for (unsigned int i = 0; i < tablesArraysCount; ++i) {
                     for (unsigned int j = 0; j < tables[i]->count; ++j) {
                         for (unsigned int k = 0; k < tables[i]->tables[j]->paramsCount; ++k)
-                            setParamValueWithoutSaveSession(custTable, tables[i]->tables[j]->params[k],
-                                                            tables[i]->tables[j]->params[k]->defaultValue);
+                            setParamValueWithoutSaveSession(custTable, tables[i]->tables[j]->params[k], tables[i]->tables[j]->params[k]->defaultValue);
                     }
                 }
                 saveSession((const CustomizeTable*)custTable);

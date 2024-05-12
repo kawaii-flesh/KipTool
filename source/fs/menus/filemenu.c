@@ -2,7 +2,7 @@
 
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
-#include <storage/nx_sd.h>
+#include <storage/sd.h>
 #include <string.h>
 #include <utils/sprintf.h>
 
@@ -35,7 +35,7 @@ extern int launch_payload(char* path);
 
 void LaunchPayload(char* path, FSEntry_t entry) { launch_payload(CombinePaths(path, entry.name)); }
 
-//void KipTool(char* path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
+void KipTool(char* path, FSEntry_t entry) { drawKipToolMenu(path, entry); }
 
 void CopyClipboard(char* path, FSEntry_t entry) {
     char* thing = CombinePaths(path, entry.name);
@@ -82,7 +82,7 @@ void RenameFile(char* path, FSEntry_t entry) {
     free(renameTo);
 }
 
-fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, LaunchPayload, drawKipToolMenu};
+fileMenuPath FileMenuPaths[] = {CopyClipboard, MoveClipboard, RenameFile, DeleteFile, LaunchPayload, KipTool};
 
 void FileMenu(char* path, FSEntry_t entry) {
     FileMenuEntries[1].name = entry.name;

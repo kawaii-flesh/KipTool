@@ -1,6 +1,7 @@
 #include "menu.h"
 
 #include <mem/minerva.h>
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/btn.h>
 #include <utils/sprintf.h>
@@ -76,8 +77,7 @@ int newMenu(Vector_t* vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
             if (redrawScreen) {
                 minerva_periodic_training();
-                gfx_boxGrey(startX, startY, startX + screenLenX * 16, startY + screenLenY * 16,
-                            (options & USELIGHTGREY) ? 0x33 : 0x1B);
+                gfx_boxGrey(startX, startY, startX + screenLenX * 16, startY + screenLenY * 16, (options & USELIGHTGREY) ? 0x33 : 0x1B);
             }
 
             int start = selected / screenLenY * screenLenY;

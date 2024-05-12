@@ -9,6 +9,7 @@
 #include "../../gfx/gfxutils.h"
 #include "../../gfx/menu.h"
 #include "../../hid/hid.h"
+#include "../../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../../tegraexplorer/tconf.h"
 #include "../../utils/utils.h"
 #include "../../utils/vector.h"
@@ -40,8 +41,7 @@ void FileExplorer(const char* path) {
     if (TConf.explorerCopyMode == CMODE_Move || TConf.explorerCopyMode == CMODE_MoveFolder) ResetCopyParams();
 
     while (1) {
-        topEntries[2].optionUnion =
-            (TConf.explorerCopyMode != CMODE_None) ? (COLORTORGB(COLOR_ORANGE)) : (COLORTORGB(COLOR_GREY) | SKIPBIT);
+        topEntries[2].optionUnion = (TConf.explorerCopyMode != CMODE_None) ? (COLORTORGB(COLOR_ORANGE)) : (COLORTORGB(COLOR_GREY) | SKIPBIT);
         topEntries[1].name = (!strcmp(SD_ROOT, storedPath)) ? "<- Exit explorer" : "<- Folder back";
 
         gfx_clearscreen();
@@ -92,11 +92,19 @@ void FileExplorer(const char* path) {
                 if (TConf.explorerCopyMode == CMODE_Move || TConf.explorerCopyMode == CMODE_MoveFolder) {
                     if ((err.err = f_rename(TConf.srcCopy, dst))) err = newErrCode(err.err);
                 } else if (TConf.explorerCopyMode == CMODE_Copy) {
+                    if (FileExists(dst)) {
+                        const char* fileMessage[] = {"The file already exists.", "Do you want to overwrite it?", NULL};
+                        if (confirmationDialog(fileMessage, ENO) == ENO) continue;
+                    }
                     gfx_clearscreen();
                     RESETCOLOR;
                     gfx_printf("Hold vol+/- to cancel\nCopying %s... ", filename);
                     err = FileCopy(TConf.srcCopy, dst, COPY_MODE_CANCEL | COPY_MODE_PRINT);
                 } else {
+                    if (DirExists(dst)) {
+                        const char* dirMessage[] = {"The dir already exists.", "Do you want to overwrite it?", NULL};
+                        if (confirmationDialog(dirMessage, ENO) == ENO) continue;
+                    }
                     gfx_clearscreen();
                     RESETCOLOR;
                     gfx_printf("\nCopying folder... ");

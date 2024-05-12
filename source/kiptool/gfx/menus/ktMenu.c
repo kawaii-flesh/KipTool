@@ -1,5 +1,6 @@
 #include "ktMenu.h"
 
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/sprintf.h>
 #include <utils/util.h>
@@ -9,7 +10,7 @@
 #include "../gfx.h"
 
 int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, const void* additionalData,
-              void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* additionalData)) {
+              void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData)) {
     int screenLenX = 70;
     int screenLenY = 42;
     int selected = startIndex;
@@ -164,7 +165,7 @@ void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* addi
 
     if (entry->icon) {
         gfx_putc(entry->icon);
-        gfx_putc('       ');
+        gfx_putc(' ');
         maxLen -= 2;
     }
 

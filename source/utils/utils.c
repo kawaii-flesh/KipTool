@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include <mem/heap.h>
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/types.h>
 #include <utils/util.h>
@@ -14,6 +15,8 @@
 #include "vector.h"
 
 extern int launch_payload(char* path);
+
+#define ALWAYS_INLINE inline __attribute__((always_inline))
 
 void ALWAYS_INLINE power_off() { power_set_state(POWER_OFF_RESET); }
 

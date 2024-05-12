@@ -4,12 +4,17 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stddef.h>
 
 // Перечисление типов элементов меню
 typedef enum entry_type_t
 {
+    ENTRY_UNDEFINED = 0,
 	ENTRY_FOLDER = 1, // Пункт меню
 	ENTRY_PARAM = 2, // Параметр, содержит подменю значений
 	ENTRY_VALUE = 3, // Значение параметра
@@ -18,16 +23,29 @@ typedef enum entry_type_t
 // Перечисление типов значений
 typedef enum value_type_t
 {
+    VALUE_UNDEFINED = 0,
 	VALUE_FIXED_SELECTION = 1, // Фиксированное значение, пресет
 	VALUE_MANUAL_SELECTION = 2, // Ручной выбор, диапазон min-max
 	VALUE_RANGE_SELECTION = 3, // Диапазон параметров с min по max, генерация силами фронта
 } value_type_t;
 
+// Перечисление типов оборудования
+typedef enum hardware_type_t
+{
+    HARDWARE_COMMON = 0, // Универсальный параметр
+    HARDWARE_ERISTA = 1, // Относится только к ERISTA
+    HARDWARE_MARIKO = 2, // Относится только к MARIKO
+} hardware_type_t;
+
 // Структура описания значения по умолчанию для параметра
 typedef struct default_value_s
 {
-	uint32_t id; // Айди параметря, являющийся дефолтным
-	int64_t value; // Дефолтное значение
+    uint32_t id_common; // Айди параметря, являющийся дефолтным
+    int64_t value_common; // Дефолтное значение
+    uint32_t id_erista; // Айди параметря, являющийся дефолтным для эристы
+    int64_t value_erista; // Дефолтное значение
+    uint32_t id_mariko; // Айди параметря, являющийся дефолтным для марико
+    int64_t value_mariko; // Дефолтное значение
 } default_value_s;
 
 // Структура описания параметров значения, в т.ч. диапазоны
@@ -44,6 +62,7 @@ typedef struct value_data_s
 	int64_t step;   // Шаг ручной настройки или перебора
 	char* unit_name; // Единицы измерения, нуль-терминированная строка
 	default_value_s default_value; // Значение по умолчанию
+    hardware_type_t hardware_type; // Железо, к которому относится данный параметр
 } value_data_s;
 
 // Данные для отрисовки меню, тип эелемента, его имя и хелпа
@@ -101,28 +120,28 @@ typedef struct menu_creation_res_s
 
 } menu_creation_res_s;
 
-
+void CopyDataToMenu(menu_entry_s* dst, const menu_entry_s* src);
 
 /// @brief Чтение JSON и складирование всех элементов в список, первый этап создания меню
 /// @param json_text нуль-терминированное содержимое файла json, весь файл
-/// @return структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню. 
-//         Эти пункты не пригодны для создания меню. Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
+/// @return структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню.
+///         Эти пункты не пригодны для создания меню. Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
 menu_creation_res_s* ReadJsonMenuFromText(char* json_text);
 
 /// @brief Чтение JSON и добавление элементов в конец списка JSON-элементов
 /// @param json_text нуль-терминированное содержимое файла json, весь файл
 /// @param menu_creation_res menu_creation_res - по сути результат работы функции ReadJsonMenuFromText
 /// @return структура с описанием дополнительных файлов, которые нужно прочитать, а так же список всех пунктов меню. 
-//         Эти пункты не пригодны для создания меню. Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
+///         Эти пункты не пригодны для создания меню. Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
 menu_creation_res_s* AppendJsonMenuFromText(char* json_text, menu_creation_res_s* menu_creation_res);
 
 /// @brief Создание меню, проставление зависимостей и добавление избыточной информации
 /// @param menu_creation_res menu_creation_res_s* menu_creation_res - по сути результат работы функции ReadJsonMenuFromText
 /// @return Указатель на голову меню
-//         Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
+///         Дополнительно в структуру menu_creation_res добавляется информация об ошибках, если они произошли.
 menu_entry_s* CreateMenu(menu_creation_res_s* menu_creation_res);
 
-/// @brief Удаление структуры с результатами парсинга
+/// @brief Удаление структуры с результатами парсинга, не удаляет сами элементы.
 /// @param str Указатель на структуру с результатами парсинга
 void DeleteMenuCreationRes(menu_creation_res_s* str);
 
@@ -131,4 +150,6 @@ void DeleteMenuCreationRes(menu_creation_res_s* str);
 /// @param header Указатель на голову меню, самый верхний уровень, самый первый пункт меню
 void DeleteJsonMenu(menu_entry_s* header);
 
-
+#ifdef __cplusplus
+}
+#endif

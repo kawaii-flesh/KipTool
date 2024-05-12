@@ -33,15 +33,14 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
     else if (entry->type == ETReset) {
         char* displayBuff = malloc(256);
         s_printf(displayBuff, "%s", "Reset to the default value - ");
-        formatValueDiv(displayBuff + strlen(displayBuff), editorAdditionalData->param->defaultValue,
-                       editorAdditionalData->param->defaultValue > 1500);
+        formatValueDiv(displayBuff + strlen(displayBuff), editorAdditionalData->param->defaultValue, editorAdditionalData->param->defaultValue > 1500);
         gfx_puts_limit(displayBuff, maxLen);
         free(displayBuff);
     } else if (entry->type == ETFixedRange) {
-        char* buff = malloc(8);
-        utoa((unsigned int)entry->entry, buff, 10);  // It is not a bug. entry->entry is an unsigned int value
-        gfx_puts_limit(buff, maxLen);
-        free((void*)buff);
+        char* displayBuff = malloc(256);
+        getDisplayValue(editorAdditionalData->param, displayBuff, (unsigned int)entry->entry, 0);
+        gfx_puts_limit(displayBuff, maxLen);
+        free((void*)displayBuff);
     } else if (entry->type == ETValue) {
         char* displayBuff = malloc(256);
         const Value* value = entry->entry;
@@ -63,11 +62,10 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
         formatValueDiv(maxStr, max, div);
         char* stepStr = malloc(8);
         formatValueDiv(stepStr, stepSize, div);
-        const char* measure =
-            editorAdditionalData->param->measure != NULL ? editorAdditionalData->param->measure : fixedLimits->measure;
-        s_printf(displayBuff, "Manual value - min: %s curVal: %s max: %s step: %s", minStr,
-                 validateValueByFixedLimits(fixedLimits, editorAdditionalData->currentValue) ? curValStr : "preset", maxStr,
-                 stepStr, measure != NULL ? measure : "");
+        const char* measure = editorAdditionalData->param->measure != NULL ? editorAdditionalData->param->measure : fixedLimits->measure;
+        s_printf(displayBuff, "Manual value - min: %s curVal: %s max: %s step: %s%s", minStr,
+                 validateValueByFixedLimits(fixedLimits, editorAdditionalData->currentValue) ? curValStr : "preset", maxStr, stepStr,
+                 measure != NULL ? measure : "");
         gfx_puts_limit(displayBuff, maxLen);
         free(minStr);
         free(curValStr);
@@ -118,9 +116,8 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                     startIndex = menuEntriesIndex;
                     menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
                 } else
-                    menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == fixedValue->value
-                                                                    ? COLORTORGB(COLOR_DEFAULT_PARAM)
-                                                                    : COLORTORGB(COLOR_CHANGED_PARAM);
+                    menuEntries[menuEntriesIndex].optionUnion =
+                        param->defaultValue == fixedValue->value ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
                 ++menuEntriesIndex;
             }
         if (fixedLimits != NULL) {
@@ -136,14 +133,12 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         if (fixedRange != NULL)
             for (unsigned int i = fixedRange->start; i <= fixedRange->end; ++i) {
                 menuEntries[menuEntriesIndex].type = ETFixedRange;
-                menuEntries[menuEntriesIndex].entry =
-                    i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
+                menuEntries[menuEntriesIndex].entry = i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
                 if (paramCurrentValue == i) {
                     startIndex = menuEntriesIndex;
                     menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
                 } else
-                    menuEntries[menuEntriesIndex].optionUnion =
-                        param->defaultValue == i ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
+                    menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == i ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
                 ++menuEntriesIndex;
             }
         menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);

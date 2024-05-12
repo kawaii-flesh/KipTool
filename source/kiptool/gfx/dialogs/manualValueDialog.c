@@ -1,6 +1,7 @@
 #include "manualValueDialog.h"
 
 #include <mem/heap.h>
+#include <soc/timer.h>
 #include <string.h>
 #include <utils/sprintf.h>
 #include <utils/util.h>
@@ -48,8 +49,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
     const char* measure = param->measure != NULL ? param->measure : fixedLimits->measure != NULL ? fixedLimits->measure : "";
     const unsigned int minMaxDif = numPlaces(max) - numPlaces(min);
     unsigned int maxStringLen = 16 + numPlaces(min > 1500 ? min / 1000 : min) + numPlaces(max > 1500 ? max / 1000 : max) * 2 +
-                                numPlaces(stepSize > 1500 ? stepSize / 1000 : stepSize) +
-                                (measure != NULL ? strlen(measure) : 0) + minMaxDif + 6;
+                                numPlaces(stepSize > 1500 ? stepSize / 1000 : stepSize) + (measure != NULL ? strlen(measure) : 0) + minMaxDif + 6;
     if (strlen(help) + 2 > maxStringLen) maxStringLen = strlen(help) + 2;
     unsigned int fontSize = gfx_con.fntsz;
     unsigned int boxWidth = (maxStringLen * fontSize) + fontSize * 2;
@@ -68,14 +68,24 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
 
     unsigned int lastPress = 1000 + get_tmr_ms();
     unsigned int lastResult = currentValue;
-    const int mult = (max - min) / (stepSize * 10);
+    int mult = (max - min) / (stepSize * 10);
+    if (mult < 2) mult = 2;
     bool redraw = true;
     bool fullRedraw = true;
     Input_t* input = hidRead();
     Input_t oldButtons = *input;
     bool isFromConfirmDialog = false;
+    bool div = min > 1500 || currentValue > 1500 || max > 1500 || stepSize > 1500;
+    char* minStr = malloc(8);
+    formatValueDiv(minStr, min, div);
+    char* currentStr = malloc(8);
+    char* maxStr = malloc(8);
+    formatValueDiv(maxStr, max, div);
+    char* stepStr = malloc(8);
+    formatValueDiv(stepStr, stepSize, div);
+    char* buff = malloc(256);
     while (1) {
-        if (redraw) {
+        if (redraw || fullRedraw) {
             gfx_printTopInfoKT();
             SETCOLOR(COLOR_WHITE, COLOR_GREY);
             if (fullRedraw) {
@@ -87,29 +97,18 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 gfx_puts(help);
                 fullRedraw = false;
             }
-            redraw = false;
-            bool div = min > 1500 || currentValue > 1500 || max > 1500 || stepSize > 1500;
-            char* minStr = malloc(8);
-            formatValueDiv(minStr, min, div);
-            char* currentStr = malloc(8);
+            div = div || currentValue > 1500;
             formatValueDiv(currentStr, currentValue, div);
-            char* maxStr = malloc(8);
-            formatValueDiv(maxStr, max, div);
-            char* stepStr = malloc(8);
-            formatValueDiv(stepStr, stepSize, div);
-            char* buff = malloc(256);
             s_printf(buff, "min=%s %s %s=max step=%s%s", minStr, currentStr, maxStr, stepStr, measure);
             maxStringLen = strlen(buff);
             unsigned int selectorX0Position = boxXMid - (maxStringLen / 2) * fontSize;
-            gfx_box(boxX0Position, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
+            if (redraw) {
+                gfx_box(selectorX0Position - 2 * fontSize, selectorY0Position, selectorX0Position, selectorY0Position + fontSize, COLOR_GREY);
+                gfx_box(selectorX0Position + maxStringLen * fontSize, selectorY0Position, boxX1Position, selectorY0Position + fontSize, COLOR_GREY);
+                redraw = false;
+            }
             gfx_con_setpos(selectorX0Position, selectorY0Position);
-            gfx_printf("min=%s %k%s%k %s=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr,
-                       measure);
-            free(minStr);
-            free(currentStr);
-            free(maxStr);
-            free(stepStr);
-            free(buff);
+            gfx_printf("min=%s %k%s%k %s=max step=%s%s", minStr, COLOR_ORANGE, currentStr, COLOR_WHITE, maxStr, stepStr, measure);
         }
         if (isFromConfirmDialog) {
             const unsigned holdTimer = 500;
@@ -128,37 +127,58 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
             if (validateValue(min, max, stepSize, currentValue)) {
                 const ManualValueResult good = {.value = currentValue, .status = EMVS_GOOD};
                 const char* message[] = {"Do you want to set new value?", NULL};
-                if (confirmationDialog(message, EYES) == EYES)
+                if (confirmationDialog(message, EYES) == EYES) {
+                    free(minStr);
+                    free(currentStr);
+                    free(maxStr);
+                    free(stepStr);
+                    free(buff);
                     return good;
-                else {
+                } else {
                     fullRedraw = true;
-                    redraw = true;
                     isFromConfirmDialog = true;
                     oldButtons = *input;
                     continue;
                 }
             } else {
-                const char* message[] = {"Oops... The selected value cannot be used O_o", "Do you want to continue editing?",
-                                         NULL};
+                const char* message[] = {"Oops... The selected value cannot be used O_o", "Do you want to continue editing?", NULL};
                 if (confirmationDialog(message, ENO) == ENO) {
                     const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
-                    return invalidValue;
+                    {
+                        free(minStr);
+                        free(currentStr);
+                        free(maxStr);
+                        free(stepStr);
+                        free(buff);
+                        return invalidValue;
+                    }
                 }
                 continue;
             }
         } else if (oldButtons.b) {
             const ManualValueResult exit = {.status = EMVS_EXIT};
             const char* message[] = {"Do you want to close editor?", NULL};
-            if (confirmationDialog(message, EYES) == EYES)
+            if (confirmationDialog(message, EYES) == EYES) {
+                free(minStr);
+                free(currentStr);
+                free(maxStr);
+                free(stepStr);
+                free(buff);
                 return exit;
-            else {
+            } else {
                 fullRedraw = true;
-                redraw = true;
                 isFromConfirmDialog = true;
                 oldButtons = *input;
                 continue;
             }
-            return exit;
+            {
+                free(minStr);
+                free(currentStr);
+                free(maxStr);
+                free(stepStr);
+                free(buff);
+                return exit;
+            }
         } else if (oldButtons.right || oldButtons.volp) {
             if (currentValue + stepSize < max)
                 currentValue += stepSize;

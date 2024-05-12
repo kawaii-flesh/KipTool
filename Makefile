@@ -16,11 +16,10 @@ LPVERSION := \"$(LPVERSION_MAJOR).$(LPVERSION_MINOR).$(LPVERSION_BUGFX)\"
 
 ################################################################################
 
-KTVERSION_MAJOR := 2
-KTVERSION_MINOR := 1
-KTVERSION_BUGFX := 0
-KTCUST_VERSION := 22
-KTVERSION := \"$(KTVERSION_MAJOR).$(KTVERSION_MINOR).$(KTVERSION_BUGFX)-$(KTCUST_VERSION)\"
+KTVERSION_MAJOR := 4
+KTVERSION_MINOR := 0
+KTVERSION_BUGFX := 3
+KTCUST_VERSION  := 24
 
 ################################################################################
 
@@ -44,7 +43,7 @@ OBJS +=	$(patsubst $(BDKDIR)/%.S, $(BUILDDIR)/$(TARGET)/%.o, \
 		$(call rwildcard, $(BDKDIR), *.S *.c)))
 
 GFX_INC   := '"../$(SOURCEDIR)/gfx/gfx.h"'
-FFCFG_INC := '"../$(SOURCEDIR)/libs/fatfs/ffconf.h"'
+FFCFG_INC := '"../$(SOURCEDIR)/libs/fatfs/fatfs_conf.h"'
 
 ################################################################################
 
@@ -52,6 +51,7 @@ CUSTOMDEFINES := -DIPL_LOAD_ADDR=$(IPL_LOAD_ADDR)
 CUSTOMDEFINES += -DLP_VER_MJ=$(LPVERSION_MAJOR) -DLP_VER_MN=$(LPVERSION_MINOR) -DLP_VER_BF=$(LPVERSION_BUGFX) -DLP_VER=$(LPVERSION)
 CUSTOMDEFINES += -DKT_VER_MJ=$(KTVERSION_MAJOR) -DKT_VER_MN=$(KTVERSION_MINOR) -DKT_VER_BF=$(KTVERSION_BUGFX) -DKT_VER=$(KTVERSION) -DKT_CUST_VER=$(KTCUST_VERSION)
 CUSTOMDEFINES += -DGFX_INC=$(GFX_INC) -DFFCFG_INC=$(FFCFG_INC)
+#CUSTOMDEFINES += -DALLOC_DEBUG
 
 # 0: UART_A, 1: UART_B.
 #CUSTOMDEFINES += -DDEBUG_UART_PORT=0
@@ -59,7 +59,7 @@ CUSTOMDEFINES += -DGFX_INC=$(GFX_INC) -DFFCFG_INC=$(FFCFG_INC)
 #CUSTOMDEFINES += -DDEBUG
 
 ARCH := -march=armv4t -mtune=arm7tdmi -mthumb -mthumb-interwork
-CFLAGS = $(ARCH) -Os -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-inline -std=gnu11 -Wall -Wextra -Wno-missing-braces $(CUSTOMDEFINES)
+CFLAGS = $(ARCH) -Os -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-inline -std=gnu11 -Wall -Wno-missing-braces $(CUSTOMDEFINES)
 LDFLAGS = $(ARCH) -nostartfiles -lgcc -Wl,--nmagic,--gc-sections -Xlinker --defsym=IPL_LOAD_ADDR=$(IPL_LOAD_ADDR)
 
 ################################################################################

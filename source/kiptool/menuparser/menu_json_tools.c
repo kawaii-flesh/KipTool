@@ -8,11 +8,11 @@
 #include <errno.h>
 #include "printf.h"
 
-#ifdef _MSC_VER
-#include <malloc.h>
-#else
+//#ifdef _MSC_VER
+//#include <malloc.h>
+//#else
 #include <mem/heap.h>
-#endif
+//#endif
 
 #pragma warning(disable : 4996)
 
@@ -96,7 +96,10 @@ typedef enum _value_type_t
 	VT_FIXED,
 	VT_MANUAL,
 	VT_RANGE,
-	VT_FOLDER_ENTRY
+    VT_FOLDER_ENTRY,
+    VT_HARDWARE_COMMON,
+    VT_HARDWARE_ERISTA,
+    VT_HARDWARE_MARIKO
 }_value_type_t;
 
 #define IsDigit(c)		((c) >= '0' && (c) <= '9')
@@ -204,6 +207,12 @@ _value_type_t GetValueType(char* value)
 	{
 		if (strncmp("Manual", value, 6) == 0)
 			return VT_MANUAL;
+        if (strncmp("Common", value, 6) == 0)
+            return VT_HARDWARE_COMMON;
+        if (strncmp("Erista", value, 6) == 0)
+            return VT_HARDWARE_ERISTA;
+        if (strncmp("Mariko", value, 6) == 0)
+            return VT_HARDWARE_MARIKO;
 	}
 	else if (value_len == 10)
 	{
@@ -394,6 +403,30 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 				memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 				important_fileds++;
 			}
+            else if (jsoneq(json_text, &json_tokens[*ptr], "hardware_type") == 0)
+            {
+                *ptr += 1;
+                if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+                    memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                else
+                {
+                    SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+                    return NULL;
+                }
+                _value_type_t type = GetValueType(work_buffer);
+                if (type != VT_HARDWARE_COMMON && type != VT_HARDWARE_ERISTA && type != VT_HARDWARE_MARIKO)
+                {
+                    SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "hardware_type is not Common, Erista or Mariko: ");
+                    return NULL;
+                }
+                if (type == VT_HARDWARE_COMMON)
+                    elem->value_data.hardware_type = HARDWARE_COMMON;
+                else if (type == VT_HARDWARE_ERISTA)
+                    elem->value_data.hardware_type = HARDWARE_ERISTA;
+                else
+                    elem->value_data.hardware_type = HARDWARE_MARIKO;
+                memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
+            }
 			else if (jsoneq(json_text, &json_tokens[*ptr], "entries") == 0)
 			{
 				*ptr += 1;
@@ -456,6 +489,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 								t->error_ptr = -1;
 								return NULL;
 							}
+                            t->requered_jsons = temp;
 							memset(&temp[t->_requered_json_allocated_size], 0, sizeof(char**) * 5);
 							t->_requered_json_allocated_size += 5;
 							goto returnToInsertPath;
@@ -492,7 +526,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 						SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value.id is not decimal: ");
 						return NULL;
 					}
-					elem->value_data.default_value.id = (uint32_t)GetLongInt(work_buffer);
+					elem->value_data.default_value.id_common = (uint32_t)GetLongInt(work_buffer);
 					memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 					*ptr += 1;
 					if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
@@ -507,12 +541,112 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 						SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value.value is not decimal: ");
 						return NULL;
 					}
-					elem->value_data.default_value.value = GetLongInt(work_buffer);
+					elem->value_data.default_value.value_common = GetLongInt(work_buffer);
 					memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
 
 				}
 
 			}
+            /////
+            ///
+            else if (jsoneq(json_text, &json_tokens[*ptr], "default_value_erista") == 0)
+            {
+                *ptr += 1; // TODO CHECK ARRAY
+                if (json_tokens[*ptr].size != 2)
+                {
+                    SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value_erista requered 2 params (id and value): ");
+                    return NULL;
+                }
+                else
+                {
+                    if (json_tokens[*ptr].type != JSMN_ARRAY)
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "entries is not JSON_ARRAY: ");
+                        return NULL;
+                    }
+                    *ptr += 1;
+                    if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+                        memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                    else
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+                        return NULL;
+                    }
+                    if (GetValueType(work_buffer) != VT_DECIMAL)
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value_erista.id is not decimal: ");
+                        return NULL;
+                    }
+                    elem->value_data.default_value.id_erista = (uint32_t)GetLongInt(work_buffer);
+                    memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                    *ptr += 1;
+                    if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+                        memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                    else
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+                        return NULL;
+                    }
+                    if (GetValueType(work_buffer) != VT_DECIMAL)
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value_erista.value is not decimal: ");
+                        return NULL;
+                    }
+                    elem->value_data.default_value.value_erista = GetLongInt(work_buffer);
+                    memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
+
+                }
+
+            }
+            else if (jsoneq(json_text, &json_tokens[*ptr], "default_value_mariko") == 0)
+            {
+                *ptr += 1; // TODO CHECK ARRAY
+                if (json_tokens[*ptr].size != 2)
+                {
+                    SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value_mariko requered 2 params (id and value): ");
+                    return NULL;
+                }
+                else
+                {
+                    if (json_tokens[*ptr].type != JSMN_ARRAY)
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "entries is not JSON_ARRAY: ");
+                        return NULL;
+                    }
+                    *ptr += 1;
+                    if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+                        memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                    else
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+                        return NULL;
+                    }
+                    if (GetValueType(work_buffer) != VT_DECIMAL)
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value_mariko.id is not decimal: ");
+                        return NULL;
+                    }
+                    elem->value_data.default_value.id_mariko = (uint32_t)GetLongInt(work_buffer);
+                    memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                    *ptr += 1;
+                    if (json_tokens[*ptr].end - json_tokens[*ptr].start < WORK_BUFFER_SIZE)
+                        memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                    else
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "String size exceeded buffer size: ");
+                        return NULL;
+                    }
+                    if (GetValueType(work_buffer) != VT_DECIMAL)
+                    {
+                        SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "default_value_mariko.value is not decimal: ");
+                        return NULL;
+                    }
+                    elem->value_data.default_value.value_mariko = GetLongInt(work_buffer);
+                    memset(work_buffer, 0, json_tokens[*ptr].end - json_tokens[*ptr].start);
+                }
+            }
+            ///
+            ///
 			else if (jsoneq(json_text, &json_tokens[*ptr], "hide_if") == 0)
 			{
 				*ptr += 1; // TODO CHECK ARRAY
@@ -896,6 +1030,7 @@ menu_entry_s* GetElement(jsmntok_t* json_tokens, uint32_t ptr_max, uint32_t* ptr
 			}
 			else
 			{
+                memcpy(work_buffer, json_text + json_tokens[*ptr].start, json_tokens[*ptr].end - json_tokens[*ptr].start);
 				SaveErrorData(json_tokens, ptr, json_text, elem, t, work_buffer, "Unknown json entity: ");
 				return NULL;
 			}
@@ -1053,16 +1188,16 @@ void SetUpperEntryFirstItem(menu_entry_s* first_item, menu_entry_s* inner_entry)
 		}
 		if (inner_entry->menu_info.entry_type == ENTRY_VALUE)
 		{
-			if (inner_entry->_id == inner_entry->item_parent->value_data.default_value.id)
+			if (inner_entry->_id == inner_entry->item_parent->value_data.default_value.id_common)
 			{
 				if (inner_entry->value_data.value_type == VALUE_FIXED_SELECTION)
 				{
-					inner_entry->item_parent->value_data.default_value.value = inner_entry->value_data.value;
+					inner_entry->item_parent->value_data.default_value.value_common = inner_entry->value_data.value;
 					inner_entry->item_parent->value_data.current_value = inner_entry->value_data.value;
 				}
 				else if (inner_entry->value_data.value_type == VALUE_RANGE_SELECTION)
 				{
-					inner_entry->item_parent->value_data.current_value = inner_entry->item_parent->value_data.default_value.value;
+					inner_entry->item_parent->value_data.current_value = inner_entry->item_parent->value_data.default_value.value_common;
 				}
 			}
 		}
@@ -1272,6 +1407,18 @@ menu_entry_s* SetDependencies(entry_list_s* map, menu_creation_res_s* res)
 	return head;
 }
 
+/// Used to get already parsed json elements anyway, even if error occured
+uint32_t GetAbsoluteSizeAnyway(jsmntok_t* json_tokens)
+{
+    uint32_t count = 0;
+    for (uint32_t i = 0; i < JSON_TOKENS_COUNT; i++)
+    {
+        if (json_tokens[i].end == 0 && json_tokens[i].size == 0 && json_tokens[i].start == 0 && json_tokens[i].type == 0)
+            return count;
+        count++;
+    }
+    return 0;
+}
 
 menu_creation_res_s* ReadJsonMenuFromText(char* json_text)
 {
@@ -1285,9 +1432,10 @@ menu_creation_res_s* ReadJsonMenuFromText(char* json_text)
 	jsmntok_t* json_tokens = (jsmntok_t*)calloc(JSON_TOKENS_COUNT * sizeof(jsmntok_t), 1);
 	if (json_tokens == NULL)
 		return t;
-	auto rts = errno;
 	tokens_count = jsmn_parse(&p, json_text, strlen(json_text), json_tokens,
 		JSON_TOKENS_COUNT);
+        if (tokens_count < 0) // TODO set error message
+            tokens_count = GetAbsoluteSizeAnyway(json_tokens);
 	uint32_t menu_count = 0;
 	entry_list_s* head = NULL;
 
@@ -1310,9 +1458,11 @@ menu_creation_res_s* AppendJsonMenuFromText(char* json_text, menu_creation_res_s
 	jsmntok_t* json_tokens = (jsmntok_t*)calloc(JSON_TOKENS_COUNT * sizeof(jsmntok_t), 1);
 	if (json_tokens == NULL)
 		return t;
-	auto rts = errno;
+
 	tokens_count = jsmn_parse(&p, json_text, strlen(json_text), json_tokens,
 		JSON_TOKENS_COUNT);
+        if (tokens_count < 0) // TODO set error message
+            tokens_count = GetAbsoluteSizeAnyway(json_tokens);
 	uint32_t menu_count = 0;
 
 	t->head = ParseJson(json_tokens, tokens_count, json_text, &menu_count, t->head, t);
@@ -1358,4 +1508,59 @@ void DeleteJsonMenu(menu_entry_s* header)
 		header = temp;
 	}
 
+}
+
+
+void CopyDataToMenu(menu_entry_s* dst, const menu_entry_s* src)
+{
+    dst->value_data.current_value = src->value_data.current_value;
+    dst->value_data.max_value = src->value_data.max_value;
+    dst->value_data.min_value = src->value_data.min_value;
+    dst->value_data.value = src->value_data.value;
+    dst->value_data.value_size = src->value_data.value_size;
+    dst->value_data.default_value.value_common = src->value_data.default_value.value_common;
+    dst->value_data.default_value.id_common = src->value_data.default_value.id_common;
+    dst->value_data.default_value.value_erista = src->value_data.default_value.value_erista;
+    dst->value_data.default_value.id_erista = src->value_data.default_value.id_erista;
+    dst->value_data.default_value.value_mariko = src->value_data.default_value.value_mariko;
+    dst->value_data.default_value.id_mariko = src->value_data.default_value.id_mariko;
+    dst->value_data.value_type = src->value_data.value_type;
+    dst->value_data.delimiter = src->value_data.delimiter;
+    dst->value_data.offset = src->value_data.offset;
+    dst->value_data.step = src->value_data.step;
+    dst->value_data.hardware_type = src->value_data.hardware_type;
+    dst->menu_info.color = src->menu_info.color;
+    dst->menu_info.entry_type = src->menu_info.entry_type;
+
+    if (src->menu_info.description)
+    {
+        dst->menu_info.description = calloc(strlen(src->menu_info.description) + 1, 1);
+        memcpy(dst->menu_info.description, src->menu_info.description, strlen(src->menu_info.description) + 1);
+    }
+    else
+        dst->menu_info.description = NULL;
+
+    if (src->menu_info.help)
+    {
+        dst->menu_info.help = calloc(strlen(src->menu_info.help) + 1, 1);
+        memcpy(dst->menu_info.help, src->menu_info.help, strlen(src->menu_info.help) + 1);
+    }
+    else
+        dst->menu_info.help = NULL;
+
+    if (src->menu_info.name)
+    {
+        dst->menu_info.name = calloc(strlen(src->menu_info.name) + 1, 1);
+        memcpy(dst->menu_info.name, src->menu_info.name, strlen(src->menu_info.name) + 1);
+    }
+    else
+        dst->menu_info.name = NULL;
+
+    if (src->value_data.unit_name)
+    {
+        dst->value_data.unit_name = calloc(strlen(src->value_data.unit_name) + 1, 1);
+        memcpy(dst->value_data.unit_name, src->value_data.unit_name, strlen(src->value_data.unit_name) + 1);
+    }
+    else
+        dst->value_data.unit_name = NULL;
 }

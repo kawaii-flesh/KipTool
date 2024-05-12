@@ -11,7 +11,7 @@
 #include "../params/param.h"
 #include "../params/table.h"
 
-#define ALLOC_DEBUG
+// #define ALLOC_DEBUG
 #ifdef ALLOC_DEBUG
 #include <mem/heap.h>
 #endif

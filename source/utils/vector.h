@@ -30,8 +30,7 @@ typedef struct {
 
 #define vecGetArrayPtr(vec, type) (type)((vec)->data)
 
-#define vecForEach(type, varname, vecPtr) \
-    for (type varname = vecPtr->data; ((u8*)varname - (u8*)vecPtr->data) < (vecPtr->count * vecPtr->elemSz); varname++)
+#define vecForEach(type, varname, vecPtr) for (type varname = vecPtr->data; ((u8*)varname - (u8*)vecPtr->data) < (vecPtr->count * vecPtr->elemSz); varname++)
 
 Vector_t newVec(u8 typesz, u32 preallocate);
 Vector_t vecFromArray(void* array, u32 count, u32 typesz);

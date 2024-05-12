@@ -17,11 +17,11 @@ typedef struct MenuEntry {
         u32 optionUnion;
     };
     enum MenuEntryType type;
-    void* entry;
+    const void* entry;
     u8 icon;
 } MenuEntry;
 
 int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, const void* additionalData,
-              void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* additionalData));
+              void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData));
 
 void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* additionalData);

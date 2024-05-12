@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utils/types.h>
+
 typedef struct _inputs {
     union {
         struct {

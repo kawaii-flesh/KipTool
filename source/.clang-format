@@ -1,5 +1,5 @@
 BasedOnStyle: Google
 IndentWidth: 4
-ColumnLimit: 128
+ColumnLimit: 164
 InsertNewlineAtEOF: true
 PointerAlignment: Left

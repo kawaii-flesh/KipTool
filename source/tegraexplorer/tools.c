@@ -3,7 +3,8 @@
 #include <display/di.h>
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
-#include <storage/nx_sd.h>
+#include <soc/timer.h>
+#include <storage/sd.h>
 #include <string.h>
 #include <utils/sprintf.h>
 #include <utils/util.h>
@@ -19,12 +20,10 @@
 #include "../tegraexplorer/tconf.h"
 #include "../utils/utils.h"
 
-extern bool sd_mounted;
-
 void TakeScreenshot() {
     static u32 timer = 0;
 
-    if (!TConf.minervaEnabled || !sd_mounted) return;
+    if (!TConf.minervaEnabled || !sd_get_card_mounted()) return;
 
     if (timer + 3 < get_tmr_s())
         timer = get_tmr_s();

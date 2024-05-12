@@ -2,9 +2,15 @@
 
 #include <power/bq24193.h>
 #include <power/max17050.h>
+#include <soc/timer.h>
 
 #include "../hid/hid.h"
 #include "gfx.h"
+
+// #define ALLOC_DEBUG
+#ifdef ALLOC_DEBUG
+#include <mem/heap.h>
+#endif
 
 void gfx_printTopInfo() {
     int battery = 0;
@@ -14,8 +20,17 @@ void gfx_printTopInfo() {
     bq24193_get_property(BQ24193_ChargeStatus, &current_charge_status);
     SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
     gfx_con_setpos(0, 0);
-    gfx_printf("Tegraexplorer %d.%d.%d | Battery: %d%% %c\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, battery >> 8,
-               ((current_charge_status) ? 129 : 32));
+
+#ifndef ALLOC_DEBUG
+    gfx_printf("Tegraexplorer %d.%d.%d | Battery: %d%% %c\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, battery >> 8, ((current_charge_status) ? 129 : 32));
+#endif
+#ifdef ALLOC_DEBUG
+    heap_monitor_t mon = {};
+    heap_monitor(&mon, 0);
+
+    gfx_printf("Tegraexplorer %d.%d.%d | usedMem: %d\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, mon.used);
+
+#endif
     RESETCOLOR;
 }
 
@@ -30,9 +45,7 @@ void gfx_clearscreen() {
 
 MenuEntry_t YesNoEntries[] = {{.optionUnion = COLORTORGB(COLOR_YELLOW), .name = "No"}, {.R = 255, .name = "Yes"}};
 
-int MakeYesNoHorzMenu(int spacesBetween, u32 bg) {
-    return MakeHorizontalMenu(YesNoEntries, ARR_LEN(YesNoEntries), spacesBetween, bg, 0);
-}
+int MakeYesNoHorzMenu(int spacesBetween, u32 bg) { return MakeHorizontalMenu(YesNoEntries, ARR_LEN(YesNoEntries), spacesBetween, bg, 0); }
 
 int MakeHorizontalMenu(MenuEntry_t* entries, int len, int spacesBetween, u32 bg, int startPos) {
     u32 initialX = 0, initialY = 0;

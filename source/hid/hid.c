@@ -2,6 +2,8 @@
 
 #include <display/di.h>
 #include <input/joycon.h>
+#include <input/touch.h>
+#include <soc/timer.h>
 #include <utils/btn.h>
 #include <utils/types.h>
 #include <utils/util.h>
@@ -10,16 +12,38 @@
 #include "../tegraexplorer/tconf.h"
 #include "../tegraexplorer/tools.h"
 #include "../utils/utils.h"
-#include "touch.h"
+#include "inputType.h"
+#include "touchutils.h"
 
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
-void hidInit() { jc_init_hw(); }
+#define SLEEP_TIME_MS 16
+
+bool canUpdate() {
+    static u32 lastUpdateRequest = 0;
+    if (get_tmr_ms() - lastUpdateRequest < SLEEP_TIME_MS) return 0;
+    lastUpdateRequest = get_tmr_ms();
+    return 1;
+}
 
 Input_t* hidRead() {
-    jc_gamepad_rpt_t* controller = joycon_poll();
+    if (*isTouchEnabled()) {
+        Input_t tmp = {0};
+        touch_event tevent;
+        touch_poll(&tevent);
+        if (tevent.fingers == 3)
+            TakeScreenshot();
+        else
+            updateInput(&tmp, &tevent);
+        if (tmp.buttons != 0) {
+            inputs.buttons = tmp.buttons;
+            return &inputs;
+        }
+    }
+    if (!canUpdate()) return &inputs;
 
+    jc_gamepad_rpt_t* controller = joycon_poll();
     inputs.buttons = 0;
     u8 left_connected = 0;
     u8 right_connected = 0;
@@ -40,11 +64,12 @@ Input_t* hidRead() {
     inputs.power = (btn & BTN_POWER) ? 1 : 0;
 
     if (left_connected) {
+        // Hoag has inverted Y axis (only the left stick O_o)
+        if (controller->sio_mode) controller->lstick_y *= -1;
         if ((LbaseX == 0 || LbaseY == 0) || controller->l3) {
             LbaseX = controller->lstick_x;
             LbaseY = controller->lstick_y;
         }
-
         inputs.up = (controller->up || inputs.volp || (controller->lstick_y > LbaseY + 500)) ? 1 : 0;
         inputs.down = (controller->down || inputs.volm || (controller->lstick_y < LbaseY - 500)) ? 1 : 0;
         inputs.left = (controller->left || (controller->lstick_x < LbaseX - 500)) ? 1 : 0;
@@ -67,15 +92,6 @@ Input_t* hidRead() {
     }
     inputs.a = inputs.a || inputs.power;
     inputs.b = inputs.b || (inputs.volp && inputs.volm);
-
-    if (*isTouchEnabled()) {
-        touch_event tevent;
-        touch_poll(&tevent);
-        if (tevent.fingers == 3)
-            TakeScreenshot();
-        else
-            updateInput(&inputs, &tevent);
-    }
 
     return &inputs;
 }
@@ -102,6 +118,7 @@ Input_t* hidWait() {
 }
 
 bool hidConnected() {
+    msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
     return (controller->conn_l && controller->conn_r) ? 1 : 0;
 }
