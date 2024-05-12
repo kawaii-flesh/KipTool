@@ -13,6 +13,7 @@
 #include "../../gfx/menu.h"
 #include "../../helpers/fs.h"
 #include "../../hid/hid.h"
+#include "../../kiptool/helpers/rw.h"
 #include "../gfx/dialogs/confirmationDialog.h"
 #include "../gfx/gfx.h"
 #include "../gfx/menus/ktMenu.h"
@@ -40,9 +41,9 @@ void printCPUParams(const CustomizeTable* custTable, const KTSection* ktSection,
     const Params* allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
     const Tables* allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
     if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, ktSection, "CPU", allCPUParams, 3, allCPUTables, 3);
+        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "CPU", allCPUParams, 3, allCPUTables, 3);
     else
-        newParamsMenu((const u8*)custTable, ktSection, "CPU", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "CPU", allParams, 2, allTables, 2);
 }
 
 const Params* allGPUParams[] = {&cGPUParams, &mGPUParams, &eGPUParams};
@@ -52,9 +53,9 @@ void printGPUParams(const CustomizeTable* custTable, const KTSection* ktSection,
     const Params* allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
     const Tables* allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
     if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, ktSection, "GPU", allGPUParams, 3, allGPUTables, 3);
+        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "GPU", allGPUParams, 3, allGPUTables, 3);
     else
-        newParamsMenu((const u8*)custTable, ktSection, "GPU", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "GPU", allParams, 2, allTables, 2);
 }
 
 const Params* allRAMParams[] = {&cRAMParams, &mRAMParams, &eRAMParams};
@@ -64,9 +65,9 @@ void printRAMParams(const CustomizeTable* custTable, const KTSection* ktSection,
     const Params* allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
     const Tables* allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
     if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, ktSection, "RAM", allRAMParams, 3, allRAMTables, 3);
+        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "RAM", allRAMParams, 3, allRAMTables, 3);
     else
-        newParamsMenu((const u8*)custTable, ktSection, "RAM", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "RAM", allParams, 2, allTables, 2);
 }
 
 int kipWizard(char* path, FSEntry_t entry) {

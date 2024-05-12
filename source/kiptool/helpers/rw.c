@@ -1,5 +1,7 @@
 #include "rw.h"
 
+#include "../../fs/fsutils.h"
+
 FRESULT writeData(const char *path, const int offset, const void *data, u32 dataSize, BYTE flags) {
     FIL fil;
     UINT bw;

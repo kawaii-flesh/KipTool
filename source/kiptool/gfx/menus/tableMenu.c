@@ -47,7 +47,8 @@ void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table) 
         }
         getFormatingData(&formatingData, custTable, table->paramsCount, table->params);
         const PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
+        int res =
+            newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
         if (res == -1) {
             free(menuEntries);
             return;

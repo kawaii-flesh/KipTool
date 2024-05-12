@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mem/heap.h>
 #include <utils/types.h>
 
 #include "../../fs/fsutils.h"

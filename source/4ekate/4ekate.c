@@ -9,6 +9,7 @@
 #include "../helpers/mem.h"
 #include "../kiptool/gfx/gfx.h"
 #include "../kiptool/gfx/menus/ktMenu.h"
+#include "../kiptool/helpers/rw.h"
 
 #define CHEKATE_STAGES_COUNT 3
 

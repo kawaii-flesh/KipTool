@@ -13,3 +13,4 @@ const char* getSessionPath(const KTSection* ktSection);
 bool isSessionsSupported();
 void setSessionSupported(bool value);
 bool sessionIsExist(const KTSection* ktSection);
+u32 getSessionId();

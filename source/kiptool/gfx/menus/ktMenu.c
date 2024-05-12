@@ -158,7 +158,7 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
     }
 }
 
-void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, void* additionalData) {
+void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData) {
     if (entry->hide) return;
 
     (highlighted) ? SETCOLOR(bg, RGBUnionToU32(entry->optionUnion)) : SETCOLOR(RGBUnionToU32(entry->optionUnion), bg);

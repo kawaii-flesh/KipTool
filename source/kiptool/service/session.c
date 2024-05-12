@@ -1,5 +1,7 @@
 #include "session.h"
 
+#include <mem/heap.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "idStorage.h"
@@ -54,7 +56,7 @@ bool saveSession(const KTSection* ktSection, const CustomizeTable* customizeTabl
 bool removeSession(const KTSection* ktSection) {
     const char* sessionPath = getSessionPath(ktSection);
     FRESULT res = f_unlink(sessionPath);
-    free(ktSection);
+    free(sessionPath);
     if (res != FR_OK) return false;
 
     return true;

@@ -133,7 +133,7 @@ void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param)
         if (fixedRange != NULL)
             for (unsigned int i = fixedRange->start; i <= fixedRange->end; ++i) {
                 menuEntries[menuEntriesIndex].type = ETFixedRange;
-                menuEntries[menuEntriesIndex].entry = i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
+                menuEntries[menuEntriesIndex].entry = (const void*)i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
                 if (paramCurrentValue == i) {
                     startIndex = menuEntriesIndex;
                     menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
@@ -145,7 +145,7 @@ void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param)
         menuEntries[menuEntriesIndex].type = ETReset;
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, printValueEntry);
+        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printValueEntry);
         if (res == -1) {
             break;
         }

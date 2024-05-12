@@ -84,7 +84,8 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
         menuEntries[menuEntriesIndex].type = ETReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
+        int res =
+            newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
         if (res == -1) {
             free(menuEntries);
             return;
