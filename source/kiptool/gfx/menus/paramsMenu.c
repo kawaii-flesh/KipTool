@@ -44,8 +44,8 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
     gfx_putc('\n');
 }
 
-void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount, const Tables* tables[],
-                   unsigned int tablesArraysCount) {
+void newParamsMenu(const u8* custTable, const u8* ktSection, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount,
+                   const Tables* tables[], unsigned int tablesArraysCount) {
     unsigned int totalEntriesCount = 2;
     unsigned int startIndex = 0;
     for (unsigned int i = 0; i < paramsArraysCount; ++i) totalEntriesCount += params[i]->count;
@@ -84,7 +84,8 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         menuEntries[menuEntriesIndex].type = ETReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
+        int res =
+            newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
         if (res == -1) {
             free(menuEntries);
             return;
@@ -92,9 +93,9 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         const MenuEntry selectedEntry = menuEntries[res + 1];
         if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
-            newTableMenu(custTable, table);
+            newTableMenu(custTable, ktSection, table);
         } else if (selectedEntry.type == ETParam)
-            newEditorMenu(custTable, selectedEntry.entry);
+            newEditorMenu(custTable, ktSection, selectedEntry.entry);
         else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset all params in this category?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
@@ -109,7 +110,9 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                             setParamValueWithoutSaveSession(custTable, tables[i]->tables[j]->params[k], tables[i]->tables[j]->params[k]->defaultValue);
                     }
                 }
-                saveSession((const CustomizeTable*)custTable);
+                if (isSessionsSupported()) {
+                    saveSession((const KTSection*)ktSection, (const CustomizeTable*)custTable);
+                }
                 char* message = calloc(256, 1);
                 s_printf(message, "[Session] Category: %s has been reset", sectionTitle);
                 gfx_printBottomInfoKT(message);

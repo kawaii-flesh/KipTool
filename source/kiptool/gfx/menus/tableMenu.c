@@ -11,7 +11,7 @@
 #include "ktMenu.h"
 #include "paramsMenu.h"
 
-void newTableMenu(const u8* custTable, const Table* table) {
+void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table) {
     const unsigned int paramsCount = table->paramsCount;
     unsigned int totalEntriesCount = 2 + table->paramsCount;
     MenuEntry* menuEntries = calloc(sizeof(MenuEntry), totalEntriesCount);
@@ -47,7 +47,8 @@ void newTableMenu(const u8* custTable, const Table* table) {
         }
         getFormatingData(&formatingData, custTable, table->paramsCount, table->params);
         const PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, printParamEntry);
+        int res =
+            newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
         if (res == -1) {
             free(menuEntries);
             return;
@@ -59,14 +60,16 @@ void newTableMenu(const u8* custTable, const Table* table) {
                 if (confirmationDialog(message, ENO) == EYES) {
                     for (unsigned int i = 0; i < table->paramsCount; ++i)
                         setParamValueWithoutSaveSession(custTable, table->params[i], table->params[i]->defaultValue);
-                    saveSession((const CustomizeTable*)custTable);
+                    if (isSessionsSupported()) {
+                        saveSession((const KTSection*)ktSection, (const CustomizeTable*)custTable);
+                    }
                     char* message = calloc(256, 1);
                     s_printf(message, "[Session] Table: %s has been reset", table->name);
                     gfx_printBottomInfoKT(message);
                     free(message);
                 }
             } else
-                newEditorMenu(custTable, selectedEntry.entry);
+                newEditorMenu(custTable, ktSection, selectedEntry.entry);
         }
     }
 }

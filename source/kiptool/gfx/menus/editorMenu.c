@@ -77,7 +77,7 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
     gfx_putc('\n');
 }
 
-void newEditorMenu(const u8* custTable, const Param* param) {
+void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param) {
     const unsigned int limitsCount = param->limitsCount;
     const FixedValues* fixedValues = NULL;
     const FixedLimits* fixedLimits = NULL;
@@ -133,7 +133,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         if (fixedRange != NULL)
             for (unsigned int i = fixedRange->start; i <= fixedRange->end; ++i) {
                 menuEntries[menuEntriesIndex].type = ETFixedRange;
-                menuEntries[menuEntriesIndex].entry = i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
+                menuEntries[menuEntriesIndex].entry = (const void*)i;  // It is not a bug. Although the pointer is waiting, we assign an unsigned int
                 if (paramCurrentValue == i) {
                     startIndex = menuEntriesIndex;
                     menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_BLUE);
@@ -145,23 +145,23 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         menuEntries[menuEntriesIndex].type = ETReset;
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, printValueEntry);
+        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printValueEntry);
         if (res == -1) {
             break;
         }
         const MenuEntry selectedEntry = menuEntries[res + 1];
         if (selectedEntry.type == ETLimits) {
             const ManualValueResult manualValueResult = manualValueDialog(param, canBeManualValue ? paramCurrentValue : -1);
-            if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, param, manualValueResult.value);
+            if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, ktSection, param, manualValueResult.value);
         } else if (selectedEntry.type == ETValue) {
             const Value* value = selectedEntry.entry;
-            setParamValue(custTable, param, value->value);
+            setParamValue(custTable, ktSection, param, value->value);
         } else if (selectedEntry.type == ETFixedRange) {
-            setParamValue(custTable, param, (unsigned int)selectedEntry.entry);  // It is not a bug
+            setParamValue(custTable, ktSection, param, (unsigned int)selectedEntry.entry);  // It is not a bug
         } else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset param?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
-                setParamValue(custTable, param, param->defaultValue);
+                setParamValue(custTable, ktSection, param, param->defaultValue);
                 char* message = calloc(256, 1);
                 s_printf(message, "[Session] Param: %s has been reset", param->name);
                 gfx_printBottomInfoKT(message);
