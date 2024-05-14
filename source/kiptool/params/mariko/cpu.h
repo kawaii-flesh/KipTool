@@ -4,8 +4,9 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues commonCpuBoostClockFV = {.valuesCount = 5,
-                                           .values = {{.value = 1428000, .label = "CPU-HI uV DEBUG"},
+const FixedValues commonCpuBoostClockFV = {.valuesCount = 6,
+                                           .values = {{.value = 1, .label = "AUTO ST1"},
+                                                      {.value = 1428000, .label = "CPU-HI uV DEBUG"},
                                                       {.value = 1785000, .label = "CPU-LOW uV DEBUG"},
                                                       {.value = 2000000, .label = "E"},
                                                       {.value = 2500000, .label = "D"},
@@ -17,7 +18,8 @@ const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .step
 // 2000000 E
 // 2500000 D
 // 3000000 S
-// MANUAL 1400000-3000000 100000 STEP
+// MANUAL 1400000-3000000 STEP 100000
+// 1 AUTO ST1
 const Param commonCpuBoostClock = {.name = "CPU LAUNCH CONTROL TARGET",
                                    .measure = "MHz",
                                    .description = NULL,
@@ -81,11 +83,11 @@ const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
 const FixedValues marikoCpuMaxVoltFV = {
     .valuesCount = 4,
     .values = {{.value = 1150, .label = "ECO"}, {.value = 1180, .label = "STAGE 1"}, {.value = 1210, .label = "STAGE 2"}, {.value = 1250, .label = "STAGE 3"}}};
-const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1280, .stepSize = 5};
+const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1375, .stepSize = 5};
 // MARIKO CPU VMAX MODE
 // 1150 ECO
 // 1180-1250 STAGE 1-3
-// MANUAL 1130-1280 STEP 5mV
+// MANUAL 1130-1375 STEP 5mV
 const Param marikoCpuMaxVolt = {.name = "CPU VMAX MODE",
                                 .measure = "mV",
                                 .description = NULL,
