@@ -28,27 +28,16 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
-    if (entry->type == ETLabel)
-        gfx_puts_limit((const char*)entry->entry, maxLen);
-    else if (entry->type == ETReset) {
-        char* displayBuff = malloc(256);
+    char* displayBuff = malloc(256);
+    if (entry->type == ETReset) {
         s_printf(displayBuff, "%s", "Reset to the default value - ");
         formatValueDiv(displayBuff + strlen(displayBuff), editorAdditionalData->param->defaultValue, editorAdditionalData->param->defaultValue > 1500);
-        gfx_puts_limit(displayBuff, maxLen);
-        free(displayBuff);
     } else if (entry->type == ETFixedRange) {
-        char* displayBuff = malloc(256);
         getDisplayValue(editorAdditionalData->param, displayBuff, (unsigned int)entry->entry, 0);
-        gfx_puts_limit(displayBuff, maxLen);
-        free((void*)displayBuff);
     } else if (entry->type == ETValue) {
-        char* displayBuff = malloc(256);
         const Value* value = entry->entry;
         getDisplayValue(editorAdditionalData->param, displayBuff, value->value, 0);
-        gfx_puts_limit(displayBuff, maxLen);
-        free((void*)displayBuff);
     } else if (entry->type == ETLimits) {
-        char* displayBuff = malloc(256);
         const FixedLimits* fixedLimits = entry->entry;
         int min = fixedLimits->min;
         int max = fixedLimits->max;
@@ -66,14 +55,16 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
         s_printf(displayBuff, "Manual value - min: %s curVal: %s max: %s step: %s%s", minStr,
                  validateValueByFixedLimits(fixedLimits, editorAdditionalData->currentValue) ? curValStr : "preset", maxStr, stepStr,
                  measure != NULL ? measure : "");
-        gfx_puts_limit(displayBuff, maxLen);
         free(minStr);
         free(curValStr);
         free(maxStr);
         free(stepStr);
-        free(displayBuff);
     }
-
+    if (entry->type == ETLabel)
+        gfx_puts_limit((const char*)entry->entry, maxLen);
+    else
+        gfx_puts_limit(displayBuff, maxLen);
+    free(displayBuff);
     gfx_putc('\n');
 }
 

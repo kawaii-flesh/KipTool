@@ -5,7 +5,7 @@
 #include "../table.h"
 
 const FixedValues commonCpuBoostClockFV = {.valuesCount = 6,
-                                           .values = {{.value = eBAMATIC, .label = "eBAMATIC"},
+                                           .values = {{.value = eBAMATIC, .label = "eBAMATIC", .measure = ""},
                                                       {.value = 1428000, .label = "CPU-HI uV DEBUG"},
                                                       {.value = 1785000, .label = "CPU-LOW uV DEBUG"},
                                                       {.value = 2000000, .label = "E"},
@@ -82,7 +82,7 @@ const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
                             .limits = {{.type = EFixedValues, .values = &marikoCpuHUVFV}}};
 
 const FixedValues marikoCpuMaxVoltFV = {.valuesCount = 5,
-                                        .values = {{.value = eBAMATIC, .label = "eBAMATIC"},
+                                        .values = {{.value = eBAMATIC, .label = "eBAMATIC", .measure = ""},
                                                    {.value = 1150, .label = "ECO"},
                                                    {.value = 1180, .label = "STAGE 1"},
                                                    {.value = 1215, .label = "STAGE 2"},

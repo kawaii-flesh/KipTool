@@ -8,7 +8,7 @@
 #include "../params/param.h"
 #include "kiprw.h"
 
-void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam) {
+void addPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam) {
     if (param->defaultValue == value)
         strcpy(displayBuff + strlen(displayBuff), " - Default");
     else if (isParam)
@@ -68,29 +68,32 @@ void formatValueDiv(char* displayBuff, const unsigned int value, bool div) {
 
 void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, int isParam) {
     formatValue(displayBuff, value);
-    if (param->measure != NULL) strcpy(displayBuff + strlen(displayBuff), param->measure);
+    const Value* foundedValue = NULL;
+    const char* measure = param->measure;
     bool founded = false;
-    for (unsigned limitIndex = 0; limitIndex < param->limitsCount; ++limitIndex) {
+    for (unsigned int limitIndex = 0; limitIndex < param->limitsCount; ++limitIndex) {
         const Limit limit = param->limits[limitIndex];
         if (limit.type == EFixedOneValue) {
             const FixedOneValue* fixedOneValue = (const FixedOneValue*)limit.values;
             if (fixedOneValue->value.value == value) {
-                addLabel(&fixedOneValue->value, displayBuff);
+                foundedValue = &fixedOneValue->value;
                 founded = true;
                 break;
             }
         } else if (limit.type == EFixedValues) {
             const FixedValues* fixedValues = (const FixedValues*)limit.values;
-            for (unsigned int i = 0; i < fixedValues->valuesCount; ++i)
+            for (unsigned int i = 0; i < fixedValues->valuesCount; ++i) {
                 if (fixedValues->values[i].value == value) {
-                    addLabel(&fixedValues->values[i], displayBuff);
+                    foundedValue = &fixedValues->values[i];
                     founded = true;
                     break;
                 }
+            }
+            if (founded) break;
         } else if (limit.type == EFixedLimits) {
             const FixedLimits* fixedLimits = (const FixedLimits*)limit.values;
             if ((fixedLimits->min <= value && value <= fixedLimits->max) && (value % fixedLimits->stepSize == 0)) {
-                if (fixedLimits->measure != NULL) strcpy(displayBuff + strlen(displayBuff), fixedLimits->measure);
+                if (fixedLimits->measure != NULL) measure = fixedLimits->measure;
                 founded = true;
                 break;
             }
@@ -106,7 +109,12 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
         strcpy(displayBuff + strlen(displayBuff), " - Unknown value");
         return;
     }
-    addDefaultPostfix(param, displayBuff, value, isParam);
+    if (foundedValue != NULL) {
+        if (foundedValue->measure != NULL) measure = foundedValue->measure;
+    }
+    if (measure != NULL) strcpy(displayBuff + strlen(displayBuff), measure);
+    if (foundedValue != NULL) addLabel(foundedValue, displayBuff);
+    addPostfix(param, displayBuff, value, isParam);
     return;
 }
 
