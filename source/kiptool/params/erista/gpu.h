@@ -19,10 +19,10 @@ const Param eristaGpuUV = {.name = "GPU ECO LOGIC",
                            .limitsCount = 1,
                            .limits = {{.type = EFixedValues, .values = &eristaGpuUVFV}}};
 
-const FixedValues eristaHGPUvFV = {.valuesCount = 1, .values = {{.value = 0, .label = "AUTO"}}};
+const FixedValues eristaHGPUvFV = {.valuesCount = 1, .values = {{.value = eBAMATIC, .label = "eBAMATIC"}}};
 const FixedLimits eristaHGPUvFL = {.min = 850, .max = 1300, .stepSize = 50, .measure = "mV"};
 // GPU OVER LOGIC
-// 0 AUTO
+// eBAMATIC
 // ERISTA: 850-1300 MANUAL
 const Param eristaHGPUv = {.name = "GPU OVER MODE",
                            .description = NULL,

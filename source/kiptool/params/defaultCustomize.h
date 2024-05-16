@@ -24,8 +24,8 @@ const CustomizeTable defaultCustTable = {
     // 2500000 D
     // 3000000 S
     // 1400000-3000000 MANUAL 100000 STEP
-    // 1 AUTO ST1
-    .commonCpuBoostClock = 1,
+    // eBAMATIC
+    .commonCpuBoostClock = eBAMATIC,
 
     // RAM VDD MODE
     // 1175'000 ECO
@@ -55,20 +55,20 @@ const CustomizeTable defaultCustTable = {
     // 1150 ECO
     // 1180-1250 STAGE 1-3
     // 1130-1375 MANUAL 5mV STEP
-    .marikoCpuMaxVolt = 1150,
+    .marikoCpuMaxVolt = eBAMATIC,
 
-    // 4IFIR MODE ON MARIKO / VDQ / eBL2 / eBL3 / eBL4 / eBL5
-    // S-LOH 1600 / 1600000 / 370 / 1050 /  975
-    // E ST3 1733 / 1734400 / 400 / 1100 / 1025
-    // E ST2 1866 / 1868800 / 430 / 1150 / 1075	   900
-    // E ST1 2000 / 1996800 / 460 / 1200 / 1125	   950
-    // D ST1 2133 / 2131200 / 490 / 1250 / 1175 / 1000    925
-    // D ST2 2266 / 2265600 / 520 / 1300 / 1225 / 1050    975
-    // D ST3 2400 / 2400000 / 550 / 1350 / 1275 / 1100 / 1025
-    // S ST1 2533 / 2534400 / 580 /		   1325 / 1150 / 1075
-    // S ST2 2666 / 2665600 / 610 /		   1375 / 1200 / 1125
-    // S ST3 2800 / 2800000 / 640 / 	  		  1250 / 1175
-    // L-C4C 2933 / 2934400 / 670 / 	  		  1300 / 1225
+    // 4IFIR MODE ON MARIKO / VDQ / eBL2 / eBL3 / eBL4 / eBL5 /
+    // S-LOH 1600 / 1600000 / 370 / 1050 /  975				  /
+    // E ST3 1733 / 1734400 / 400 / 1100 / 1025				  /
+    // E ST2 1866 / 1868800 / 430 / 1150 / 1075	   900		  /
+    // E ST1 2000 / 1996800 / 460 / 1200 / 1125	   950		  /
+    // D ST1 2133 / 2131200 / 490 / 1250 / 1175 / 1000    925 /
+    // D ST2 2266 / 2265600 / 520 / 1300 / 1225 / 1050    975 /
+    // D ST3 2400 / 2400000 / 550 / 1350 / 1275 / 1100 / 1025 /
+    // S ST1 2533 / 2534400 / 580 /		   1325 / 1150 / 1075 /
+    // S ST2 2666 / 2665600 / 610 /		   1375 / 1200 / 1125 /
+    // S ST3 2800 / 2800000 / 640 / 	  		  1250 / 1175 /
+    // L-C4C 2933 / 2934400 / 670 / 	  		  1300 / 1225 /
     .marikoEmcMaxClock = 2400000,
     // MICRON E/H eBAL 4 < 3.8GHz
     // SAMSUNG B eBAL 4 < 3.9GHz
@@ -127,13 +127,13 @@ const CustomizeTable defaultCustTable = {
     .marikoEmcDvbShift = 3,
 
     // DERIVATIVE TIMINGS ORCHESTRATORs // SAMSUNG D/E 2666 eBAL 2 RCD 12
-    .drochr01 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
-    .drochr02 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-8 AUTO STAGE // 9 ALT LOGIC
-    .drochr03 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE // 10 ALT LOGIC
-    .drochr04 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
-    .drochr05 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE // ! drochr05 = drochr01 + drochr05
-    .drochr06 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-14 AUTO STAGE
-    .drochr07 = 1,  // 0 DEBUG // 1 AUTO SAFE // 2-10 AUTO STAGE
+    .drochr01 = 1,         // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
+    .drochr02 = 1,         // 0 DEBUG // 1 AUTO SAFE // 2-8 AUTO STAGE // 9 ALT LOGIC
+    .drochr03 = eBAMATIC,  // 1 AUTO SAFE // 2-9 AUTO STAGE // 10 ALT LOGIC
+    .drochr04 = 1,         // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
+    .drochr05 = 1,         // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE // ! drochr05 = drochr01 + drochr05
+    .drochr06 = 1,         // 0 DEBUG // 1 AUTO SAFE // 2-14 AUTO STAGE
+    .drochr07 = 1,         // 0 DEBUG // 1 AUTO SAFE // 2-10 AUTO STAGE
 
     .marikoGpuVoltArray = {395, 420, 445, 470, 495, 520, 545, 570, 595, 620, 645, 670, 695, 720, 750, 780, 810, 840, 870, 900, 930, 960, 990, 1020},
 
@@ -178,6 +178,7 @@ const CustomizeTable defaultCustTable = {
             {2601000, {1805897, -36331, 113}, {1235000}}, {2703000, {1857394, -37019, 113}, {1235000}}, {2805000, {1908891, -37707, 113}, {1235000}},
             {2907000, {1960388, -38395, 113}, {1235000}}, {3009000, {2011885, -39083, 113}, {1235000}},
             //{ 3111000, { 2063382, -39771, 113 }, { 1235000 } },
+            //{ 3213000, { 2063382, -39771, 113 }, { 1235000 } },
         },
 
     .marikoCpuDvfsTableSLT =
@@ -194,6 +195,7 @@ const CustomizeTable defaultCustTable = {
             {2601000, {1805897, -36331, 113}, {1235000}}, {2703000, {1857394, -37019, 113}, {1235000}}, {2805000, {1908891, -37707, 113}, {1235000}},
             {2907000, {1960388, -38395, 113}, {1235000}}, {3009000, {2011885, -39083, 113}, {1235000}},
             //{ 3111000, { 2063382, -39771, 113 }, { 1235000 } },
+            //{ 3213000, { 2063382, -39771, 113 }, { 1235000 } },
         },
 
     // ERISTA GPU ECO LOGIC
@@ -839,46 +841,46 @@ const CustomizeTable defaultCustTable = {
         },
 
     // SPEEDSHIFT ECO LOGIC
-    // 0 DEFAULT
-    // 1 AUTO
+    // eBAMATIC
+    // 1 DEFAULT
     // 50 SRT ST1
     // 100 ECO ST1
     // 125 ECO ST2
     // 150 ECO ST3
     // 25-175 MANUAL
-    .SpeedShift = 1,
+    .SpeedShift = eBAMATIC,
     // Ov << 100 >> uV
 
     // MARIKO CPU-HI ECO LOGIC
-    // 0 ECO ALT-MODE
+    // eBAMATIC
     // 1 AUTO ECO ST1
     // 3 AUTO ECO ST2
     // 5 AUTO ECO ST3
-    // 1-7 MANUAL
-    .marikoCpuHUV = 0,
+    // 1-8 MANUAL
+    .marikoCpuHUV = eBAMATIC,
 
     // GPU OVER LOGIC
-    // 0 AUTO
+    // eBAMATIC
     // MARIKO: 750-1200 MANUAL
     // ERISTA: 850-1300 MANUAL
-    .hGPUv = 0,
+    .hGPUv = eBAMATIC,
 
     // MARIKO CPU MIN-HIGH LOGIC
-    // 0 AUTO
+    // eBAMATIC
     // 1 AUTO ECO ST1
     // 2 AUTO ECO ST2
     // 3 AUTO ECO ST3
     // 750-850 MANUAL
-    .dCPUv = 0,
+    .dCPUv = eBAMATIC,
 
     // EMC BALLANCE ADVANCED LOGIC
-    // 0 eBAMATIC
+    // eBAMATIC
     // 1 SYK-LOH
     // 2 ECO ST1
     // 3 DEFAULT
     // 4 SRT ST1
     // 5 SRT ST2
-    .eBAL = 0,
+    .eBAL = eBAMATIC,
     // TRADE MAX FREQ FOR EFFICIENCY
     // EFFICIENCY << PRIORITY >> FREQUENCY
 
@@ -900,19 +902,19 @@ const CustomizeTable defaultCustTable = {
 
     // PRIMARY MICRO-ENHANCE LOGI15C			 	// 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2 1333>1065>800 0-3
     // 3 eBAW Shift 0-4		// 4 eBAR Shift 0-4     // 5 eBAW Crement 0-4	 // 6 eBAR Crement 0-4 	   // 7 eBAS Crement 0-4
-    // 8 RCD Decret 0-4 	// 9 RP Decret 0-4      // 10 RAS Decret 0-8	 // 11 SRPD 0-15 		   // 12 E-Enhance P 0-2
+    // 8 RCD Decret 0-4 	// 9 RP Decret 0-4      // 10 RAS Decret 0-8	 // 11 SRPD 0-15 		   // 12 E-Enhance P 0-1
     // 13 DR Debug 0-8		// 14 GameChanger 0-24	// 15 eFOS MK 0-1		 // 16 lovec 0-1		   // 17 DBI 0-3
-    // 18 eBAMATIC ST 0-3	// 19 vMINetune ST 0-5	// 20 rVDDick 0-8		 // 21 gVMINDick 0-8
-    .pMEH = {0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 4, 2, 0, 0},
-    // DEF =  0  2  0  2  2  0  0  0  0  0  0  0  2  0  0  0  0  0  0  3  4  2  >> RESERVED >>
+    // 18 eBAMATIC ST 0-3	// 19 vMINetune 0-9		// 20 rVDDick 0-6		 // 21 gVMINDick 0-9
+    .pMEH = {0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3, 4, 2, 0, 0},
+    // DEF =  0  2  0  2  2  0  0  0  0  0  0  0  1  0  0  0  0  0  0  3  4  2  >> RESERVED >>
     // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
     // SECONDARY MICRO-ENHANCE LOGIC (SAFE)	// 0 ARB-Boost 1-9		// 1 ARB-BCD 0-4	// 2 ARB-BRP 0-4	// 3 ARB-RTR 0-4
     // 4 ARB-RTW 0-4	// 5 ARB-WTR 0-4	// 6 eZQ Override 0-7	// 7 trDVFS 0-1		// 8 E-Boost 0-2	// 9 SSC Logic 0-1
     // 10 Latent 0-8  	// 11 REF-NEH 0-4	// 12 Clatok 0-1		// 13 CPriora 0-4	// 14 GetLow 0-3	// 15 GetHigh 0-3
     // 16 SYK-LOH 0-1
-    .sMEH = {4, 2, 2, 2, 2, 2, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // DEF =  4  2  2  2  2  2  0  0  0  1  0  2  0  0  0  0  0 >> RESERVED >>
+    .sMEH = {6, 2, 2, 2, 2, 1, 1, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // DEF =  6  2  2  2  2  2  1  0  0  1  0  2  0  0  0  0  0 >> RESERVED >>
     // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
     // Secret Hardware Assisted Integration Tool 4 Advanced Necessities

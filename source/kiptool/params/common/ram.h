@@ -39,15 +39,16 @@ const Param drochr02 = {.name = "DROCHR02",
                         .limitsCount = 1,
                         .limits = {{.type = EFixedRange, .values = &drochr02FR}}};
 
-const FixedRange drochr03FR = {.start = 0, .end = 10};
-// 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE // 10 ALT LOGIC
+const FixedValues drochr03FV = {.valuesCount = 1, .values = {{.value = eBAMATIC, .label = "eBAMATIC"}}};
+const FixedRange drochr03FR = {.start = 1, .end = 10};
+// 1 AUTO SAFE // 2-9 AUTO STAGE // 10 ALT LOGIC
 const Param drochr03 = {.name = "DROCHR03",
                         .measure = NULL,
                         .description = NULL,
                         .offset = getOffset(defaultCustTable.drochr03),
                         .defaultValue = defaultCustTable.drochr03,
-                        .limitsCount = 1,
-                        .limits = {{.type = EFixedRange, .values = &drochr03FR}}};
+                        .limitsCount = 2,
+                        .limits = {{.type = EFixedValues, .values = &drochr03FV}, {.type = EFixedRange, .values = &drochr03FR}}};
 
 const FixedRange drochr04FR = {.start = 0, .end = 9};
 // 0 DEBUG // 1 AUTO SAFE // 2-9 AUTO STAGE
@@ -105,14 +106,14 @@ const Table drochrsTable = {.name = "RAM Timings Table",
                             .params = {&drochr01, &drochr02, &drochr03, &drochr04, &drochr05, &drochr06, &drochr07, &drochr08}};
 
 const FixedValues eBALFV = {.valuesCount = 6,
-                            .values = {{.value = 0, .label = "eBAMATIC"},
+                            .values = {{.value = eBAMATIC, .label = "eBAMATIC"},
                                        {.value = 1, .label = "SYK-LOH"},
                                        {.value = 2, .label = "ECO ST1"},
                                        {.value = 3},
                                        {.value = 4, .label = "SRT ST1"},
                                        {.value = 5, .label = "SRT ST2"}}};
 // EMC BALLANCE ADVANCED LOGIC
-// 0 eBAMATIC
+// eBAMATIC
 // 1 SYK-LOH
 // 2 ECO ST1
 // 3 DEFAULT
@@ -260,8 +261,8 @@ const Param pMeh11 = {.name = "pMeh 11 SRPD",
                       .defaultValue = defaultCustTable.pMEH[11],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh11FR}}};
-const FixedRange pMeh12FR = {.start = 0, .end = 2};
-// 12 E-Enhance P 0-2
+const FixedRange pMeh12FR = {.start = 0, .end = 1};
+// 12 E-Enhance P 0-1
 const Param pMeh12 = {.name = "pMeh 12 E-Enhance P",
                       .measure = NULL,
                       .description = NULL,
@@ -323,8 +324,8 @@ const Param pMeh18 = {.name = "pMeh 18 eBAMATIC ST",
                       .defaultValue = defaultCustTable.pMEH[18],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh18FR}}};
-const FixedRange pMeh19FR = {.start = 0, .end = 5};
-// 19 vMINetune ST 0-5
+const FixedRange pMeh19FR = {.start = 0, .end = 9};
+// 19 vMINetune 0-9
 const Param pMeh19 = {.name = "pMeh 19 vMINetune",
                       .measure = NULL,
                       .description = NULL,
@@ -332,8 +333,8 @@ const Param pMeh19 = {.name = "pMeh 19 vMINetune",
                       .defaultValue = defaultCustTable.pMEH[19],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh19FR}}};
-const FixedRange pMeh20FR = {.start = 0, .end = 8};
-// 20 rVDDick 0-8
+const FixedRange pMeh20FR = {.start = 0, .end = 6};
+// 20 rVDDick 0-6
 const Param pMeh20 = {.name = "pMeh 20 rVDDick",
                       .measure = NULL,
                       .description = NULL,
@@ -341,8 +342,8 @@ const Param pMeh20 = {.name = "pMeh 20 rVDDick",
                       .defaultValue = defaultCustTable.pMEH[20],
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh20FR}}};
-const FixedRange pMeh21FR = {.start = 0, .end = 8};
-// 21 gVMINDick 0-8
+const FixedRange pMeh21FR = {.start = 0, .end = 9};
+// 21 gVMINDick 0-9
 const Param pMeh21 = {.name = "pMeh 21 gVMINDick",
                       .measure = NULL,
                       .description = NULL,
@@ -351,7 +352,7 @@ const Param pMeh21 = {.name = "pMeh 21 gVMINDick",
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh21FR}}};
 
-// DEF =  0  2  0  2  2  0  0  0  0  0  0  0  2  0  0  0  0  0  0  3  4  2  >> RESERVED >>
+// DEF =  0  2  0  2  2  0  0  0  0  0  0  0  1  0  0  0  0  0  0  3  4  2  >> RESERVED >>
 // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 const Table pMehTable = {.name = "pMeh Table",
                          .description = NULL,
@@ -516,7 +517,7 @@ const Param sMeh16 = {.name = "sMeh 16 SYK-LOH",
                       .limits = {{.type = EFixedRange, .values = &sMeh16FR}}};
 
 // SECONDARY MICRO-ENHANCE LOGIC (SAFE)
-// DEF =  4  2  2  2  2  2  0  0  0  1  0  2  0  0  0  0  0 >> RESERVED >>
+// DEF =  6  2  2  2  2  2  1  0  0  1  0  2  0  0  0  0  0 >> RESERVED >>
 // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 const Table sMehTable = {
     .name = "sMeh Table",
