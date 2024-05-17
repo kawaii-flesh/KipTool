@@ -5,6 +5,7 @@
 #include <utils/sprintf.h>
 
 #include "../../../gfx/gfxutils.h"
+#include "../../../utils/utils.h"
 #include "../../helpers/kiprw.h"
 #include "../../helpers/param.h"
 #include "../../service/session.h"
@@ -94,9 +95,30 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
         if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
             newTableMenu(custTable, ktSection, table);
-        } else if (selectedEntry.type == ETParam)
+        } else if (selectedEntry.type == ETParam) {
+#ifdef KT_DEBUG
+            Input_t* input = hidRead();
+            if (input->l || input->r) {
+                gfx_clearscreenKT();
+                unsigned int currentValue = getParamValueFromBuffer(custTable, selectedEntry.entry);
+                char* currentValueStr = malloc(256);
+                utoa(currentValue, currentValueStr, 10);
+                char* value = ShowKeyboard(currentValueStr, false);
+                if (value != NULL) {
+                    const unsigned int newValue = atoi(value);
+                    formatValueDiv(currentValueStr, newValue, newValue > 1500);
+                    const char* message[] = {"Do you want to set a new value?", strcat(strcat(currentValueStr, " <- "), value), NULL};
+                    if (confirmationDialog(message, ENO) == EYES) setParamValue(custTable, ktSection, selectedEntry.entry, atoi(value));
+                    free(value);
+                }
+                free(currentValueStr);
+                gfx_clearscreenKT();
+            } else
+                newEditorMenu(custTable, ktSection, selectedEntry.entry);
+#else
             newEditorMenu(custTable, ktSection, selectedEntry.entry);
-        else if (selectedEntry.type == ETReset) {
+#endif
+        } else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset all params in this category?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
                 for (unsigned int i = 0; i < paramsArraysCount; ++i) {

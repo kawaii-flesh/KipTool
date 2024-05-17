@@ -7,8 +7,8 @@
 #include "../hid/hid.h"
 #include "gfx.h"
 
-// #define ALLOC_DEBUG
-#ifdef ALLOC_DEBUG
+// #define KT_DEBUG
+#ifdef KT_DEBUG
 #include <mem/heap.h>
 #endif
 
@@ -21,10 +21,10 @@ void gfx_printTopInfo() {
     SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
     gfx_con_setpos(0, 0);
 
-#ifndef ALLOC_DEBUG
+#ifndef KT_DEBUG
     gfx_printf("Tegraexplorer %d.%d.%d | Battery: %d%% %c\n", LP_VER_MJ, LP_VER_MN, LP_VER_BF, battery >> 8, ((current_charge_status) ? 129 : 32));
 #endif
-#ifdef ALLOC_DEBUG
+#ifdef KT_DEBUG
     heap_monitor_t mon = {};
     heap_monitor(&mon, 0);
 
