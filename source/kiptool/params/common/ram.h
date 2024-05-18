@@ -352,7 +352,7 @@ const Param pMeh21 = {.name = "pMeh 21 gVMINDick",
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh21FR}}};
 
-// DEF =  0  2  0  2  2  0  0  0  0  0  0  0  1  0  0  0  0  0  0  3  4  2  >> RESERVED >>
+// DEF =  0  2  0  2  2  0  0  0  0  0  0  0  1  0  0  0  0  0  0  1  4  2  >> RESERVED >>
 // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 const Table pMehTable = {.name = "pMeh Table",
                          .description = NULL,
