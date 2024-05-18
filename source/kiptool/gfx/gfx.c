@@ -11,22 +11,22 @@
 #include "../params/param.h"
 #include "../params/table.h"
 
-// #define ALLOC_DEBUG
-#ifdef ALLOC_DEBUG
+// #define KT_DEBUG
+#ifdef KT_DEBUG
 #include <mem/heap.h>
 #endif
 
 void gfx_printTopInfoKT() {
     SETCOLOR(COLOR_DEFAULT, COLOR_WHITE);
     gfx_con_setpos(0, 0);
-#ifndef ALLOC_DEBUG
+#ifndef KT_DEBUG
     gfx_printf("Kip Tool %d.%d.%d-%d | SoC: %s | Battery: %d%% %c\n", KT_VER_MJ, KT_VER_MN, KT_VER_BF, KT_CUST_VER,
                getHWType() == COMMON   ? "Common"
                : getHWType() == MARIKO ? "Mariko"
                                        : "Erista",
                getBatteryValue(), (getCurrentChargeState() ? 129 : 32));
 #endif
-#ifdef ALLOC_DEBUG
+#ifdef KT_DEBUG
     heap_monitor_t mon = {};
     heap_monitor(&mon, 0);
 
@@ -49,6 +49,7 @@ void gfx_printBottomInfoKT(const char* message) {
 void gfx_clearscreenKT() {
     gfx_boxGrey(0, 16, 1279, 703, 0x1b);
 
+    gfx_boxGrey(0, 703, 1279, 719, 0xFF);
     gfx_boxGrey(0, 0, 1279, 15, 0xFF);
 
     gfx_printTopInfoKT();

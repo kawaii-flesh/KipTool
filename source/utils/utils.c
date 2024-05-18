@@ -102,14 +102,15 @@ char* ShowKeyboard(const char* toEdit, u8 alwaysRet) {
         }
 
         Input_t* input = hidWait();
-        if (input->buttons & (JoyA | JoyLB | JoyRB)) {
-            if (pos == 42 || input->l) {
+        if (input->buttons) {
+            int isAPressed = input->a;
+            if ((pos == 42 && isAPressed) || input->l) {
                 if (posOnWord > 0) posOnWord--;
-            } else if (pos == 43 || input->r) {
+            } else if ((pos == 43 && isAPressed) || input->r) {
                 if (strlen(ret) - 1 > posOnWord) posOnWord++;
-            } else if (pos == 10) {
+            } else if (pos == 10 && isAPressed) {  // *
                 break;
-            } else if (pos == 21) {
+            } else if ((pos == 21 && isAPressed) || input->x) {  // ~
                 u32 wordLen = strlen(ret);
                 if (!wordLen) continue;
 
@@ -118,18 +119,19 @@ char* ShowKeyboard(const char* toEdit, u8 alwaysRet) {
                 }
                 ret[wordLen - 1] = 0;
                 if (posOnWord > wordLen - 2) posOnWord--;
-            } else if (pos == 32) {
+            } else if ((pos == 32 && isAPressed) || input->plus || input->y) {  // +
                 u32 wordLen = strlen(ret);
                 if (wordLen >= 79) continue;
 
                 char* copy = calloc(wordLen + 2, 1);
                 memcpy(copy, ret, wordLen);
                 copy[wordLen] = 'a';
+                posOnWord = wordLen;
                 free(ret);
                 ret = copy;
-            } else if (pos == 33) {
+            } else if (pos == 33 && isAPressed) {
                 shift = !shift;
-            } else {
+            } else if (isAPressed) {
                 char toPut = lines[pos / 11][pos % 11];
                 if (shift) toPut &= ~BIT(5);
                 ret[posOnWord] = toPut;

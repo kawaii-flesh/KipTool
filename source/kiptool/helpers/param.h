@@ -10,7 +10,7 @@ typedef struct FormatingData {
     unsigned int labelLen;
 } FormatingData;
 
-void addDefaultPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam);
+void addPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam);
 
 void addLabel(const Value* value, char* displayBuff);
 

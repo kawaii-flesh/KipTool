@@ -4,8 +4,9 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues commonCpuBoostClockFV = {.valuesCount = 5,
-                                           .values = {{.value = 1428000, .label = "CPU-HI uV DEBUG"},
+const FixedValues commonCpuBoostClockFV = {.valuesCount = 6,
+                                           .values = {{.value = eBAMATIC, .label = "eBAMATIC", .measure = ""},
+                                                      {.value = 1428000, .label = "CPU-HI uV DEBUG"},
                                                       {.value = 1785000, .label = "CPU-LOW uV DEBUG"},
                                                       {.value = 2000000, .label = "E"},
                                                       {.value = 2500000, .label = "D"},
@@ -17,7 +18,8 @@ const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .step
 // 2000000 E
 // 2500000 D
 // 3000000 S
-// MANUAL 1400000-3000000 100000 STEP
+// MANUAL 1400000-3000000 STEP 100000
+// eBAMATIC
 const Param commonCpuBoostClock = {.name = "CPU LAUNCH CONTROL TARGET",
                                    .measure = "MHz",
                                    .description = NULL,
@@ -28,7 +30,7 @@ const Param commonCpuBoostClock = {.name = "CPU LAUNCH CONTROL TARGET",
 
 const FixedValues SpeedShiftFV = {.valuesCount = 6,
                                   .values = {
-                                      {.value = 0},
+                                      {.value = eBAMATIC, .label = "eBAMATIC"},
                                       {.value = 1, .label = "AUTO"},
                                       {.value = 50, .label = "SRT ST1"},
                                       {.value = 100, .label = "ECO ST1"},
@@ -37,8 +39,8 @@ const FixedValues SpeedShiftFV = {.valuesCount = 6,
                                   }};
 const FixedLimits SpeedShiftFL = {.min = 25, .max = 175, .stepSize = 25};
 // SPEEDSHIFT ECO LOGIC
-// 0 DEFAULT
-// 1 AUTO
+// eBAMATIC
+// 1 DEFAULT
 // 50 SRT ST1
 // 100 ECO ST1
 // 125 ECO ST2
@@ -53,23 +55,24 @@ const Param SpeedShift = {.name = "SPEEDSHIFT",
                           .limitsCount = 2,
                           .limits = {{.type = EFixedValues, .values = &SpeedShiftFV}, {.type = EFixedLimits, .values = &SpeedShiftFL}}};
 
-const FixedValues marikoCpuHUVFV = {.valuesCount = 8,
+const FixedValues marikoCpuHUVFV = {.valuesCount = 9,
                                     .values = {
-                                        {.value = 0, .label = "ECO ALT-MODE"},
-                                        {.value = 1, .label = "SRT"},
+                                        {.value = eBAMATIC, .label = "eBAMATIC"},
+                                        {.value = 1, .label = "ECO ST1"},
                                         {.value = 2},
                                         {.value = 3, .label = "ECO ST2"},
                                         {.value = 4},
                                         {.value = 5, .label = "ECO ST3"},
                                         {.value = 6},
                                         {.value = 7},
+                                        {.value = 8},
                                     }};
 // MARIKO CPU-HI ECO LOGIC
-// 0 ECO ALT-MODE
+// eBAMATIC
 // 1 AUTO ECO ST1
 // 3 AUTO ECO ST2
 // 5 AUTO ECO ST3
-// MANUAL 1-7
+// 1-8 MANUAL
 const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
                             .measure = NULL,
                             .description = NULL,
@@ -78,14 +81,17 @@ const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
                             .limitsCount = 1,
                             .limits = {{.type = EFixedValues, .values = &marikoCpuHUVFV}}};
 
-const FixedValues marikoCpuMaxVoltFV = {
-    .valuesCount = 4,
-    .values = {{.value = 1150, .label = "ECO"}, {.value = 1180, .label = "STAGE 1"}, {.value = 1210, .label = "STAGE 2"}, {.value = 1250, .label = "STAGE 3"}}};
-const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1280, .stepSize = 5};
+const FixedValues marikoCpuMaxVoltFV = {.valuesCount = 5,
+                                        .values = {{.value = eBAMATIC, .label = "eBAMATIC", .measure = ""},
+                                                   {.value = 1150, .label = "ECO"},
+                                                   {.value = 1180, .label = "STAGE 1"},
+                                                   {.value = 1215, .label = "STAGE 2"},
+                                                   {.value = 1250, .label = "STAGE 3"}}};
+const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1375, .stepSize = 5};
 // MARIKO CPU VMAX MODE
 // 1150 ECO
-// 1180-1250 STAGE 1-3
-// MANUAL 1130-1280 STEP 5mV
+// 1180-1250 STAGE 1-3 STEP 35mV
+// MANUAL 1130-1375 STEP 5mV
 const Param marikoCpuMaxVolt = {.name = "CPU VMAX MODE",
                                 .measure = "mV",
                                 .description = NULL,
@@ -118,10 +124,10 @@ const Param marikoCpuUV = {.name = "CPU-LOW ECO LOGIC",
 
 const FixedValues dCPUvFV = {
     .valuesCount = 4,
-    .values = {{.value = 0, .label = "AUTO"}, {.value = 1, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 3, .label = "ECO ST3"}}};
+    .values = {{.value = eBAMATIC, .label = "eBAMATIC"}, {.value = 1, .label = "ECO ST1"}, {.value = 2, .label = "ECO ST2"}, {.value = 3, .label = "ECO ST3"}}};
 const FixedLimits dCPUvFL = {.min = 750, .max = 850, .stepSize = 5, .measure = "mV"};
 // MARIKO CPU MIN-HIGH LOGIC
-// 0 AUTO
+// eBAMATIC
 // 1 AUTO ECO ST1
 // 2 AUTO ECO ST2
 // 3 AUTO ECO ST3

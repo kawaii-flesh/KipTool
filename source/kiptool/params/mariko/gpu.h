@@ -248,10 +248,10 @@ const Table marikoGpuVoltArray = {
                &marikoGpuVoltArray1305mhz, &marikoGpuVoltArray1344mhz, &marikoGpuVoltArray1382mhz, &marikoGpuVoltArray1420mhz, &marikoGpuVoltArray1459mhz,
                &marikoGpuVoltArray1497mhz, &marikoGpuVoltArray1536mhz, &marikoGpuVoltArray1574mhz, &marikoGpuVoltArray1612mhz}};
 
-const FixedValues marikoHGPUvFV = {.valuesCount = 1, .values = {{.value = 0, .label = "AUTO"}}};
+const FixedValues marikoHGPUvFV = {.valuesCount = 1, .values = {{.value = eBAMATIC, .label = "eBAMATIC"}}};
 const FixedLimits marikoHGPUvFL = {.min = 750, .max = 1200, .stepSize = 50, .measure = "mV"};
 // GPU OVER LOGIC
-// 0 AUTO
+// eBAMATIC
 // MARIKO: 750-1200 MANUAL
 const Param marikoHGPUv = {.name = "GPU OVER MODE",
                            .description = NULL,

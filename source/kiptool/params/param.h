@@ -5,6 +5,7 @@ enum LimitsType { EFixedLimits, EFixedRange, EFixedOneValue, EFixedValues, EMinB
 typedef struct {
     const unsigned int value;
     const char* label;
+    const char* measure;
 } Value;
 
 typedef struct {
