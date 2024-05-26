@@ -19,12 +19,6 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
 
     (highlighted) ? SETCOLOR(bg, RGBUnionToU32(entry->optionUnion)) : SETCOLOR(RGBUnionToU32(entry->optionUnion), bg);
 
-    if (entry->icon) {
-        gfx_putc(entry->icon);
-        gfx_putc(' ');
-        maxLen -= 2;
-    }
-
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
     if (entry->type == ETLabel || entry->type == ETReset)
@@ -85,13 +79,13 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
         menuEntries[menuEntriesIndex].type = ETReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        int res =
-            newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
-        if (res == -1) {
+        MenuResult result = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
+                                      (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
+        if (result.index == -1) {
             free(menuEntries);
             return;
         }
-        const MenuEntry selectedEntry = menuEntries[res + 1];
+        const MenuEntry selectedEntry = menuEntries[result.index + 1];
         if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
             newTableMenu(custTable, ktSection, table);
@@ -141,6 +135,6 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
                 free(message);
             }
         }
-        startIndex = res + 1;
+        startIndex = result.index + 1;
     }
 }

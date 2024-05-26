@@ -14,6 +14,7 @@ typedef struct _menuEntry {
             u32 R : 8;
             u32 skip : 1;
             u32 hide : 1;
+            u32 allocatedName : 1;
         };
         u32 optionUnion;
     };
@@ -34,6 +35,7 @@ typedef struct _menuEntry {
 
 #define SKIPBIT BIT(24)
 #define HIDEBIT BIT(25)
+#define ALLOCATED_NAME_BIT BIT(26)
 
 #define ENABLEB BIT(0)
 #define ENABLEPAGECOUNT BIT(1)
@@ -46,3 +48,4 @@ typedef struct _menuEntry {
 #define ARR_LEN(x) (sizeof(x) / sizeof(*x))
 
 int newMenu(Vector_t* vec, int startIndex, int screenLenX, int screenLenY, u8 options, int entryCount);
+void freeAllocatedNames(MenuEntry_t mainMenuEntries[], u32 count);

@@ -19,9 +19,12 @@
 #include "../hid/touchutils.h"
 #include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../kiptool/kipWizard/kipWizard.h"
+#include "../kiptool/service/profile.h"
 #include "../utils/utils.h"
 #include "tconf.h"
 #include "tools.h"
+
+#define ENTRIES_COUNT 16
 
 enum {
     MainExplore = 0,
@@ -32,6 +35,7 @@ enum {
     MainMisc,
     MainActivateTouchMode,
     Main4EKATE,
+    MainProfiles,
     MainExit,
     MainPowerOff,
     MainRebootRCM,
@@ -41,7 +45,7 @@ enum {
     MainReboot4EKATE
 };
 
-MenuEntry_t mainMenuEntries[] = {
+MenuEntry_t mainMenuEntries[ENTRIES_COUNT] = {
     [MainExplore] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- Explore --"},
     [MainKipWizard] = {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "KIP Wizard atmosphere/kips/loader.kip"},
     [MainBrowseSd] = {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Browse SD"},
@@ -50,6 +54,7 @@ MenuEntry_t mainMenuEntries[] = {
     [MainMisc] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Misc --"},
     [MainActivateTouchMode] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
     [Main4EKATE] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
+    [MainProfiles] = {.optionUnion = COLORTORGB(COLOR_BLUE) | ALLOCATED_NAME_BIT},
     [MainExit] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Exit --"},
     [MainPowerOff] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Power off"},
     [MainRebootRCM] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Reboot to RCM"},
@@ -123,10 +128,19 @@ void ActivateTouchMode() {
     }
 }
 
-menuPaths mainMenuPaths[] = {
-    [MainBrowseSd] = HandleSD,    [MainKipWizard] = OpenKipWizard, [MainMountSd] = MountOrUnmountSD,   [MainActivateTouchMode] = ActivateTouchMode,
-    [Main4EKATE] = chekate,       [MainViewCredits] = ViewCredits, [MainRebootAMS] = RebootToAMS,      [MainRebootUpdate] = RebootToUpdate,
-    [MainRebootRCM] = reboot_rcm, [MainPowerOff] = power_off,      [MainRebootNormal] = reboot_normal, [MainReboot4EKATE] = RebootTo4EKATE};
+menuPaths mainMenuPaths[] = {[MainBrowseSd] = HandleSD,
+                             [MainKipWizard] = OpenKipWizard,
+                             [MainMountSd] = MountOrUnmountSD,
+                             [MainActivateTouchMode] = ActivateTouchMode,
+                             [Main4EKATE] = chekate,
+                             [MainProfiles] = profiles,
+                             [MainViewCredits] = ViewCredits,
+                             [MainRebootAMS] = RebootToAMS,
+                             [MainRebootUpdate] = RebootToUpdate,
+                             [MainRebootRCM] = reboot_rcm,
+                             [MainPowerOff] = power_off,
+                             [MainRebootNormal] = reboot_normal,
+                             [MainReboot4EKATE] = RebootTo4EKATE};
 
 void EnterMainMenu() {
     int res = 0;
@@ -151,6 +165,19 @@ void EnterMainMenu() {
                 mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
         } else
             mainMenuEntries[Main4EKATE].hide = 1;
+        if (sd_mounted) {
+            const char* profileNameBuff = malloc(256);
+            strcpy(profileNameBuff, "Profile - ");
+            if (getProfilesCount() == 0) {
+                mainMenuEntries[MainProfiles].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT | ALLOCATED_NAME_BIT;
+                strcat(profileNameBuff, KT_PROFILES_EMPTY_MSG);
+            } else {
+                mainMenuEntries[MainProfiles].optionUnion = COLORTORGB(COLOR_BLUE) | ALLOCATED_NAME_BIT;
+                strcat(profileNameBuff, getCurrentProfileName());
+            }
+            mainMenuEntries[MainProfiles].name = profileNameBuff;
+        } else
+            mainMenuEntries[MainProfiles].hide = 1;
         mainMenuEntries[MainActivateTouchMode].name = (*isTouchEnabled()) ? "Deactivate touch mode" : "Activate touch mode";
         Vector_t ent = newVec(sizeof(MenuEntry_t), ARRAY_SIZE(mainMenuEntries));
         ent.count = ARRAY_SIZE(mainMenuEntries);
@@ -161,7 +188,8 @@ void EnterMainMenu() {
 
         res = newMenu(&ent, res, 79, 30, (ent.count == ARRAY_SIZE(mainMenuEntries)) ? ALWAYSREDRAW : ALWAYSREDRAW | ENABLEPAGECOUNT,
                       ent.count - ARRAY_SIZE(mainMenuEntries));
-        if (res < 16 && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
+        freeAllocatedNames(mainMenuEntries, ENTRIES_COUNT);
+        if (res < ENTRIES_COUNT && mainMenuPaths[res] != NULL && res != -1) mainMenuPaths[res]();
 
         free(ent.data);
     }

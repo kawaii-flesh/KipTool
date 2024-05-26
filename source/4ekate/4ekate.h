@@ -1,16 +1,17 @@
 #pragma once
 #include "../kiptool/service/kiptool.h"
 
-#define CHEKATE_PARAMS_ABSOLUTE_OFFSET 0x00019f78
 #define CHEKATE_UNKNOWN_STAGE "4EKATE - UNKNOWN Stage"
 #define CHEKATE_PAYLOAD_PATH "sd:/payload.bin"
+#define CHEKATE_FUSEE_PATH "sd:/bootloader/payloads/fusee.bin"
 #define CHEKATE_PAYLOAD_BACKUP_PATH (KT_DIR "/backup_payload.bin")
+#define CHEKATE_FUSEE_BACKUP_PATH (KT_DIR "/backup_fusee.bin")
 
 typedef struct {
-    unsigned int p0;
-    unsigned int p1;
-    unsigned int p2;
-    unsigned int p3;
+    unsigned int mc_emem_adr_cfg_channel_mask;
+    unsigned int mc_emem_adr_cfg_bank_mask0;
+    unsigned int mc_emem_adr_cfg_bank_mask1;
+    unsigned int mc_emem_adr_cfg_bank_mask2;
 } CHEKATEParams;
 
 const char* getCurrentStageTitle();

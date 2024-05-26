@@ -20,12 +20,6 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
 
     (highlighted) ? SETCOLOR(bg, RGBUnionToU32(entry->optionUnion)) : SETCOLOR(RGBUnionToU32(entry->optionUnion), bg);
 
-    if (entry->icon) {
-        gfx_putc(entry->icon);
-        gfx_putc(' ');
-        maxLen -= 2;
-    }
-
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);
     char* displayBuff = malloc(256);
@@ -136,11 +130,12 @@ void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param)
         menuEntries[menuEntriesIndex].type = ETReset;
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
-        int res = newMenuKT(menuEntries, totalEntriesCount, startIndex, &editorAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printValueEntry);
-        if (res == -1) {
+        MenuResult result =
+            newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &editorAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printValueEntry);
+        if (result.index == -1) {
             break;
         }
-        const MenuEntry selectedEntry = menuEntries[res + 1];
+        const MenuEntry selectedEntry = menuEntries[result.index + 1];
         if (selectedEntry.type == ETLimits) {
             const ManualValueResult manualValueResult = manualValueDialog(param, canBeManualValue ? paramCurrentValue : -1);
             if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, ktSection, param, manualValueResult.value);
