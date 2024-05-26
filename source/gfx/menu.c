@@ -1,5 +1,6 @@
 #include "menu.h"
 
+#include <mem/heap.h>
 #include <mem/minerva.h>
 #include <soc/timer.h>
 #include <string.h>
@@ -181,4 +182,9 @@ int newMenu(Vector_t* vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
         redrawScreen = (selected / screenLenY != lastIndex / screenLenY);
     }
+}
+
+void freeAllocatedNames(MenuEntry_t mainMenuEntries[], u32 count) {
+    for (int i = 0; i < count; ++i)
+        if (mainMenuEntries[i].optionUnion & ALLOCATED_NAME_BIT) free(mainMenuEntries[i].name);
 }

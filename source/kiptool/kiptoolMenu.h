@@ -1,15 +1,17 @@
 #pragma once
 #include "kipWizard/kipWizard.h"
 #include "service/kiptool.h"
+#include "service/profile.h"
 
-enum { KTMenu = 0, KTWizard };
+enum { KTMenu = 0, KTWizard, AddToProfiles };
 
 MenuEntry_t kipToolMenuEntries[] = {
     {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "-- Kip Tool Menu --"},
     {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Kip Wizard"},
+    {.optionUnion = COLORTORGB(COLOR_GREEN), .name = "Add to Profiles"},
 };
 
-const int (*kipToolMenuPaths[])(char*, FSEntry_t) = {[KTWizard] = kipWizard};
+const int (*kipToolMenuPaths[])(char*, FSEntry_t) = {[KTWizard] = kipWizard, [AddToProfiles] = addFileToProfiles};
 
 void drawKipToolMenu(char* path, FSEntry_t entry) {
     Vector_t ent = vecFromArray(kipToolMenuEntries, ARR_LEN(kipToolMenuEntries), sizeof(MenuEntry_t));

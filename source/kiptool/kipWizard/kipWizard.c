@@ -75,7 +75,7 @@ int kipWizard(char* path, FSEntry_t entry) {
     char* filePath = CombinePaths(path, entry.name);
 
     FIL kipFile;
-    int res;
+    int resFile;
     Input_t* input = hidRead();
     if (input->l) {
         if (input->r)
@@ -89,8 +89,8 @@ int kipWizard(char* path, FSEntry_t entry) {
     gfx_clearscreenKT();
     gfx_printf("Loading CUST table ...");
 
-    if ((res = f_open(&kipFile, filePath, FA_READ | FA_OPEN_EXISTING))) {
-        DrawError(newErrCode(res));
+    if ((resFile = f_open(&kipFile, filePath, FA_READ | FA_OPEN_EXISTING))) {
+        DrawError(newErrCode(resFile));
         free(filePath);
         return 1;
     }
@@ -135,7 +135,7 @@ int kipWizard(char* path, FSEntry_t entry) {
             if (!sessionIsExist(ktSection)) {
                 f_lseek(&kipFile, baseOffset);
                 f_read(&kipFile, custTable, custTableSize, &bytesReaded);
-            } else if (confirmationDialog(messageLoadSession, EYES) == ENO) {
+            } else if (confirmationDialog(messageLoadSession, EYES) != EYES) {
                 f_lseek(&kipFile, baseOffset);
                 f_read(&kipFile, custTable, custTableSize, &bytesReaded);
             } else {
@@ -172,9 +172,9 @@ int kipWizard(char* path, FSEntry_t entry) {
             void (*functions[])(const CustomizeTable*, const KTSection*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
             while (1) {
                 gfx_clearscreenKT();
-                int res = newMenuKT(entries, 7, startIndex, NULL, printEntry);
-                startIndex = res + 1;
-                if (res == -1) {
+                MenuResult result = newMenuKT(entries, 7, startIndex, JoyA, NULL, printEntry);
+                startIndex = result.index + 1;
+                if (result.index == -1) {
                     if (isSessionsSupported()) {
                         break;
                     } else {
@@ -184,14 +184,14 @@ int kipWizard(char* path, FSEntry_t entry) {
                             break;
                         }
                     }
-                } else if (res == 3) {
+                } else if (result.index == 3) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         writeData(filePath, baseOffset, custTable, sizeof(CustomizeTable), 0);
                         removeSession(ktSection);
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
                     }
-                } else if (res == 4) {
+                } else if (result.index == 4) {
                     ++startIndex;
                     const char* message[] = {"Do you want to reset all params?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
@@ -199,8 +199,8 @@ int kipWizard(char* path, FSEntry_t entry) {
                         saveSession(ktSection, custTable);
                         gfx_printBottomInfoKT("[Session] All params have been reset");
                     }
-                } else if (res <= 2)
-                    functions[res](custTable, ktSection, getHWType());
+                } else if (result.index <= 2)
+                    functions[result.index](custTable, ktSection, getHWType());
             }
             free(displayBuff);
         }

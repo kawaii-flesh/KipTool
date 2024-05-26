@@ -2,11 +2,15 @@
 
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "../err.h"
 #include "../fs/fscopy.h"
 #include "../fs/fsutils.h"
+#include "../helpers/fs.h"
 #include "../helpers/mem.h"
+#include "../hid/hid.h"
 #include "../kiptool/gfx/gfx.h"
 #include "../kiptool/gfx/menus/ktMenu.h"
 #include "../kiptool/helpers/rw.h"
@@ -14,25 +18,78 @@
 #define CHEKATE_STAGES_COUNT 3
 
 const CHEKATEParams stages[CHEKATE_STAGES_COUNT] = {
-    {.p0 = 0xFFFF2400, .p1 = 0x6E574400, .p2 = 0x39722800, .p3 = 0x4B9C1000},  // DEFAULT
-    {.p0 = 0x00002400, .p1 = 0x6E574400, .p2 = 0x39722800, .p3 = 0x4B9C1000},  // ST1
-    {.p0 = 0x00002400, .p1 = 0x00004400, .p2 = 0x00002800, .p3 = 0x00001000}   // ST2
-};
+    // DEFAULT
+    {.mc_emem_adr_cfg_channel_mask = 0xFFFF2400,
+     .mc_emem_adr_cfg_bank_mask0 = 0x6E574400,
+     .mc_emem_adr_cfg_bank_mask1 = 0x39722800,
+     .mc_emem_adr_cfg_bank_mask2 = 0x4B9C1000},
+    // ST1
+    {.mc_emem_adr_cfg_channel_mask = 0x00002400,
+     .mc_emem_adr_cfg_bank_mask0 = 0x6E574400,
+     .mc_emem_adr_cfg_bank_mask1 = 0x39722800,
+     .mc_emem_adr_cfg_bank_mask2 = 0x4B9C1000},
+    // ST2
+    {.mc_emem_adr_cfg_channel_mask = 0x00002400,
+     .mc_emem_adr_cfg_bank_mask0 = 0x00004400,
+     .mc_emem_adr_cfg_bank_mask1 = 0x00002800,
+     .mc_emem_adr_cfg_bank_mask2 = 0x00001000}};
 const char* stagesTitles[CHEKATE_STAGES_COUNT] = {"4EKATE Stage - Default", "4EKATE Stage - ST1", "4EKATE Stage - ST2"};
 
-bool load4EKATEParams(CHEKATEParams* params) {
+int payloadOffset = 0;
+int fuseeOffset = 0;
+
+int getParamsOffset(const char filePath[]) {
     FIL file;
-    FRESULT res;
-    res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_READ);
+    FRESULT res = f_open(&file, filePath, FA_READ);
     if (res != FR_OK) {
         f_close(&file);
-        return false;
+        return -1;
     }
-    unsigned int bytesRead;
-    f_lseek(&file, CHEKATE_PARAMS_ABSOLUTE_OFFSET);
-    f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
+    for (int i = 0; i < CHEKATE_STAGES_COUNT; ++i) {
+        int offset = searchBytesArray((const u8*)(&stages[i]), sizeof(CHEKATEParams), &file);
+        if (offset != -1) {
+            f_close(&file);
+            return offset;
+        }
+    }
     f_close(&file);
-    return bytesRead == sizeof(CHEKATEParams);
+    return -1;
+}
+
+void setOffsets() {
+    if (payloadOffset == 0) payloadOffset = getParamsOffset(CHEKATE_PAYLOAD_PATH);
+    if (fuseeOffset == 0) fuseeOffset = getParamsOffset(CHEKATE_FUSEE_PATH);
+}
+
+bool load4EKATEParams(CHEKATEParams* params) {
+    setOffsets();
+    FIL file;
+    FRESULT res;
+    if (FileExists(CHEKATE_PAYLOAD_PATH)) {
+        res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_READ);
+        if (res != FR_OK) {
+            f_close(&file);
+            return false;
+        }
+        unsigned int bytesRead;
+
+        f_lseek(&file, payloadOffset);
+        f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
+        f_close(&file);
+        return bytesRead == sizeof(CHEKATEParams);
+    } else if (FileExists(CHEKATE_FUSEE_PATH)) {
+        res = f_open(&file, CHEKATE_FUSEE_PATH, FA_READ);
+        if (res != FR_OK) {
+            f_close(&file);
+            return false;
+        }
+        unsigned int bytesRead;
+        f_lseek(&file, fuseeOffset);
+        f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
+        f_close(&file);
+        return bytesRead == sizeof(CHEKATEParams);
+    }
+    return false;
 }
 
 bool set4EKATEParams(const CHEKATEParams* params) {
@@ -40,14 +97,26 @@ bool set4EKATEParams(const CHEKATEParams* params) {
     FRESULT res;
     unsigned int bytesWritten;
 
-    res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_WRITE);
-    if (res != FR_OK) {
-        return false;
+    if (FileExists(CHEKATE_PAYLOAD_PATH)) {
+        res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_WRITE);
+        if (res != FR_OK) {
+            return false;
+        }
+        f_lseek(&file, payloadOffset);
+        res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
+        f_close(&file);
+        if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
     }
-    f_lseek(&file, CHEKATE_PARAMS_ABSOLUTE_OFFSET);
-    res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
-    f_close(&file);
-    if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
+    if (FileExists(CHEKATE_FUSEE_PATH)) {
+        res = f_open(&file, CHEKATE_FUSEE_PATH, FA_WRITE);
+        if (res != FR_OK) {
+            return false;
+        }
+        f_lseek(&file, fuseeOffset);
+        res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
+        f_close(&file);
+        if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
+    }
 
     return true;
 }
@@ -76,12 +145,23 @@ bool createPayloadBackup() {
     return true;
 }
 
+bool createPayloadFusee() {
+    ErrCode_t res = FileCopy(CHEKATE_FUSEE_PATH, CHEKATE_FUSEE_BACKUP_PATH, 0);
+    if (res.err != 0) return false;
+    return true;
+}
+
 void chekate() {
     createDirIfNotExist(KT_DIR);
     if (!FileExists(CHEKATE_PAYLOAD_BACKUP_PATH)) {
         gfx_clearscreenKT();
-        gfx_printf("Creating a backup ...");
+        gfx_printf("Creating a paylaod backup ...");
         createPayloadBackup();
+    }
+    if (!FileExists(CHEKATE_FUSEE_BACKUP_PATH)) {
+        gfx_clearscreenKT();
+        gfx_printf("Creating a fusee backup ...");
+        createPayloadFusee();
     }
     MenuEntry* menuEntries = calloc(1 + CHEKATE_STAGES_COUNT, sizeof(MenuEntry));
     int currentStageId = getCurrentStageId();
@@ -101,13 +181,13 @@ void chekate() {
             else
                 menuEntries[i].optionUnion = COLORTORGB(COLOR_ORANGE);
         }
-        int res = newMenuKT(menuEntries, CHEKATE_STAGES_COUNT + 1, startIndex, NULL, printEntry);
-        startIndex = res + 1;
-        if (res == -1 || currentStageId == -1) {
+        MenuResult result = newMenuKT(menuEntries, CHEKATE_STAGES_COUNT + 1, startIndex, JoyA, NULL, printEntry);
+        startIndex = result.index + 1;
+        if (result.index == -1 || currentStageId == -1) {
             free(menuEntries);
             break;
         }
-        set4EKATEParams(&stages[res]);
+        set4EKATEParams(&stages[result.index]);
 
         currentStageId = getCurrentStageId();
     }

@@ -51,6 +51,38 @@ FRESULT readData(const char *path, void *buffer, u32 bufferSize) {
     return FR_OK;
 }
 
+FRESULT readAllFile(const char *path, void *buffer, u32 bufferSize) {
+    FIL fil;
+    UINT br;
+    FRESULT res;
+    u32 fileSize;
+
+    res = f_open(&fil, path, FA_READ);
+    if (res != FR_OK) return res;
+
+    fileSize = f_size(&fil);
+
+    if (fileSize > bufferSize) {
+        f_close(&fil);
+        return FR_INT_ERR;
+    }
+
+    res = f_read(&fil, buffer, fileSize, &br);
+    if (res != FR_OK) {
+        f_close(&fil);
+        return res;
+    }
+
+    if (br != fileSize) {
+        f_close(&fil);
+        return FR_INT_ERR;
+    }
+
+    f_close(&fil);
+
+    return FR_OK;
+}
+
 FRESULT createDirIfNotExist(const char path[]) {
     FRESULT res;
     if (!DirExists(path)) {

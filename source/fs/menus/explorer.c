@@ -94,7 +94,7 @@ void FileExplorer(const char* path) {
                 } else if (TConf.explorerCopyMode == CMODE_Copy) {
                     if (FileExists(dst)) {
                         const char* fileMessage[] = {"The file already exists.", "Do you want to overwrite it?", NULL};
-                        if (confirmationDialog(fileMessage, ENO) == ENO) continue;
+                        if (confirmationDialog(fileMessage, ENO) != EYES) continue;
                     }
                     gfx_clearscreen();
                     RESETCOLOR;
@@ -103,7 +103,7 @@ void FileExplorer(const char* path) {
                 } else {
                     if (DirExists(dst)) {
                         const char* dirMessage[] = {"The dir already exists.", "Do you want to overwrite it?", NULL};
-                        if (confirmationDialog(dirMessage, ENO) == ENO) continue;
+                        if (confirmationDialog(dirMessage, ENO) != EYES) continue;
                     }
                     gfx_clearscreen();
                     RESETCOLOR;

@@ -47,14 +47,14 @@ void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table) 
         }
         getFormatingData(&formatingData, custTable, table->paramsCount, table->params);
         const PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        int res =
-            newMenuKT(menuEntries, totalEntriesCount, startIndex, &printParamAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
-        if (res == -1) {
+        MenuResult result = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
+                                      (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
+        if (result.index == -1) {
             free(menuEntries);
             return;
         } else {
-            const MenuEntry selectedEntry = menuEntries[res + 1];
-            startIndex = res + 1;
+            const MenuEntry selectedEntry = menuEntries[result.index + 1];
+            startIndex = result.index + 1;
             if (selectedEntry.type == ETReset) {
                 const char* message[] = {"Do you want to reset tables params?", NULL};
                 if (confirmationDialog(message, ENO) == EYES) {

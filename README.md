@@ -78,6 +78,34 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 
 ![Params menu](/screenshots/edit_param.jpg)
 
+## Профили
+
+`Механизм профилей` позволяет добавлять и использовать различные `loader.kip`'ы в зависимости от ваших нужд
+
+### Добавление профиля
+
+1. С помощью `Browse SD` необходимо найти `kip файл`, который хотим использовать в качестве `профиля`
+2. Открываем `меню файла` (нажать `A`)
+3. `Kip tool` -> `Add to profiles`
+
+![Add to profiles](/screenshots/add_to_profiles.jpg)
+
+4. С помощью клавиатуры отредактировать название профиля и сохранить (нажать `B` -> `YES`)
+
+![Profile name](/screenshots/profile_name.jpg)
+
+### Выбор профиля
+
+1. В главном меню открыть `Profile - ...`
+2. Выбрать из списка нужный `профиль` и нажать `A` -> `YES`
+
+![Profile name](/screenshots/profiles.jpg)
+
+### Удаление профиля
+
+1. В главном меню открыть `Profile - ...`
+2. Выбрать из списка нужный профиль и нажать `X` -> `YES`
+
 ## Скриншоты
 
 ![TE Main menu](/screenshots/te_main_menu.jpg)

@@ -9,8 +9,9 @@
 #include "../../../hid/hid.h"
 #include "../gfx.h"
 
-int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, const void* additionalData,
-              void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData)) {
+const MenuResult exitResult = {.index = -1, .buttons = -1};
+MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, u32 buttonsMask, const void* additionalData,
+                     void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData)) {
     int screenLenX = 70;
     int screenLenY = 42;
     int selected = startIndex;
@@ -20,7 +21,7 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
         haveSelectable = !(entries[i].optionUnion & SKIPHIDEBITS);
         if (haveSelectable == true) break;
     }
-    if (!haveSelectable) return -1;
+    if (!haveSelectable) return exitResult;
     while (entries[selected].optionUnion & SKIPHIDEBITS) {
         selected++;
         if (selected >= entriesCount) selected = 0;
@@ -91,15 +92,17 @@ int newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int
         int nextPageFirstIndex = currentPageFirstIndex + screenLenY;
         bool pageTurn = false;
         while (1) {
-            if (hidRead()->a) {
+            const u32 buttons = hidRead()->buttons;
+            if (buttons & buttonsMask) {
                 int skipableBefore = 0;
                 int tmp = selected;
                 while (tmp != 0)
                     if (entries[--tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
-                return selected - skipableBefore;
-            } else if (input->b)
-                return -1;
-            else if (input->down || input->rDown) {  // Rdown should probs not trigger a page change. Same for RUp
+                const MenuResult result = {.index = selected - skipableBefore, .buttons = buttons};
+                return result;
+            } else if (input->b) {
+                return exitResult;
+            } else if (input->down || input->rDown) {  // Rdown should probs not trigger a page change. Same for RUp
                 ++selected;
                 break;
             } else if (input->right) {
@@ -162,12 +165,6 @@ void printEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void
     if (entry->hide) return;
 
     (highlighted) ? SETCOLOR(bg, RGBUnionToU32(entry->optionUnion)) : SETCOLOR(RGBUnionToU32(entry->optionUnion), bg);
-
-    if (entry->icon) {
-        gfx_putc(entry->icon);
-        gfx_putc(' ');
-        maxLen -= 2;
-    }
 
     u32 curX = 0, curY = 0;
     gfx_con_getpos(&curX, &curY);

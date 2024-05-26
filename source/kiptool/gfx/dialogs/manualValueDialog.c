@@ -142,7 +142,7 @@ ManualValueResult manualValueDialog(const Param* param, int defaultValue) {
                 }
             } else {
                 const char* message[] = {"Oops... The selected value cannot be used O_o", "Do you want to continue editing?", NULL};
-                if (confirmationDialog(message, ENO) == ENO) {
+                if (confirmationDialog(message, ENO) != EYES) {
                     const ManualValueResult invalidValue = {.status = EMVS_INVALID_VALUE};
                     {
                         free(minStr);
