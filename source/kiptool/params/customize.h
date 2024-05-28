@@ -33,7 +33,7 @@ typedef struct {
     u8 cust[4];                                                // 0        CUST
     u32 custRev;                                               // 4        KIP version
     u32 mtcConf;                                               // 8        MtcConfig
-    u32 commonCpuBoostClock;                                   // 12       MARIKO - CPU
+    u32 commonCpuBoostClock;                                   // 12       COMMON - CPU
     u32 commonEmcMemVolt;                                      // 16       COMMON - RAM
     u32 eristaCpuMaxVolt;                                      // 20       ERISTA - CPU
     u32 eristaEmcMaxClock;                                     // 24       ERISTA - RAM
@@ -60,10 +60,10 @@ typedef struct {
     cvb_entry_t marikoGpuDvfsTable[DvfsTableEntryLimit];       // 7128     MARIKO - GPU
     cvb_entry_t marikoGpuDvfsTableSLT[DvfsTableEntryLimit];    // 8864     MARIKO - GPU
     cvb_entry_t marikoGpuDvfsTableHiOPT[DvfsTableEntryLimit];  // 10600    MARIKO - GPU
-    u32 SpeedShift;                                            // 12336    MARIKO - CPU
+    u32 SpeedShift;                                            // 12336    COMMON - CPU
     u32 marikoCpuHUV;                                          // 12340    MARIKO - CPU
     u32 hGPUv;                                                 // 12344    COMMON - GPU
-    u32 dCPUv;                                                 // 12348    MARIKO - CPU
+    u32 dCPUv;                                                 // 12348    COMMON - CPU
     u32 eBAL;                                                  // 12352    COMMON - RAM
     u32 drochr08;                                              // 12356    COMMON - RAM
     u32 eBAS;                                                  // 12360    COMMON - RAM

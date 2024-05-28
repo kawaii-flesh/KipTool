@@ -9,7 +9,7 @@
 #include "../../../hid/hid.h"
 #include "../gfx.h"
 
-const MenuResult exitResult = {.index = -1, .buttons = -1};
+const MenuResult notSelectable = {.selectableIndex = -1, .buttons = JoyB};
 MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, u32 buttonsMask, const void* additionalData,
                      void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData)) {
     int screenLenX = 70;
@@ -21,7 +21,7 @@ MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsig
         haveSelectable = !(entries[i].optionUnion & SKIPHIDEBITS);
         if (haveSelectable == true) break;
     }
-    if (!haveSelectable) return exitResult;
+    if (!haveSelectable) return notSelectable;
     while (entries[selected].optionUnion & SKIPHIDEBITS) {
         selected++;
         if (selected >= entriesCount) selected = 0;
@@ -98,9 +98,14 @@ MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsig
                 int tmp = selected;
                 while (tmp != 0)
                     if (entries[--tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
-                const MenuResult result = {.index = selected - skipableBefore, .buttons = buttons};
+                const MenuResult result = {.selectableIndex = selected - skipableBefore, .buttons = buttons};
                 return result;
             } else if (input->b) {
+                int skipableBefore = 0;
+                int tmp = selected;
+                while (tmp != 0)
+                    if (entries[--tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
+                const MenuResult exitResult = {.selectableIndex = selected - skipableBefore, .buttons = JoyB};
                 return exitResult;
             } else if (input->down || input->rDown) {  // Rdown should probs not trigger a page change. Same for RUp
                 ++selected;
