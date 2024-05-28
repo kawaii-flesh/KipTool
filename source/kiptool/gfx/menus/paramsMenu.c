@@ -81,11 +81,11 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
         MenuResult result = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
                                       (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
-        if (result.index == -1) {
+        if (result.buttons & JoyB) {
             free(menuEntries);
             return;
         }
-        const MenuEntry selectedEntry = menuEntries[result.index + 1];
+        const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
         if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
             newTableMenu(custTable, ktSection, table);
@@ -97,15 +97,19 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
                 unsigned int currentValue = getParamValueFromBuffer(custTable, selectedEntry.entry);
                 char* currentValueStr = malloc(256);
                 utoa(currentValue, currentValueStr, 10);
+                char* oldValue = malloc(256);
+                strcpy(oldValue, currentValueStr);
                 char* value = ShowKeyboard(currentValueStr, false);
                 if (value != NULL) {
                     const unsigned int newValue = atoi(value);
                     formatValueDiv(currentValueStr, newValue, newValue > 1500);
-                    const char* message[] = {"Do you want to set a new value?", strcat(strcat(currentValueStr, " <- "), value), NULL};
+                    const char* message[] = {"Do you want to set a new value?", strcat(strcat(strcat(strcat(currentValueStr, " <- "), value), " <- "), oldValue),
+                                             NULL};
                     if (confirmationDialog(message, ENO) == EYES) setParamValue(custTable, ktSection, selectedEntry.entry, atoi(value));
                     free(value);
                 }
                 free(currentValueStr);
+                free(oldValue);
                 gfx_clearscreenKT();
             } else
                 newEditorMenu(custTable, ktSection, selectedEntry.entry);
@@ -135,6 +139,6 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
                 free(message);
             }
         }
-        startIndex = result.index + 1;
+        startIndex = result.selectableIndex + 1;
     }
 }

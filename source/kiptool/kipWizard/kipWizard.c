@@ -77,6 +77,7 @@ int kipWizard(char* path, FSEntry_t entry) {
     FIL kipFile;
     int resFile;
     Input_t* input = hidRead();
+#ifdef KT_DEBUG
     if (input->l) {
         if (input->r)
             setHWType(MARIKO);
@@ -85,6 +86,7 @@ int kipWizard(char* path, FSEntry_t entry) {
         else if (input->zl)
             setHWType(COMMON);
     }
+#endif
 
     gfx_clearscreenKT();
     gfx_printf("Loading CUST table ...");
@@ -173,8 +175,8 @@ int kipWizard(char* path, FSEntry_t entry) {
             while (1) {
                 gfx_clearscreenKT();
                 MenuResult result = newMenuKT(entries, 7, startIndex, JoyA, NULL, printEntry);
-                startIndex = result.index + 1;
-                if (result.index == -1) {
+                startIndex = result.selectableIndex + 1;
+                if (result.buttons & JoyB) {
                     if (isSessionsSupported()) {
                         break;
                     } else {
@@ -184,14 +186,17 @@ int kipWizard(char* path, FSEntry_t entry) {
                             break;
                         }
                     }
-                } else if (result.index == 3) {
+                    continue;
+                    ;
+                }
+                if (result.selectableIndex == 3) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         writeData(filePath, baseOffset, custTable, sizeof(CustomizeTable), 0);
                         removeSession(ktSection);
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
                     }
-                } else if (result.index == 4) {
+                } else if (result.selectableIndex == 4) {
                     ++startIndex;
                     const char* message[] = {"Do you want to reset all params?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
@@ -199,8 +204,8 @@ int kipWizard(char* path, FSEntry_t entry) {
                         saveSession(ktSection, custTable);
                         gfx_printBottomInfoKT("[Session] All params have been reset");
                     }
-                } else if (result.index <= 2)
-                    functions[result.index](custTable, ktSection, getHWType());
+                } else if (result.selectableIndex <= 2)
+                    functions[result.selectableIndex](custTable, ktSection, getHWType());
             }
             free(displayBuff);
         }

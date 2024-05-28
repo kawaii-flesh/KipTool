@@ -106,6 +106,14 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 1. В главном меню открыть `Profile - ...`
 2. Выбрать из списка нужный профиль и нажать `X` -> `YES`
 
+## Особенности Debug сборки
+- отображения выделенной памяти `heap`'а в верхнем статусе
+- выбор платформы при запуске Kip Wizard:
+`l + r`  - MARIKO
+`l + zr` - ERISTA
+`l + zl` - COMMON (MARIKO + ERISTA)
+- ввод значений параметров с помощью `клавиатуры` (при выборе параметра зажать `l` или `r`)
+
 ## Скриншоты
 
 ![TE Main menu](/screenshots/te_main_menu.jpg)

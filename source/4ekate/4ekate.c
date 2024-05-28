@@ -182,12 +182,12 @@ void chekate() {
                 menuEntries[i].optionUnion = COLORTORGB(COLOR_ORANGE);
         }
         MenuResult result = newMenuKT(menuEntries, CHEKATE_STAGES_COUNT + 1, startIndex, JoyA, NULL, printEntry);
-        startIndex = result.index + 1;
-        if (result.index == -1 || currentStageId == -1) {
+        if (result.buttons & JoyA) startIndex = result.selectableIndex + 1;
+        if (result.buttons & JoyB || currentStageId == -1) {
             free(menuEntries);
             break;
         }
-        set4EKATEParams(&stages[result.index]);
+        set4EKATEParams(&stages[result.selectableIndex]);
 
         currentStageId = getCurrentStageId();
     }

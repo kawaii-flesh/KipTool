@@ -21,7 +21,7 @@ typedef struct MenuEntry {
 } MenuEntry;
 
 typedef struct {
-    int index;
+    int selectableIndex;
     u32 buttons;
 } MenuResult;
 

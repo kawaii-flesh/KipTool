@@ -49,12 +49,12 @@ void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table) 
         const PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
         MenuResult result = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
                                       (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
-        if (result.index == -1) {
+        if (result.buttons & JoyB) {
             free(menuEntries);
             return;
         } else {
-            const MenuEntry selectedEntry = menuEntries[result.index + 1];
-            startIndex = result.index + 1;
+            const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
+            startIndex = result.selectableIndex + 1;
             if (selectedEntry.type == ETReset) {
                 const char* message[] = {"Do you want to reset tables params?", NULL};
                 if (confirmationDialog(message, ENO) == EYES) {

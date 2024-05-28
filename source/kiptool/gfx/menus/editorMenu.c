@@ -132,10 +132,10 @@ void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param)
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
         MenuResult result =
             newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &editorAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printValueEntry);
-        if (result.index == -1) {
+        if (result.buttons & JoyB) {
             break;
         }
-        const MenuEntry selectedEntry = menuEntries[result.index + 1];
+        const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
         if (selectedEntry.type == ETLimits) {
             const ManualValueResult manualValueResult = manualValueDialog(param, canBeManualValue ? paramCurrentValue : -1);
             if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, ktSection, param, manualValueResult.value);
