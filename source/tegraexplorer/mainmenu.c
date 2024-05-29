@@ -156,7 +156,7 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin"));
         mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
-        if (TConf.isMariko && sd_mounted) {
+        if (sd_mounted) {
             const char* stageTitle = getCurrentStageTitle();
             mainMenuEntries[Main4EKATE].name = (char*)stageTitle;
             if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0)
