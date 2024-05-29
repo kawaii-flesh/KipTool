@@ -109,9 +109,9 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 ## Особенности Debug сборки
 - отображения выделенной памяти `heap`'а в верхнем статусе
 - выбор платформы при запуске Kip Wizard:
-`l + r`  - MARIKO
-`l + zr` - ERISTA
-`l + zl` - COMMON (MARIKO + ERISTA)
+  - `l + r`  - MARIKO
+  - `l + zr` - ERISTA
+  - `l + zl` - COMMON (MARIKO + ERISTA)
 - ввод значений параметров с помощью `клавиатуры` (при выборе параметра зажать `l` или `r`)
 
 ## Скриншоты
