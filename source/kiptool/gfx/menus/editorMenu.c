@@ -62,7 +62,7 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
     gfx_putc('\n');
 }
 
-void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param) {
+void newEditorMenu(const u8* custTable, const Param* param) {
     const unsigned int limitsCount = param->limitsCount;
     const FixedValues* fixedValues = NULL;
     const FixedLimits* fixedLimits = NULL;
@@ -138,16 +138,16 @@ void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param)
         const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
         if (selectedEntry.type == ETLimits) {
             const ManualValueResult manualValueResult = manualValueDialog(param, canBeManualValue ? paramCurrentValue : -1);
-            if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, ktSection, param, manualValueResult.value);
+            if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, param, manualValueResult.value);
         } else if (selectedEntry.type == ETValue) {
             const Value* value = selectedEntry.entry;
-            setParamValue(custTable, ktSection, param, value->value);
+            setParamValue(custTable, param, value->value);
         } else if (selectedEntry.type == ETFixedRange) {
-            setParamValue(custTable, ktSection, param, (unsigned int)selectedEntry.entry);  // It is not a bug
+            setParamValue(custTable, param, (unsigned int)selectedEntry.entry);  // It is not a bug
         } else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset param?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
-                setParamValue(custTable, ktSection, param, param->defaultValue);
+                setParamValue(custTable, param, param->defaultValue);
                 char* message = calloc(256, 1);
                 s_printf(message, "[Session] Param: %s has been reset", param->name);
                 gfx_printBottomInfoKT(message);

@@ -4,4 +4,4 @@
 
 #include "../../params/table.h"
 
-void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table);
+void newTableMenu(const u8* custTable, const Table* table);

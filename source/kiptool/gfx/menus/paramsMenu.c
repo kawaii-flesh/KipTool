@@ -8,7 +8,6 @@
 #include "../../../utils/utils.h"
 #include "../../helpers/kiprw.h"
 #include "../../helpers/param.h"
-#include "../../service/session.h"
 #include "../gfx.h"
 #include "editorMenu.h"
 #include "ktMenu.h"
@@ -39,8 +38,8 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
     gfx_putc('\n');
 }
 
-void newParamsMenu(const u8* custTable, const u8* ktSection, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount,
-                   const Tables* tables[], unsigned int tablesArraysCount) {
+void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount, const Tables* tables[],
+                   unsigned int tablesArraysCount) {
     unsigned int totalEntriesCount = 2;
     unsigned int startIndex = 0;
     for (unsigned int i = 0; i < paramsArraysCount; ++i) totalEntriesCount += params[i]->count;
@@ -88,7 +87,7 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
         const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
         if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
-            newTableMenu(custTable, ktSection, table);
+            newTableMenu(custTable, table);
         } else if (selectedEntry.type == ETParam) {
 #ifdef KT_DEBUG
             Input_t* input = hidRead();
@@ -105,16 +104,16 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
                     formatValueDiv(currentValueStr, newValue, newValue > 1500);
                     const char* message[] = {"Do you want to set a new value?", strcat(strcat(strcat(strcat(currentValueStr, " <- "), value), " <- "), oldValue),
                                              NULL};
-                    if (confirmationDialog(message, ENO) == EYES) setParamValue(custTable, ktSection, selectedEntry.entry, atoi(value));
+                    if (confirmationDialog(message, ENO) == EYES) setParamValue(custTable, selectedEntry.entry, atoi(value));
                     free(value);
                 }
                 free(currentValueStr);
                 free(oldValue);
                 gfx_clearscreenKT();
             } else
-                newEditorMenu(custTable, ktSection, selectedEntry.entry);
+                newEditorMenu(custTable, selectedEntry.entry);
 #else
-            newEditorMenu(custTable, ktSection, selectedEntry.entry);
+            newEditorMenu(custTable, selectedEntry.entry);
 #endif
         } else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset all params in this category?", NULL};
@@ -129,9 +128,6 @@ void newParamsMenu(const u8* custTable, const u8* ktSection, const char* section
                         for (unsigned int k = 0; k < tables[i]->tables[j]->paramsCount; ++k)
                             setParamValueWithoutSaveSession(custTable, tables[i]->tables[j]->params[k], tables[i]->tables[j]->params[k]->defaultValue);
                     }
-                }
-                if (isSessionsSupported()) {
-                    saveSession((const KTSection*)ktSection, (const CustomizeTable*)custTable);
                 }
                 char* message = calloc(256, 1);
                 s_printf(message, "[Session] Category: %s has been reset", sectionTitle);
