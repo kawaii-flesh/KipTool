@@ -11,4 +11,4 @@ typedef struct EditorAdditionalData {
 
 void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const EditorAdditionalData* editorAdditionalData);
 
-void newEditorMenu(const u8* custTable, const u8* ktSection, const Param* param);
+void newEditorMenu(const u8* custTable, const Param* param);

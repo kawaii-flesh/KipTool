@@ -32,42 +32,41 @@
 #include "../params/mariko/gpu.h"
 #include "../params/mariko/ram.h"
 #include "../service/kiptool.h"
-#include "../service/session.h"
 
 const Params* allCPUParams[] = {&cCPUParams, &mCPUParams, &eCPUParams};
 const Tables* allCPUTables[] = {&cCPUTables, &mCPUTables, &eCPUTables};
-void printCPUParams(const CustomizeTable* custTable, const KTSection* ktSection, enum Platform platform) {
+void printCPUParams(const CustomizeTable* custTable, enum Platform platform) {
     gfx_clearscreenKT();
     const Params* allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
     const Tables* allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
     if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "CPU", allCPUParams, 3, allCPUTables, 3);
+        newParamsMenu((const u8*)custTable, "CPU", allCPUParams, 3, allCPUTables, 3);
     else
-        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "CPU", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, "CPU", allParams, 2, allTables, 2);
 }
 
 const Params* allGPUParams[] = {&cGPUParams, &mGPUParams, &eGPUParams};
 const Tables* allGPUTables[] = {&cGPUTables, &mGPUTables, &eGPUTables};
-void printGPUParams(const CustomizeTable* custTable, const KTSection* ktSection, enum Platform platform) {
+void printGPUParams(const CustomizeTable* custTable, enum Platform platform) {
     gfx_clearscreenKT();
     const Params* allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
     const Tables* allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
     if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "GPU", allGPUParams, 3, allGPUTables, 3);
+        newParamsMenu((const u8*)custTable, "GPU", allGPUParams, 3, allGPUTables, 3);
     else
-        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "GPU", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, "GPU", allParams, 2, allTables, 2);
 }
 
 const Params* allRAMParams[] = {&cRAMParams, &mRAMParams, &eRAMParams};
 const Tables* allRAMTables[] = {&cRAMTables, &mRAMTables, &eRAMTables};
-void printRAMParams(const CustomizeTable* custTable, const KTSection* ktSection, enum Platform platform) {
+void printRAMParams(const CustomizeTable* custTable, enum Platform platform) {
     gfx_clearscreenKT();
     const Params* allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
     const Tables* allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
     if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "RAM", allRAMParams, 3, allRAMTables, 3);
+        newParamsMenu((const u8*)custTable, "RAM", allRAMParams, 3, allRAMTables, 3);
     else
-        newParamsMenu((const u8*)custTable, (const u8*)ktSection, "RAM", allParams, 2, allTables, 2);
+        newParamsMenu((const u8*)custTable, "RAM", allParams, 2, allTables, 2);
 }
 
 int kipWizard(char* path, FSEntry_t entry) {
@@ -113,56 +112,10 @@ int kipWizard(char* path, FSEntry_t entry) {
     if (kipVersion == KT_CUST_VER) {
         const unsigned int custTableSize = sizeof(CustomizeTable);
         CustomizeTable* custTable = malloc(custTableSize);
-        KTSection* ktSection = malloc(sizeof(KTSection));
-
-        unsigned int bytesReaded;
-        bool goToExit = false;
-        bool loadedFromSession = false;
-        const u8 ktMagic[] = KT_MAGIC;
-        int ktSectionOffset = searchBytesArray(ktMagic, 8, &kipFile);
-        if (ktSectionOffset == -1) {
-            setSessionSupported(false);
-            const char* ktSectionCreatingMessage[] = {"Do you want to enable the mechanism of sessions?",
-                                                      "This will add a service section at the end of your kip file", NULL};
-            if (confirmationDialog(ktSectionCreatingMessage, EYES) == EYES) {
-                if (addKTSection(filePath, ktSection) == FR_OK) setSessionSupported(true);
-            }
-            f_lseek(&kipFile, baseOffset);
-            f_read(&kipFile, custTable, custTableSize, &bytesReaded);
-        } else {
-            f_lseek(&kipFile, ktSectionOffset);
-            f_read(&kipFile, ktSection, sizeof(KTSection), &bytesReaded);
-            setSessionSupported(true);
-            const char* messageLoadSession[] = {"Do you want to load a session file?", NULL};
-            if (!sessionIsExist(ktSection)) {
-                f_lseek(&kipFile, baseOffset);
-                f_read(&kipFile, custTable, custTableSize, &bytesReaded);
-            } else if (confirmationDialog(messageLoadSession, EYES) != EYES) {
-                f_lseek(&kipFile, baseOffset);
-                f_read(&kipFile, custTable, custTableSize, &bytesReaded);
-            } else {
-                loadSession(ktSection, custTable);
-                if (!checkVersionAndMagicFromBuffer(custTable)) {
-                    const char* message[] = {"Session file is corrupted or does not match the current version",
-                                             "Do you want to overwrite the session file by values from kip file?", NULL};
-                    if (confirmationDialog(message, EYES) == EYES) {
-                        f_lseek(&kipFile, baseOffset);
-                        f_read(&kipFile, custTable, custTableSize, &bytesReaded);
-                    } else
-                        goToExit = true;
-                } else {
-                    gfx_printBottomInfoKT("Session was loaded");
-                    loadedFromSession = true;
-                }
-            }
-        }
-
+        f_lseek(&kipFile, baseOffset);
+        int bytesReaded;
+        f_read(&kipFile, custTable, custTableSize, &bytesReaded);
         if (checkVersionAndMagicFromBuffer(custTable)) {
-            if (!loadedFromSession && isSessionsSupported()) saveSession(ktSection, custTable);
-        } else
-            goToExit = true;
-
-        if (!goToExit) {
             char* displayBuff = malloc(1024);
             MenuEntry entries[] = {{.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = "-- Kip Wizard --"},
                                    {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ETLabel, .entry = "CPU Params"},
@@ -171,20 +124,15 @@ int kipWizard(char* path, FSEntry_t entry) {
                                    {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = ""},
                                    {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ETLabel, .entry = "Apply changes"},
                                    {.optionUnion = COLORTORGB(COLOR_GREY), .type = ETLabel, .entry = "Reset all params to default values"}};
-            void (*functions[])(const CustomizeTable*, const KTSection*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
+            void (*functions[])(const CustomizeTable*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
             while (1) {
                 gfx_clearscreenKT();
                 MenuResult result = newMenuKT(entries, 7, startIndex, JoyA, NULL, printEntry);
                 startIndex = result.selectableIndex + 1;
                 if (result.buttons & JoyB) {
-                    if (isSessionsSupported()) {
+                    const char* message[] = {"After exiting, all changes that", "have not been applied will be lost", "Are you sure you want to exit?", NULL};
+                    if (confirmationDialog(message, ENO) == EYES) {
                         break;
-                    } else {
-                        const char* message[] = {"The session mechanism is not activated", "Changes that have not been applied will be lost",
-                                                 "Are you sure you want to exit?", NULL};
-                        if (confirmationDialog(message, ENO) == EYES) {
-                            break;
-                        }
                     }
                     continue;
                     ;
@@ -193,7 +141,6 @@ int kipWizard(char* path, FSEntry_t entry) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         writeData(filePath, baseOffset, custTable, sizeof(CustomizeTable), 0);
-                        removeSession(ktSection);
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
                     }
                 } else if (result.selectableIndex == 4) {
@@ -201,18 +148,16 @@ int kipWizard(char* path, FSEntry_t entry) {
                     const char* message[] = {"Do you want to reset all params?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         memcpy((u8*)custTable, (const u8*)&defaultCustTable, sizeof(CustomizeTable));
-                        saveSession(ktSection, custTable);
                         gfx_printBottomInfoKT("[Session] All params have been reset");
                     }
                 } else if (result.selectableIndex <= 2)
-                    functions[result.selectableIndex](custTable, ktSection, getHWType());
+                    functions[result.selectableIndex](custTable, getHWType());
             }
             free(displayBuff);
         }
         f_close(&kipFile);
         free(filePath);
         free(custTable);
-        free(ktSection);
         return 0;
     }
     free(filePath);

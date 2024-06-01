@@ -11,6 +11,6 @@ unsigned int getParamValueFromFile(FIL* file, const unsigned int baseOffset, con
 
 int checkVersionAndMagicFromBuffer(const CustomizeTable* customizeTable);
 
-void setParamValue(const u8* buffer, const u8* ktSection, const Param* param, unsigned int value);
+void setParamValue(const u8* buffer, const Param* param, unsigned int value);
 
 void setParamValueWithoutSaveSession(const u8* buffer, const Param* param, unsigned int value);

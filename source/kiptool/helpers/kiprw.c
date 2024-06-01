@@ -6,8 +6,6 @@
 #include "../../helpers/mem.h"
 #include "../gfx/gfx.h"
 #include "../params/param.h"
-#include "../service/history.h"
-#include "../service/session.h"
 
 unsigned int getParamValueFromBuffer(const u8* buffer, const Param* param) { return *(unsigned int*)(buffer + param->offset); }
 
@@ -23,11 +21,8 @@ int checkVersionAndMagicFromBuffer(const CustomizeTable* customizeTable) {
     return customizeTable->custRev == KT_CUST_VER && compareU8Arrays((const u8*)customizeTable->cust, (const u8*)"CUST", 4);
 }
 
-void setParamValue(const u8* buffer, const u8* ktSection, const Param* param, unsigned int value) {
+void setParamValue(const u8* buffer, const Param* param, unsigned int value) {
     *(unsigned int*)(buffer + param->offset) = value;
-    if (isSessionsSupported()) {
-        saveSession((const KTSection*)ktSection, (const CustomizeTable*)buffer);
-    }
     char* message = calloc(256, 1);
     s_printf(message, "[Session] Param: %s has been changed", param->name);
     gfx_printBottomInfoKT(message);

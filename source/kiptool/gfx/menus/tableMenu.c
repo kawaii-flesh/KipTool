@@ -5,13 +5,12 @@
 #include <utils/sprintf.h>
 
 #include "../../helpers/kiprw.h"
-#include "../../service/session.h"
 #include "../gfx.h"
 #include "editorMenu.h"
 #include "ktMenu.h"
 #include "paramsMenu.h"
 
-void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table) {
+void newTableMenu(const u8* custTable, const Table* table) {
     const unsigned int paramsCount = table->paramsCount;
     unsigned int totalEntriesCount = 2 + table->paramsCount;
     MenuEntry* menuEntries = calloc(sizeof(MenuEntry), totalEntriesCount);
@@ -60,16 +59,13 @@ void newTableMenu(const u8* custTable, const u8* ktSection, const Table* table) 
                 if (confirmationDialog(message, ENO) == EYES) {
                     for (unsigned int i = 0; i < table->paramsCount; ++i)
                         setParamValueWithoutSaveSession(custTable, table->params[i], table->params[i]->defaultValue);
-                    if (isSessionsSupported()) {
-                        saveSession((const KTSection*)ktSection, (const CustomizeTable*)custTable);
-                    }
                     char* message = calloc(256, 1);
                     s_printf(message, "[Session] Table: %s has been reset", table->name);
                     gfx_printBottomInfoKT(message);
                     free(message);
                 }
             } else
-                newEditorMenu(custTable, ktSection, selectedEntry.entry);
+                newEditorMenu(custTable, selectedEntry.entry);
         }
     }
 }
