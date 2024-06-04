@@ -8,8 +8,8 @@
 #include "../params/param.h"
 #include "kiprw.h"
 
-void addPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam) {
-    if (param->defaultValue == value)
+void addPostfix(const Param* param, char* displayBuff, unsigned int value, int isParam, int addToDefault) {
+    if (param->defaultValue == value && addToDefault)
         strcpy(displayBuff + strlen(displayBuff), " - Default");
     else if (isParam)
         strcpy(displayBuff + strlen(displayBuff), " - Changed");
@@ -66,7 +66,7 @@ void formatValueDiv(char* displayBuff, const unsigned int value, bool div) {
     return;
 }
 
-void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, int isParam) {
+void getDisplayValue(const Param* param, char* displayBuff, unsigned int value) {
     formatValue(displayBuff, value);
     const Value* foundedValue = NULL;
     const char* measure = param->measure;
@@ -114,7 +114,6 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value, 
     }
     if (measure != NULL) strcpy(displayBuff + strlen(displayBuff), measure);
     if (foundedValue != NULL) addLabel(foundedValue, displayBuff);
-    addPostfix(param, displayBuff, value, isParam);
     return;
 }
 
@@ -127,7 +126,9 @@ void getFormatingData(FormatingData* formatingData, const u8* custTable, const u
     for (unsigned int i = 0; i < paramsCount; ++i) {
         unsigned partsCount = 0;
         s_printf(displayBuff, "%s - ", params[i]->name);
-        getDisplayValue(params[i], displayBuff + strlen(displayBuff), getParamValueFromBuffer(custTable, params[i]), 1);
+        u32 value = getParamValueFromBuffer(custTable, params[i]);
+        getDisplayValue(params[i], displayBuff + strlen(displayBuff), value);
+        addPostfix(params[i], displayBuff, value, 1, 1);
         bool space = false;
         for (unsigned int c = 0; c < strlen(displayBuff); ++c) {
             if (displayBuff[c] == '-' && space) ++partsCount;

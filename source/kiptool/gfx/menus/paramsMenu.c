@@ -8,6 +8,7 @@
 #include "../../../utils/utils.h"
 #include "../../helpers/kiprw.h"
 #include "../../helpers/param.h"
+#include "../../service/kiptool.h"
 #include "../gfx.h"
 #include "editorMenu.h"
 #include "ktMenu.h"
@@ -26,7 +27,9 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
         char* displayBuff = malloc(1024);
         const Param* param = (const Param*)entry->entry;
         s_printf(displayBuff, "%s - ", param->name);
-        getDisplayValue(param, displayBuff + strlen(displayBuff), getParamValueFromBuffer(printParamAdditionalData->custTable, param), 1);
+        u32 value = getParamValueFromBuffer(printParamAdditionalData->custTable, param);
+        getDisplayValue(param, displayBuff + strlen(displayBuff), value);
+        addPostfix(param, displayBuff, value, 1, 1);
         const char* formattedBuff = getFormattedBuff(printParamAdditionalData->formatingData, displayBuff);
         gfx_puts_limit(formattedBuff, maxLen);
         free((void*)formattedBuff);
@@ -78,13 +81,13 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         menuEntries[menuEntriesIndex].type = ETReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        MenuResult result = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
-                                      (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
-        if (result.buttons & JoyB) {
+        MenuResult menuResult = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
+                                          (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
+        if (menuResult.buttons & JoyB) {
             free(menuEntries);
             return;
         }
-        const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
+        const MenuEntry selectedEntry = menuEntries[menuResult.index];
         if (selectedEntry.type == ETTable) {
             const Table* table = selectedEntry.entry;
             newTableMenu(custTable, table);
@@ -132,9 +135,10 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                 char* message = calloc(256, 1);
                 s_printf(message, "[Session] Category: %s has been reset", sectionTitle);
                 gfx_printBottomInfoKT(message);
+                setIsChangesApplied(0);
                 free(message);
             }
         }
-        startIndex = result.selectableIndex + 1;
+        startIndex = menuResult.index;
     }
 }

@@ -38,13 +38,14 @@ const char* stagesTitles[CHEKATE_STAGES_COUNT] = {"4EKATE Stage - Default", "4EK
 int payloadOffset = 0;
 int fuseeOffset = 0;
 
-int getParamsOffset(const char filePath[]) {
+int getParamsOffset(const char filePath[], int start) {
     FIL file;
     FRESULT res = f_open(&file, filePath, FA_READ);
     if (res != FR_OK) {
         f_close(&file);
         return -1;
     }
+    f_lseek(&file, start);
     for (int i = 0; i < CHEKATE_STAGES_COUNT; ++i) {
         int offset = searchBytesArray((const u8*)(&stages[i]), sizeof(CHEKATEParams), &file);
         if (offset != -1) {
@@ -57,8 +58,11 @@ int getParamsOffset(const char filePath[]) {
 }
 
 void setOffsets() {
-    if (payloadOffset == 0) payloadOffset = getParamsOffset(CHEKATE_PAYLOAD_PATH);
-    if (fuseeOffset == 0) fuseeOffset = getParamsOffset(CHEKATE_FUSEE_PATH);
+    if (payloadOffset == 0)
+        payloadOffset = getParamsOffset(CHEKATE_PAYLOAD_PATH, 0x00010000
+
+        );
+    if (fuseeOffset == 0) fuseeOffset = getParamsOffset(CHEKATE_FUSEE_PATH, 0x00010000);
 }
 
 bool load4EKATEParams(CHEKATEParams* params) {
@@ -181,13 +185,13 @@ void chekate() {
             else
                 menuEntries[i].optionUnion = COLORTORGB(COLOR_ORANGE);
         }
-        MenuResult result = newMenuKT(menuEntries, CHEKATE_STAGES_COUNT + 1, startIndex, JoyA, NULL, printEntry);
-        if (result.buttons & JoyA) startIndex = result.selectableIndex + 1;
-        if (result.buttons & JoyB || currentStageId == -1) {
+        MenuResult menuResult = newMenuKT(menuEntries, CHEKATE_STAGES_COUNT + 1, startIndex, JoyA, NULL, printEntry);
+        if (menuResult.buttons & JoyA) startIndex = menuResult.index;
+        if (menuResult.buttons & JoyB || currentStageId == -1) {
             free(menuEntries);
             break;
         }
-        set4EKATEParams(&stages[result.selectableIndex]);
+        set4EKATEParams(&stages[menuResult.selectableIndex]);
 
         currentStageId = getCurrentStageId();
     }

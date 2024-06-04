@@ -58,7 +58,7 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 
 ## Цветовые обозначения
 ### Параметр (в меню выбора параметра)
--  ![#8040ff](https://placehold.co/15x15/8040ff/8040ff.png) - Имеет дефолтное значение
+-  ![#b48fff](https://placehold.co/15x15/b48fff/b48fff.png) - Имеет дефолтное значение
 - ![#ff8c00](https://placehold.co/15x15/ff8c00/ff8c00.png) - Имеет недефолтное значение
 - ![#ffff40](https://placehold.co/15x15/ffff40/ffff40.png) - Является таблицей
 
@@ -66,7 +66,7 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 
 ### Значение (в меню редактирования параметра)
 - ![#00ddff](https://placehold.co/15x15/00ddff/00ddff.png) - Является текущим значением
-- ![#8040ff](https://placehold.co/15x15/8040ff/8040ff.png) - Является дефолтным значением
+- ![#b48fff](https://placehold.co/15x15/b48fff/b48fff.png) - Является дефолтным значением
 - ![#ff8c00](https://placehold.co/15x15/ff8c00/ff8c00.png) - Является недефолтным значением
 - ![#ffff40](https://placehold.co/15x15/ffff40/ffff40.png) - Пункт задания значения вручную
 
@@ -117,3 +117,5 @@ KipTool основан на [TegraExplorer](https://github.com/suchmememanyskill
 ![CPU Params](/screenshots/cpu_params.jpg)
 
 ![Value editor](/screenshots/value_editor.jpg)
+
+![Dashboard](/screenshots/dashboard.jpg)

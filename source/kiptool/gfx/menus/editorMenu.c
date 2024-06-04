@@ -27,10 +27,12 @@ void printValueEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const
         s_printf(displayBuff, "%s", "Reset to the default value - ");
         formatValueDiv(displayBuff + strlen(displayBuff), editorAdditionalData->param->defaultValue, editorAdditionalData->param->defaultValue > 1500);
     } else if (entry->type == ETFixedRange) {
-        getDisplayValue(editorAdditionalData->param, displayBuff, (unsigned int)entry->entry, 0);
+        getDisplayValue(editorAdditionalData->param, displayBuff, (unsigned int)entry->entry);
+        addPostfix(editorAdditionalData->param, displayBuff, (unsigned int)entry->entry, 0, 1);
     } else if (entry->type == ETValue) {
         const Value* value = entry->entry;
-        getDisplayValue(editorAdditionalData->param, displayBuff, value->value, 0);
+        getDisplayValue(editorAdditionalData->param, displayBuff, value->value);
+        addPostfix(editorAdditionalData->param, displayBuff, value->value, 0, 1);
     } else if (entry->type == ETLimits) {
         const FixedLimits* fixedLimits = entry->entry;
         int min = fixedLimits->min;
@@ -130,12 +132,12 @@ void newEditorMenu(const u8* custTable, const Param* param) {
         menuEntries[menuEntriesIndex].type = ETReset;
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};
-        MenuResult result =
+        MenuResult menuResult =
             newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &editorAdditionalData, (void (*)(MenuEntry*, u32, u8, u32, const void*))printValueEntry);
-        if (result.buttons & JoyB) {
+        if (menuResult.buttons & JoyB) {
             break;
         }
-        const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
+        const MenuEntry selectedEntry = menuEntries[menuResult.index];
         if (selectedEntry.type == ETLimits) {
             const ManualValueResult manualValueResult = manualValueDialog(param, canBeManualValue ? paramCurrentValue : -1);
             if (manualValueResult.status == EMVS_GOOD) setParamValue(custTable, param, manualValueResult.value);

@@ -59,7 +59,7 @@ int newMenu(Vector_t* vec, int startIndex, int screenLenX, int screenLenY, u8 op
 
     // Maybe add a check here so you don't read OOB by providing a too high startindex?
 
-    u32 lastPress = 1000 + get_tmr_ms();
+    u32 lastPress = 500 + get_tmr_ms();
     u32 holdTimer = 300;
     int totalPageCount = ((vec->count - 1) / screenLenY) + 1;
     while (1) {
@@ -77,7 +77,6 @@ int newMenu(Vector_t* vec, int startIndex, int screenLenX, int screenLenY, u8 op
             gfx_con_setpos(startX, startY);
 
             if (redrawScreen) {
-                minerva_periodic_training();
                 gfx_boxGrey(startX, startY, startX + screenLenX * 16, startY + screenLenY * 16, (options & USELIGHTGREY) ? 0x33 : 0x1B);
             }
 

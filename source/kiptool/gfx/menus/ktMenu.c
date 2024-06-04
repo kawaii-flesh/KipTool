@@ -9,7 +9,7 @@
 #include "../../../hid/hid.h"
 #include "../gfx.h"
 
-const MenuResult notSelectable = {.selectableIndex = -1, .buttons = JoyB};
+const MenuResult notSelectable = {.index = -1, .selectableIndex = -1, .buttons = JoyB};
 MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsigned int startIndex, u32 buttonsMask, const void* additionalData,
                      void (*printMenuEntryFunc)(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, const void* additionalData)) {
     int screenLenX = 70;
@@ -37,7 +37,7 @@ MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsig
     bool redrawScreen = true;
     Input_t* input = hidRead();
 
-    u32 lastPress = 1000 + get_tmr_ms();
+    u32 lastPress = 500 + get_tmr_ms();
     u32 holdTimer = 300;
     int totalPageCount = ((entriesCount - 1) / screenLenY) + 1;
     while (1) {
@@ -95,17 +95,15 @@ MenuResult newMenuKT(MenuEntry entries[], const unsigned int entriesCount, unsig
             const u32 buttons = hidRead()->buttons;
             if (buttons & buttonsMask) {
                 int skipableBefore = 0;
-                int tmp = selected;
-                while (tmp != 0)
-                    if (entries[--tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
-                const MenuResult result = {.selectableIndex = selected - skipableBefore, .buttons = buttons};
-                return result;
+                for (int tmp = selected; tmp != -1; --tmp)
+                    if (entries[tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
+                const MenuResult menuResult = {.index = selected, .selectableIndex = selected - skipableBefore, .buttons = buttons};
+                return menuResult;
             } else if (input->b) {
                 int skipableBefore = 0;
-                int tmp = selected;
-                while (tmp != 0)
-                    if (entries[--tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
-                const MenuResult exitResult = {.selectableIndex = selected - skipableBefore, .buttons = JoyB};
+                for (int tmp = selected; tmp != -1; --tmp)
+                    if (entries[tmp].optionUnion & SKIPHIDEBITS) ++skipableBefore;
+                const MenuResult exitResult = {.index = selected, .selectableIndex = selected - skipableBefore, .buttons = JoyB};
                 return exitResult;
             } else if (input->down || input->rDown) {  // Rdown should probs not trigger a page change. Same for RUp
                 ++selected;

@@ -22,7 +22,7 @@ const FixedValues marikoCpuHUVFV = {.valuesCount = 9,
 // 3 AUTO ECO ST2
 // 5 AUTO ECO ST3
 // 1-8 MANUAL
-const Param marikoCpuHUV = {.name = "CPU-HI ECO LOGIC",
+const Param marikoCpuHUV = {.name = "HI ECO LOGIC",
                             .measure = NULL,
                             .description = NULL,
                             .offset = getOffset(defaultCustTable.marikoCpuHUV),
@@ -41,7 +41,7 @@ const FixedLimits marikoCpuMaxVoltFL = {.min = 1130, .max = 1375, .stepSize = 5}
 // 1150 ECO
 // 1180-1250 STAGE 1-3 STEP 35mV
 // MANUAL 1130-1375 STEP 5mV
-const Param marikoCpuMaxVolt = {.name = "CPU VMAX MODE",
+const Param marikoCpuMaxVolt = {.name = "VMAX MODE",
                                 .measure = "mV",
                                 .description = NULL,
                                 .offset = getOffset(defaultCustTable.marikoCpuMaxVolt),
@@ -63,7 +63,7 @@ const FixedValues marikoCpuUVFV = {.valuesCount = 7,
 // 3 AUTO ECO ST2
 // 5 AUTO ECO ST3
 // MANUAL 1-6
-const Param marikoCpuUV = {.name = "CPU-LOW ECO LOGIC",
+const Param marikoCpuUV = {.name = "LOW ECO LOGIC",
                            .measure = NULL,
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoCpuUV),

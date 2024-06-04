@@ -12,7 +12,7 @@ const FixedValues marikoGpuUVFV = {
 // 1 AUTO ECO ST2
 // 2 AUTO ECO ST3
 // 3 MANUAL ( -75mV << marikoGpuVoltArray ECO ST2 >> +75mV ) 5mV STEP
-const Param marikoGpuUV = {.name = "GPU ECO LOGIC",
+const Param marikoGpuUV = {.name = "ECO LOGIC",
                            .measure = NULL,
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoGpuUV),
@@ -253,7 +253,7 @@ const FixedLimits marikoHGPUvFL = {.min = 750, .max = 1200, .stepSize = 50, .mea
 // GPU OVER LOGIC
 // eBAMATIC
 // MARIKO: 750-1200 MANUAL
-const Param marikoHGPUv = {.name = "GPU OVER MODE",
+const Param marikoHGPUv = {.name = "OVER MODE",
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.hGPUv),
                            .defaultValue = defaultCustTable.hGPUv,

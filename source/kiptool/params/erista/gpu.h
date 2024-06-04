@@ -11,7 +11,7 @@ const FixedValues eristaGpuUVFV = {.valuesCount = 3,
 // 1 AUTO ECO ST2
 // 2 AUTO ECO ST3
 // ERISTA = eristaGpuDvfsTable uV - (12500 uV * marikoGpuUV)
-const Param eristaGpuUV = {.name = "GPU ECO LOGIC",
+const Param eristaGpuUV = {.name = "ECO LOGIC",
                            .measure = NULL,
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoGpuUV),
@@ -24,7 +24,7 @@ const FixedLimits eristaHGPUvFL = {.min = 850, .max = 1300, .stepSize = 50, .mea
 // GPU OVER LOGIC
 // eBAMATIC
 // ERISTA: 850-1300 MANUAL
-const Param eristaHGPUv = {.name = "GPU OVER MODE",
+const Param eristaHGPUv = {.name = "OVER MODE",
                            .description = NULL,
                            .offset = getOffset(defaultCustTable.hGPUv),
                            .defaultValue = defaultCustTable.hGPUv,
