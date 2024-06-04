@@ -6,8 +6,8 @@
 
 const FixedValues commonCpuBoostClockFV = {.valuesCount = 6,
                                            .values = {{.value = eBAMATIC, .label = "eBAMATIC", .measure = ""},
-                                                      {.value = 1428000, .label = "CPU-HI uV DEBUG"},
-                                                      {.value = 1785000, .label = "CPU-LOW uV DEBUG"},
+                                                      {.value = 1428000, .label = "HI uV DBG"},
+                                                      {.value = 1785000, .label = "LOW uV DBG"},
                                                       {.value = 2000000, .label = "E"},
                                                       {.value = 2500000, .label = "D"},
                                                       {.value = 3000000, .label = "S"}}};
@@ -20,7 +20,7 @@ const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .step
 // 3000000 S
 // MANUAL 1400000-3000000 STEP 100000
 // eBAMATIC
-const Param commonCpuBoostClock = {.name = "CPU LAUNCH CONTROL TARGET",
+const Param commonCpuBoostClock = {.name = "LAUNCH CONTROL TARGET",
                                    .measure = "MHz",
                                    .description = NULL,
                                    .offset = getOffset(defaultCustTable.commonCpuBoostClock),
@@ -40,7 +40,7 @@ const FixedLimits CPUvFL = {.min = 430, .max = 670, .stepSize = 5, .measure = "m
 // 620mV DEFAULT
 // MARIKO CPU VOLT MIN = CPUv
 // ERISTA CPU VOLT MIN = CPUv + 205mV
-const Param CPUv = {.name = "CPU UNDER LOGIC",
+const Param CPUv = {.name = "UNDER LOGIC",
                     .measure = NULL,
                     .description = NULL,
                     .offset = getOffset(defaultCustTable.CPUv),
@@ -58,7 +58,7 @@ const FixedLimits dCPUvFL = {.min = 750, .max = 850, .stepSize = 5, .measure = "
 // 2 AUTO ECO ST2
 // 3 AUTO ECO ST3
 // MANUAL 750-850
-const Param dCPUv = {.name = "CPU MIN-HIGH LOGIC",
+const Param dCPUv = {.name = "MIN-HIGH LOGIC",
                      .measure = NULL,
                      .description = NULL,
                      .offset = getOffset(defaultCustTable.dCPUv),

@@ -6,6 +6,7 @@
 #include "../../helpers/mem.h"
 #include "../gfx/gfx.h"
 #include "../params/param.h"
+#include "../service/kiptool.h"
 
 unsigned int getParamValueFromBuffer(const u8* buffer, const Param* param) { return *(unsigned int*)(buffer + param->offset); }
 
@@ -27,6 +28,7 @@ void setParamValue(const u8* buffer, const Param* param, unsigned int value) {
     s_printf(message, "[Session] Param: %s has been changed", param->name);
     gfx_printBottomInfoKT(message);
     free(message);
+    setIsChangesApplied(0);
 }
 
 void setParamValueWithoutSaveSession(const u8* buffer, const Param* param, unsigned int value) { *(unsigned int*)(buffer + param->offset) = value; }

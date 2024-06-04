@@ -11,7 +11,7 @@ const FixedLimits commonEmcMemVoltFL = {.min = 950000, .max = 1400000, .stepSize
 // 1275'000 DEFAULT
 // 1375'000 SRT
 // MANUAL 950'000-1400'000 STEP 12'500uV
-const Param commonEmcMemVolt = {.name = "RAM VDD MODE",
+const Param commonEmcMemVolt = {.name = "VDD MODE",
                                 .measure = "mV",
                                 .description = NULL,
                                 .offset = getOffset(defaultCustTable.commonEmcMemVolt),
@@ -99,7 +99,7 @@ const Param drochr08 = {.name = "DROCHR08",
                         .limitsCount = 1,
                         .limits = {{.type = EFixedRange, .values = &drochr08FR}}};
 
-const Table drochrsTable = {.name = "RAM Timings Table",
+const Table drochrsTable = {.name = RAM_TIMINGS_TABLE_NAME,
                             .description = NULL,
                             .baseOffset = getOffset(defaultCustTable.drochr01),
                             .paramsCount = 8,

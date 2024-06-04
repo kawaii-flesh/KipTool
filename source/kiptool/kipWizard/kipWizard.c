@@ -32,41 +32,20 @@
 #include "../params/mariko/gpu.h"
 #include "../params/mariko/ram.h"
 #include "../service/kiptool.h"
+#include "dashboard.h"
 
 const Params* allCPUParams[] = {&cCPUParams, &mCPUParams, &eCPUParams};
 const Tables* allCPUTables[] = {&cCPUTables, &mCPUTables, &eCPUTables};
-void printCPUParams(const CustomizeTable* custTable, enum Platform platform) {
-    gfx_clearscreenKT();
-    const Params* allParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
-    const Tables* allTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
-    if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, "CPU", allCPUParams, 3, allCPUTables, 3);
-    else
-        newParamsMenu((const u8*)custTable, "CPU", allParams, 2, allTables, 2);
-}
 
 const Params* allGPUParams[] = {&cGPUParams, &mGPUParams, &eGPUParams};
 const Tables* allGPUTables[] = {&cGPUTables, &mGPUTables, &eGPUTables};
-void printGPUParams(const CustomizeTable* custTable, enum Platform platform) {
-    gfx_clearscreenKT();
-    const Params* allParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
-    const Tables* allTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
-    if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, "GPU", allGPUParams, 3, allGPUTables, 3);
-    else
-        newParamsMenu((const u8*)custTable, "GPU", allParams, 2, allTables, 2);
-}
 
 const Params* allRAMParams[] = {&cRAMParams, &mRAMParams, &eRAMParams};
 const Tables* allRAMTables[] = {&cRAMTables, &mRAMTables, &eRAMTables};
-void printRAMParams(const CustomizeTable* custTable, enum Platform platform) {
+
+void printParams(const CustomizeTable* custTable, char title[], int count, const Params* params[], const Tables* tables[]) {
     gfx_clearscreenKT();
-    const Params* allParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
-    const Tables* allTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
-    if (platform == COMMON)
-        newParamsMenu((const u8*)custTable, "RAM", allRAMParams, 3, allRAMTables, 3);
-    else
-        newParamsMenu((const u8*)custTable, "RAM", allParams, 2, allTables, 2);
+    newParamsMenu((const u8*)custTable, title, params, count, tables, count);
 }
 
 int kipWizard(char* path, FSEntry_t entry) {
@@ -110,6 +89,15 @@ int kipWizard(char* path, FSEntry_t entry) {
     unsigned int kipVersion = getParamValueFromFile(&kipFile, baseOffset, &cKipVersion);
     unsigned int startIndex = 0;
     if (kipVersion == KT_CUST_VER) {
+        const enum Platform platform = getHWType();
+        int count = getHWType() == COMMON ? 3 : 2;
+        const Params* CPUParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
+        const Tables* CPUTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
+        const Params* GPUParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
+        const Tables* GPUTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
+        const Params* RAMParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
+        const Tables* RAMTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
+
         const unsigned int custTableSize = sizeof(CustomizeTable);
         CustomizeTable* custTable = malloc(custTableSize);
         f_lseek(&kipFile, baseOffset);
@@ -123,35 +111,77 @@ int kipWizard(char* path, FSEntry_t entry) {
                                    {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ETLabel, .entry = "RAM Params"},
                                    {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = ""},
                                    {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ETLabel, .entry = "Apply changes"},
+                                   {.optionUnion = COLORTORGB(COLOR_YELLOW), .type = ETLabel, .entry = "Dashboard"},
                                    {.optionUnion = COLORTORGB(COLOR_GREY), .type = ETLabel, .entry = "Reset all params to default values"}};
-            void (*functions[])(const CustomizeTable*, enum Platform) = {printCPUParams, printGPUParams, printRAMParams};
             while (1) {
                 gfx_clearscreenKT();
-                MenuResult result = newMenuKT(entries, 7, startIndex, JoyA, NULL, printEntry);
-                startIndex = result.selectableIndex + 1;
-                if (result.buttons & JoyB) {
-                    const char* message[] = {"After exiting, all changes that", "have not been applied will be lost", "Are you sure you want to exit?", NULL};
+                MenuResult menuResult = newMenuKT(entries, 8, startIndex, JoyA, NULL, printEntry);
+                startIndex = menuResult.index;
+                if (menuResult.buttons & JoyB) {
+                    if (isChangesApplied()) break;
+                    const char* message[] = {"You have not applied the last changes you made", "After exiting, all changes that",
+                                             "have not been applied will be lost", "Are you sure you want to exit?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
+                        setIsChangesApplied(1);
                         break;
                     }
                     continue;
-                    ;
                 }
-                if (result.selectableIndex == 3) {
+                if (menuResult.selectableIndex == 3) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         writeData(filePath, baseOffset, custTable, sizeof(CustomizeTable), 0);
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
+                        setIsChangesApplied(1);
                     }
-                } else if (result.selectableIndex == 4) {
-                    ++startIndex;
+                } else if (menuResult.selectableIndex == 4) {
+                    gfx_clearscreenKT();
+                    showDashboard(custTable, count, CPUParams, CPUTables, GPUParams, GPUTables, RAMParams, RAMTables);
+                } else if (menuResult.selectableIndex == 5) {
                     const char* message[] = {"Do you want to reset all params?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         memcpy((u8*)custTable, (const u8*)&defaultCustTable, sizeof(CustomizeTable));
                         gfx_printBottomInfoKT("[Session] All params have been reset");
+                        setIsChangesApplied(0);
                     }
-                } else if (result.selectableIndex <= 2)
-                    functions[result.selectableIndex](custTable, getHWType());
+                } else if (menuResult.selectableIndex <= 2) {
+                    char* title;
+                    const Params** params;
+                    const Tables** tables;
+                    switch (menuResult.selectableIndex) {
+                        case 0:
+                            title = "CPU";
+                            if (platform == COMMON) {
+                                params = allCPUParams;
+                                tables = allCPUTables;
+                            } else {
+                                params = CPUParams;
+                                tables = CPUTables;
+                            }
+                            break;
+                        case 1:
+                            title = "GPU";
+                            if (platform == COMMON) {
+                                params = allGPUParams;
+                                tables = allGPUTables;
+                            } else {
+                                params = GPUParams;
+                                tables = GPUTables;
+                            }
+                            break;
+                        case 2:
+                            title = "RAM";
+                            if (platform == COMMON) {
+                                params = allRAMParams;
+                                tables = allRAMTables;
+                            } else {
+                                params = RAMParams;
+                                tables = RAMTables;
+                            }
+                            break;
+                    }
+                    printParams(custTable, title, count, params, tables);
+                }
             }
             free(displayBuff);
         }

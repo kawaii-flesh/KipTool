@@ -138,21 +138,21 @@ void profiles() {
             ++j;
         }
         gfx_clearscreenKT();
-        MenuResult result = newMenuKT(entries, entriesCount, startIndex, JoyA | JoyX, NULL, printEntry);
-        if (result.buttons & JoyB) {
+        MenuResult menuResult = newMenuKT(entries, entriesCount, startIndex, JoyA | JoyX, NULL, printEntry);
+        if (menuResult.buttons & JoyB) {
             clearFileVector(&files);
             free(entries);
             break;
         }
-        startIndex = result.selectableIndex + 1;
-        if (result.buttons & JoyA) {
+        startIndex = menuResult.index;
+        if (menuResult.buttons & JoyA) {
             gfx_clearscreenKT();
-            setCurrentProfile(entries[result.selectableIndex + 1].entry);
-        } else if (result.buttons & JoyX) {
+            setCurrentProfile(entries[menuResult.index].entry);
+        } else if (menuResult.buttons & JoyX) {
             gfx_clearscreenKT();
-            const char* fileMessage[] = {"Do you want to delete the profile?", entries[result.selectableIndex + 1].entry, NULL};
+            const char* fileMessage[] = {"Do you want to delete the profile?", entries[menuResult.index].entry, NULL};
             if (confirmationDialog(fileMessage, ENO) != EYES) continue;
-            deleteProfile(entries[result.selectableIndex + 1].entry);
+            deleteProfile(entries[menuResult.index].entry);
             startIndex = 0;
         }
         clearFileVector(&files);

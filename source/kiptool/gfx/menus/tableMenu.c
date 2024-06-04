@@ -5,6 +5,7 @@
 #include <utils/sprintf.h>
 
 #include "../../helpers/kiprw.h"
+#include "../../service/kiptool.h"
 #include "../gfx.h"
 #include "editorMenu.h"
 #include "ktMenu.h"
@@ -46,14 +47,14 @@ void newTableMenu(const u8* custTable, const Table* table) {
         }
         getFormatingData(&formatingData, custTable, table->paramsCount, table->params);
         const PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
-        MenuResult result = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
-                                      (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
-        if (result.buttons & JoyB) {
+        MenuResult menuResult = newMenuKT(menuEntries, totalEntriesCount, startIndex, JoyA, &printParamAdditionalData,
+                                          (void (*)(MenuEntry*, u32, u8, u32, const void*))printParamEntry);
+        if (menuResult.buttons & JoyB) {
             free(menuEntries);
             return;
         } else {
-            const MenuEntry selectedEntry = menuEntries[result.selectableIndex + 1];
-            startIndex = result.selectableIndex + 1;
+            const MenuEntry selectedEntry = menuEntries[menuResult.index];
+            startIndex = menuResult.index;
             if (selectedEntry.type == ETReset) {
                 const char* message[] = {"Do you want to reset tables params?", NULL};
                 if (confirmationDialog(message, ENO) == EYES) {
@@ -62,6 +63,7 @@ void newTableMenu(const u8* custTable, const Table* table) {
                     char* message = calloc(256, 1);
                     s_printf(message, "[Session] Table: %s has been reset", table->name);
                     gfx_printBottomInfoKT(message);
+                    setIsChangesApplied(0);
                     free(message);
                 }
             } else

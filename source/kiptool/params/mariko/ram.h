@@ -48,7 +48,7 @@ const FixedLimits marikoEmcVddqVoltFL = {.min = 300000, .max = 800000, .stepSize
 // 650'000 DEFAULT
 // 700'000 SRT
 // MANUAL 300'000-800'000
-const Param marikoEmcVddqVolt = {.name = "RAM VDDQ MODE",
+const Param marikoEmcVddqVolt = {.name = "VDDQ MODE",
                                  .measure = "mV",
                                  .description = NULL,
                                  .offset = getOffset(defaultCustTable.marikoEmcVddqVolt),
