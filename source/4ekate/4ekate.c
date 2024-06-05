@@ -15,8 +15,6 @@
 #include "../kiptool/gfx/menus/ktMenu.h"
 #include "../kiptool/helpers/rw.h"
 
-#define CHEKATE_STAGES_COUNT 3
-
 const CHEKATEParams stages[CHEKATE_STAGES_COUNT] = {
     // DEFAULT
     {.mc_emem_adr_cfg_channel_mask = 0xFFFF2400,
