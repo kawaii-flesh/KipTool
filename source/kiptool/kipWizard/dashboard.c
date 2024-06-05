@@ -7,6 +7,7 @@
 #include <string.h>
 #include <utils/util.h>
 
+#include "../../4ekate/4ekate.h"
 #include "../../gfx/gfx.h"
 #include "../../gfx/gfxutils.h"
 #include "../../hid/hid.h"
@@ -185,7 +186,7 @@ ShowResult showTables(const CustomizeTable* cust, const Tables* tables[], int co
     return result;
 }
 
-ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int count, int x, int y) {
+ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int count, int x, int y, int maxLength) {
     ShowResult result = {0, 0};
     int tmpX = x;
     int tmpY = y;
@@ -194,14 +195,26 @@ ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int c
         for (int j = 0; j < tables[i]->count; ++j) {
             const Table* table = tables[i]->tables[j];
             gfx_con_setpos(tmpX, tmpY);
+
+            int isRamTimings = !strcmp(table->name, RAM_TIMINGS_TABLE_NAME);
             gfx_printf("%k%s", COLORTORGB(COLOR_YELLOW), table->name);
+            if (isRamTimings) {
+                const char* stageTitle = getCurrentStageTitle();
+                int color = COLORTORGB(COLOR_ORANGE);
+                if (stageTitle == stagesTitles[0])
+                    color = COLORTORGB(COLOR_VIOLET);
+                else if (!strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE))
+                    color = COLORTORGB(COLOR_GREY);
+                gfx_con_setpos(tmpX + fontSize * (maxLength + 1), tmpY);
+                gfx_printf("%k%s", color, stageTitle);
+            }
             tmpY += fontSize;
             gfx_con_setpos(tmpX, tmpY);
             gfx_printf("%k", COLORTORGB(COLOR_BLUE));
             for (int p = 0; p < table->paramsCount; ++p) {
                 const Param* param = table->params[p];
                 const u32 value = getParamValueFromBuffer((const u8*)cust, param);
-                const int startIndex = p + (!strcmp(table->name, RAM_TIMINGS_TABLE_NAME) ? 1 : 0);
+                const int startIndex = p + (isRamTimings ? 1 : 0);
                 gfx_printf("%d", startIndex);
                 if (startIndex > 9)
                     tmpX += fontSize * 3;
@@ -219,7 +232,7 @@ ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int c
                 const u32 value = getParamValueFromBuffer((const u8*)cust, param);
                 int color = value == param->defaultValue ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
                 gfx_printf("%k%d", color, value);
-                const int startIndex = p + (!strcmp(table->name, RAM_TIMINGS_TABLE_NAME) ? 1 : 0);
+                const int startIndex = p + (isRamTimings ? 1 : 0);
                 if (startIndex > 9)
                     tmpX += fontSize * 3;
                 else if (value > 9)
@@ -297,7 +310,7 @@ void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParam
     x = (maxLengthInit + 26 + (getHWType() == ERISTA ? 6 : 0)) * fontSize;
     showTables(cust, gpuTables, COLORTORGB(COLOR_ORANGE), count, 10, x, y);
 
-    showTablesH(cust, ramTables, count, initX, result.lastY + 2 * fontSize);
+    showTablesH(cust, ramTables, count, initX, result.lastY + 2 * fontSize, maxLengthInit);
     gfx_con_getpos(&result.lastX, &result.lastY);
 
     x = initX;

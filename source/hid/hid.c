@@ -18,8 +18,7 @@
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
-#define SLEEP_TIME_MS 16
-
+#define SLEEP_TIME_MS 20
 bool canUpdate() {
     static u32 lastUpdateRequest = 0;
     if (get_tmr_ms() - lastUpdateRequest < SLEEP_TIME_MS) return 0;
