@@ -1,9 +1,11 @@
 #include "tableMenu.h"
 
 #include <mem/heap.h>
+#include <stdlib.h>
 #include <string.h>
 #include <utils/sprintf.h>
 
+#include "../../../utils/utils.h"
 #include "../../helpers/kiprw.h"
 #include "../../service/kiptool.h"
 #include "../gfx.h"
@@ -66,8 +68,34 @@ void newTableMenu(const u8* custTable, const Table* table) {
                     setIsChangesApplied(0);
                     free(message);
                 }
-            } else
+            } else {
+#ifdef KT_DEBUG
+                Input_t* input = hidRead();
+                if (input->l || input->r) {
+                    gfx_clearscreenKT();
+                    unsigned int currentValue = getParamValueFromBuffer(custTable, selectedEntry.entry);
+                    char* currentValueStr = malloc(256);
+                    utoa(currentValue, currentValueStr, 10);
+                    char* oldValue = malloc(256);
+                    strcpy(oldValue, currentValueStr);
+                    char* value = ShowKeyboard(currentValueStr, false);
+                    if (value != NULL) {
+                        const unsigned int newValue = atoi(value);
+                        formatValueDiv(currentValueStr, newValue, newValue > 1500);
+                        const char* message[] = {"Do you want to set a new value?",
+                                                 strcat(strcat(strcat(strcat(currentValueStr, " <- "), value), " <- "), oldValue), NULL};
+                        if (confirmationDialog(message, ENO) == EYES) setParamValue(custTable, selectedEntry.entry, atoi(value));
+                        free(value);
+                    }
+                    free(currentValueStr);
+                    free(oldValue);
+                    gfx_clearscreenKT();
+                } else
+                    newEditorMenu(custTable, selectedEntry.entry);
+#else
                 newEditorMenu(custTable, selectedEntry.entry);
+#endif
+            }
         }
     }
 }
