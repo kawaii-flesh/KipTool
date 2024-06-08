@@ -42,12 +42,12 @@ const Param marikoEmcMaxClock = {.name = "EMC Max Clock",
                                  .limits = {{.type = EFixedValues, .values = &marikoEmcMaxClockFV}, {.type = EFixedLimits, .values = &marikoEmcMaxClockFL}}};
 
 const FixedValues marikoEmcVddqVoltFV = {.valuesCount = 3, .values = {{.value = 500000, .label = "ECO"}, {.value = 650000}, {.value = 700000, .label = "SRT"}}};
-const FixedLimits marikoEmcVddqVoltFL = {.min = 300000, .max = 800000, .stepSize = 100000};
+const FixedLimits marikoEmcVddqVoltFL = {.min = 300000, .max = 800000, .stepSize = 10000};
 // RAM VDDQ MODE
 // 500'000 ECO
 // 650'000 DEFAULT
 // 700'000 SRT
-// MANUAL 300'000-800'000
+// MANUAL 300'000-800'000 STEP 10'000
 const Param marikoEmcVddqVolt = {.name = "VDDQ MODE",
                                  .measure = "mV",
                                  .description = NULL,
