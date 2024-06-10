@@ -849,7 +849,7 @@ const CustomizeTable defaultCustTable = {
     // 125 ECO ST2
     // 150 ECO ST3
     // 25-175 MANUAL
-    .SpeedShift = eBAMATIC,
+    .SpeedShift = 100,
     // Ov << 100 >> uV
 
     // MARIKO CPU-HI ECO LOGIC
