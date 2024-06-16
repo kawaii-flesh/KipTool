@@ -18,14 +18,6 @@
 static Input_t inputs = {0};
 u16 LbaseX = 0, LbaseY = 0, RbaseX = 0, RbaseY = 0;
 
-#define SLEEP_TIME_MS 20
-bool canUpdate() {
-    static u32 lastUpdateRequest = 0;
-    if (get_tmr_ms() - lastUpdateRequest < SLEEP_TIME_MS) return 0;
-    lastUpdateRequest = get_tmr_ms();
-    return 1;
-}
-
 Input_t* hidRead() {
     if (*isTouchEnabled()) {
         Input_t tmp = {0};
@@ -40,7 +32,6 @@ Input_t* hidRead() {
             return &inputs;
         }
     }
-    if (!canUpdate()) return &inputs;
 
     jc_gamepad_rpt_t* controller = joycon_poll();
     inputs.buttons = 0;
@@ -117,7 +108,6 @@ Input_t* hidWait() {
 }
 
 bool hidConnected() {
-    msleep(SLEEP_TIME_MS);
     jc_gamepad_rpt_t* controller = joycon_poll();
     return (controller->conn_l && controller->conn_r) ? 1 : 0;
 }
