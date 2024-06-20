@@ -849,7 +849,7 @@ const CustomizeTable defaultCustTable = {
     // 125 ECO ST2
     // 150 ECO ST3
     // 25-175 MANUAL
-    .SpeedShift = 100,
+    .SpeedShift = eBAMATIC,
     // Ov << 100 >> uV
 
     // MARIKO CPU-HI ECO LOGIC
@@ -901,7 +901,7 @@ const CustomizeTable defaultCustTable = {
     // TRADE MAX FREQ FOR EFFICIENCY
     // FREQUENCY << PRIORITY >> EFFICIENCY
 
-    // PRIMARY MICRO-ENHANCE LOGI15C			 	// 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2 1333>1065>800 0-3
+    // PRIMARY MICRO-ENHANCE LOGIC			 		// 0 eBAS Sub-Zero 0-1   // 1 divMB Supressor 0-4  // 2 1333>1065>800 0-3
     // 3 eBAW Shift 0-4		// 4 eBAR Shift 0-4     // 5 eBAW Crement 0-4	 // 6 eBAR Crement 0-4 	   // 7 eBAS Crement 0-4
     // 8 RCD Decret 0-4 	// 9 RP Decret 0-4      // 10 RAS Decret 0-8	 // 11 SRPD 0-15 		   // 12 E-Enhance P 0-1
     // 13 DR Debug 0-8		// 14 GameChanger 0-24	// 15 eFOS MK 0-1		 // 16 lovec 0-1		   // 17 DBI 0-3
@@ -914,8 +914,8 @@ const CustomizeTable defaultCustTable = {
     // 4 ARB-RTW 0-4	// 5 ARB-WTR 0-4	// 6 eZQ Override 0-7	// 7 trDVFS 0-1		// 8 E-Boost 0-2	// 9 SSC Logic 0-1
     // 10 Latent 0-8  	// 11 REF-NEH 0-4	// 12 Clatok 0-1		// 13 CPriora 0-4	// 14 GetLow 0-3	// 15 GetHigh 0-3
     // 16 SYK-LOH 0-1
-    .sMEH = {6, 2, 2, 2, 2, 1, 1, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    // DEF =  6  2  2  2  2  2  1  0  0  1  0  2  0  0  0  0  0 >> RESERVED >>
+    .sMEH = {6, 2, 2, 2, 2, 1, 1, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // DEF =  6  2  2  2  2  1  1  0  0  1  0  2  1  0  0  0  0 >> RESERVED >>
     // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
     // Secret Hardware Assisted Integration Tool 4 Advanced Necessities
