@@ -57,8 +57,7 @@ bool StrEndsWith(char* begin, char* end) {
 
 void WaitFor(u32 ms) {
     u32 a = get_tmr_ms();
-    while (a + ms > get_tmr_ms())
-        ;
+    while (a + ms > get_tmr_ms());
 }
 
 char* lines[] = {

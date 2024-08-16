@@ -81,8 +81,7 @@ int kipWizard(char* path, FSEntry_t entry) {
         gfx_clearscreenKT();
         gfx_printf("CUST section was not found! Press B to exit");
         free(filePath);
-        while (!(hidRead()->buttons & JoyB))
-            ;
+        while (!(hidRead()->buttons & JoyB));
         return -1;
     }
 
