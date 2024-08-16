@@ -1,8 +1,7 @@
 #pragma once
 #include <utils/types.h>
 
-#define CUST \
-    { 'C', 'U', 'S', 'T' }
+#define CUST {'C', 'U', 'S', 'T'}
 
 #define DvfsTableEntryCount 32
 #define DvfsTableEntryLimit DvfsTableEntryCount - 1

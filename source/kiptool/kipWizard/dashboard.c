@@ -317,6 +317,5 @@ void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParam
     y = result.lastY + fontSize * 2;
     gfx_con_setpos(x, y);
     printHWInfo();
-    while (!hidRead()->b)
-        ;
+    while (!hidRead()->b);
 }
