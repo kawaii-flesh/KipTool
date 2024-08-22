@@ -7,7 +7,6 @@
 #include "../hid/hid.h"
 #include "gfx.h"
 
-// #define KT_DEBUG
 #ifdef KT_DEBUG
 #include <mem/heap.h>
 #endif

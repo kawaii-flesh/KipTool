@@ -33,6 +33,9 @@ const CHEKATEParams stages[CHEKATE_STAGES_COUNT] = {
      .mc_emem_adr_cfg_bank_mask2 = 0x00001000}};
 const char* stagesTitles[CHEKATE_STAGES_COUNT] = {"4EKATE Stage - Default", "4EKATE Stage - ST1", "4EKATE Stage - ST2"};
 
+const char* chifixTitle = "4EKATE - 4IFIX";
+const u8 chifixPattern[4] = {0x8a, 0x1e, 0x02, 0x40};
+
 int payloadOffset = 0;
 int fuseeOffset = 0;
 
@@ -55,75 +58,66 @@ int getParamsOffset(const char filePath[], int start) {
     return -1;
 }
 
-void setOffsets() {
-    if (payloadOffset == 0)
-        payloadOffset = getParamsOffset(CHEKATE_PAYLOAD_PATH, 0x00010000
-
-        );
+void set4ekateStagesOffsets() {
+    if (payloadOffset == 0) payloadOffset = getParamsOffset(CHEKATE_PAYLOAD_PATH, 0x00010000);
     if (fuseeOffset == 0) fuseeOffset = getParamsOffset(CHEKATE_FUSEE_PATH, 0x00010000);
 }
 
-bool load4EKATEParams(CHEKATEParams* params) {
-    setOffsets();
-    FIL file;
-    FRESULT res;
-    if (FileExists(CHEKATE_PAYLOAD_PATH)) {
-        res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_READ);
+void load4EKATEParams(CHEKATEParams* params) {
+    if (payloadOffset != -1 && fuseeOffset != 1) {
+        FIL file;
+        FRESULT res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_READ);
         if (res != FR_OK) {
             f_close(&file);
-            return false;
+            return;
         }
         unsigned int bytesRead;
 
         f_lseek(&file, payloadOffset);
         f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
         f_close(&file);
-        return bytesRead == sizeof(CHEKATEParams);
-    } else if (FileExists(CHEKATE_FUSEE_PATH)) {
-        res = f_open(&file, CHEKATE_FUSEE_PATH, FA_READ);
-        if (res != FR_OK) {
+    }
+}
+
+bool set4EKATEParams(const CHEKATEParams* params) {
+    if (payloadOffset != -1 && fuseeOffset != -1) {
+        FIL file;
+        FRESULT res;
+        unsigned int bytesWritten;
+
+        if (FileExists(CHEKATE_PAYLOAD_PATH)) {
+            res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_WRITE);
+            if (res != FR_OK) {
+                return false;
+            }
+            f_lseek(&file, payloadOffset);
+            res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
             f_close(&file);
-            return false;
+            if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
         }
-        unsigned int bytesRead;
-        f_lseek(&file, fuseeOffset);
-        f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
-        f_close(&file);
-        return bytesRead == sizeof(CHEKATEParams);
+        if (FileExists(CHEKATE_FUSEE_PATH)) {
+            res = f_open(&file, CHEKATE_FUSEE_PATH, FA_WRITE);
+            if (res != FR_OK) {
+                return false;
+            }
+            f_lseek(&file, fuseeOffset);
+            res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
+            f_close(&file);
+            if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
+        }
+
+        return true;
     }
     return false;
 }
 
-bool set4EKATEParams(const CHEKATEParams* params) {
-    FIL file;
-    FRESULT res;
-    unsigned int bytesWritten;
-
-    if (FileExists(CHEKATE_PAYLOAD_PATH)) {
-        res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_WRITE);
-        if (res != FR_OK) {
-            return false;
-        }
-        f_lseek(&file, payloadOffset);
-        res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
-        f_close(&file);
-        if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
-    }
-    if (FileExists(CHEKATE_FUSEE_PATH)) {
-        res = f_open(&file, CHEKATE_FUSEE_PATH, FA_WRITE);
-        if (res != FR_OK) {
-            return false;
-        }
-        f_lseek(&file, fuseeOffset);
-        res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
-        f_close(&file);
-        if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
-    }
-
-    return true;
-}
-
 int getCurrentStageId() {
+    if (payloadOffset == -1 || fuseeOffset == -1) {
+        u8 buff[4];
+        readData(CHEKATE_PAYLOAD_PATH, buff, 4, CHIFIX_DETECT_OFFSET);
+        if (compareU8Arrays(buff, chifixPattern, 4)) return -2;
+        return -1;
+    }
     CHEKATEParams* params = malloc(sizeof(CHEKATEParams));
     load4EKATEParams(params);
     for (int i = 0; i < CHEKATE_STAGES_COUNT; ++i)
@@ -137,7 +131,10 @@ int getCurrentStageId() {
 
 const char* getCurrentStageTitle() {
     const int stageId = getCurrentStageId();
-    if (stageId == -1) return CHEKATE_UNKNOWN_STAGE;
+    if (stageId == -1)
+        return CHEKATE_UNKNOWN_STAGE;
+    else if (stageId == -2)
+        return chifixTitle;
     return stagesTitles[stageId];
 }
 

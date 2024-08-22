@@ -180,6 +180,8 @@ void heap_monitor(heap_monitor_t *mon, bool print_node_stats)
 	hnode_t *node = _heap.first;
 	while (true)
 	{
+		if(node->used != 0 && node->used != 1)
+			break;
 		if (node->used)
 		{
 			mon->nodes_used++;
