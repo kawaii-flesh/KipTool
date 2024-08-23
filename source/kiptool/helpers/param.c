@@ -106,7 +106,7 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value) 
         }
     }
     if (!founded) {
-        strcpy(displayBuff + strlen(displayBuff), " - Unknown value");
+        strcpy(displayBuff + strlen(displayBuff), " - Unknown");
         return;
     }
     if (foundedValue != NULL) {
