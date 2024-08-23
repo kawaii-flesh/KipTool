@@ -27,7 +27,7 @@ FRESULT writeData(const char *path, const int offset, const void *data, u32 data
     return FR_OK;
 }
 
-FRESULT readData(const char *path, void *buffer, u32 bufferSize) {
+FRESULT readData(const char *path, void *buffer, u32 bufferSize, const int offset) {
     FIL fil;
     UINT br;
     FRESULT res;
@@ -35,6 +35,7 @@ FRESULT readData(const char *path, void *buffer, u32 bufferSize) {
     res = f_open(&fil, path, FA_READ);
     if (res != FR_OK) return res;
 
+    f_lseek(&fil, offset);
     res = f_read(&fil, buffer, bufferSize, &br);
     if (res != FR_OK) {
         f_close(&fil);

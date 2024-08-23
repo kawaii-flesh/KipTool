@@ -157,9 +157,11 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
         if (sd_mounted) {
+            set4ekateStagesOffsets();
+            const int stageId = getCurrentStageId();
             const char* stageTitle = getCurrentStageTitle();
             mainMenuEntries[Main4EKATE].name = (char*)stageTitle;
-            if (strcmp(stageTitle, CHEKATE_UNKNOWN_STAGE) == 0)
+            if (stageId == -1 || stageId == -2)
                 mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
             else
                 mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);
