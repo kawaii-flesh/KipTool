@@ -2,7 +2,6 @@
 
 #include <libs/fatfs/ff.h>
 #include <mem/heap.h>
-#include <stdbool.h>
 #include <string.h>
 
 #include "../err.h"
@@ -14,6 +13,10 @@
 #include "../kiptool/gfx/gfx.h"
 #include "../kiptool/gfx/menus/ktMenu.h"
 #include "../kiptool/helpers/rw.h"
+
+const char* chekateFilesPaths[CHEKATE_FILES_COUNT] = {"sd:/payload.bin", "sd:/bootloader/payloads/fusee.bin", "sd:/atmosphere/reboot_payload.bin",
+                                                      "sd:/bootloader/update.bin"};
+int paramsOffsets[CHEKATE_FILES_COUNT] = {0, 0, 0, 0};
 
 const CHEKATEParams stages[CHEKATE_STAGES_COUNT] = {
     // DEFAULT
@@ -36,9 +39,6 @@ const char* stagesTitles[CHEKATE_STAGES_COUNT] = {"4EKATE Stage - Default", "4EK
 const char* chifixTitle = "4EKATE - 4IFIX";
 const u8 chifixPattern[4] = {0x8a, 0x1e, 0x02, 0x40};
 
-int payloadOffset = 0;
-int fuseeOffset = 0;
-
 int getParamsOffset(const char filePath[], int start) {
     FIL file;
     FRESULT res = f_open(&file, filePath, FA_READ);
@@ -59,62 +59,69 @@ int getParamsOffset(const char filePath[], int start) {
 }
 
 void set4ekateStagesOffsets() {
-    if (payloadOffset == 0) payloadOffset = getParamsOffset(CHEKATE_PAYLOAD_PATH, 0x00010000);
-    if (fuseeOffset == 0) fuseeOffset = getParamsOffset(CHEKATE_FUSEE_PATH, 0x00010000);
+    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
+        if (paramsOffsets[i] == 0) paramsOffsets[i] = getParamsOffset(chekateFilesPaths[i], 0x00015000);
 }
 
 void load4EKATEParams(CHEKATEParams* params) {
-    if (payloadOffset != -1 && fuseeOffset != 1) {
-        FIL file;
-        FRESULT res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_READ);
-        if (res != FR_OK) {
-            f_close(&file);
-            return;
-        }
-        unsigned int bytesRead;
-
-        f_lseek(&file, payloadOffset);
-        f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
+    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
+        if (paramsOffsets[i] == -1) return;
+    FIL file;
+    FRESULT res = f_open(&file, chekateFilesPaths[0], FA_READ);
+    if (res != FR_OK) {
         f_close(&file);
+        return;
     }
+    unsigned int bytesRead;
+
+    f_lseek(&file, paramsOffsets[0]);
+    f_read(&file, params, sizeof(CHEKATEParams), &bytesRead);
+    f_close(&file);
 }
 
+bool chekateFilesExists() {
+    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
+        if (!FileExists(chekateFilesPaths[i])) return false;
+    return true;
+}
+
+bool chekateStageWasChanged = false;
 bool set4EKATEParams(const CHEKATEParams* params) {
-    if (payloadOffset != -1 && fuseeOffset != -1) {
+    gfx_clearscreenKT();
+    gfx_printf("Patching files. Please wait ...");
+    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
+        if (paramsOffsets[i] == -1) return false;
+    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i) {
         FIL file;
         FRESULT res;
         unsigned int bytesWritten;
 
-        if (FileExists(CHEKATE_PAYLOAD_PATH)) {
-            res = f_open(&file, CHEKATE_PAYLOAD_PATH, FA_WRITE);
+        if (FileExists(chekateFilesPaths[i])) {
+            res = f_open(&file, chekateFilesPaths[i], FA_WRITE);
             if (res != FR_OK) {
                 return false;
             }
-            f_lseek(&file, payloadOffset);
+            f_lseek(&file, paramsOffsets[i]);
             res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
             f_close(&file);
             if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
         }
-        if (FileExists(CHEKATE_FUSEE_PATH)) {
-            res = f_open(&file, CHEKATE_FUSEE_PATH, FA_WRITE);
-            if (res != FR_OK) {
-                return false;
-            }
-            f_lseek(&file, fuseeOffset);
-            res = f_write(&file, params, sizeof(CHEKATEParams), &bytesWritten);
-            f_close(&file);
-            if (res != FR_OK || bytesWritten != sizeof(CHEKATEParams)) return false;
-        }
-
-        return true;
     }
-    return false;
+    if (!chekateStageWasChanged) chekateStageWasChanged = true;
+    return true;
 }
 
 int getCurrentStageId() {
-    if (payloadOffset == -1 || fuseeOffset == -1) {
+    bool unknown = false;
+    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i) {
+        if (paramsOffsets[i] == -1) {
+            unknown = true;
+            break;
+        }
+    }
+    if (unknown) {
         u8 buff[4];
-        readData(CHEKATE_PAYLOAD_PATH, buff, 4, CHIFIX_DETECT_OFFSET);
+        readData(chekateFilesPaths[0], buff, 4, CHIFIX_DETECT_OFFSET);
         if (compareU8Arrays(buff, chifixPattern, 4)) return -2;
         return -1;
     }
@@ -138,30 +145,8 @@ const char* getCurrentStageTitle() {
     return stagesTitles[stageId];
 }
 
-bool createPayloadBackup() {
-    ErrCode_t res = FileCopy(CHEKATE_PAYLOAD_PATH, CHEKATE_PAYLOAD_BACKUP_PATH, 0);
-    if (res.err != 0) return false;
-    return true;
-}
-
-bool createPayloadFusee() {
-    ErrCode_t res = FileCopy(CHEKATE_FUSEE_PATH, CHEKATE_FUSEE_BACKUP_PATH, 0);
-    if (res.err != 0) return false;
-    return true;
-}
-
 void chekate() {
     createDirIfNotExist(KT_DIR);
-    if (!FileExists(CHEKATE_PAYLOAD_BACKUP_PATH)) {
-        gfx_clearscreenKT();
-        gfx_printf("Creating a paylaod backup ...");
-        createPayloadBackup();
-    }
-    if (!FileExists(CHEKATE_FUSEE_BACKUP_PATH)) {
-        gfx_clearscreenKT();
-        gfx_printf("Creating a fusee backup ...");
-        createPayloadFusee();
-    }
     MenuEntry* menuEntries = calloc(1 + CHEKATE_STAGES_COUNT, sizeof(MenuEntry));
     int currentStageId = getCurrentStageId();
     int startIndex = currentStageId + 1;

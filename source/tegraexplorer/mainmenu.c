@@ -102,7 +102,7 @@ extern int launch_payload(char* path);
 
 void RebootToAMS() { launch_payload("sd:/atmosphere/reboot_payload.bin"); }
 
-void RebootTo4EKATE() { launch_payload(CHEKATE_PAYLOAD_PATH); }
+void RebootTo4EKATE() { launch_payload("sd:/payload.bin"); }
 
 void RebootToUpdate() { launch_payload("sd:/bootloader/update.bin"); }
 
@@ -152,16 +152,17 @@ void EnterMainMenu() {
         mainMenuEntries[MainMountSd].name = (sd_mounted) ? "Unmount SD" : "Mount SD";
 
         // -- Exit --
-        mainMenuEntries[MainReboot4EKATE].hide = (!sd_mounted || !FileExists(CHEKATE_PAYLOAD_PATH));
-        mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin"));
-        mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin"));
+        mainMenuEntries[MainReboot4EKATE].hide = (!sd_mounted || !FileExists("sd:/payload.bin") || !chekateFilesExists() || chekateStageWasChanged);
+        mainMenuEntries[MainRebootAMS].hide = (!sd_mounted || !FileExists("sd:/atmosphere/reboot_payload.bin") || chekateStageWasChanged);
+        mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin") || chekateStageWasChanged);
+        mainMenuEntries[MainRebootNormal].hide = chekateStageWasChanged;
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
         if (sd_mounted) {
             set4ekateStagesOffsets();
             const int stageId = getCurrentStageId();
             const char* stageTitle = getCurrentStageTitle();
             mainMenuEntries[Main4EKATE].name = (char*)stageTitle;
-            if (stageId == -1 || stageId == -2)
+            if (stageId == -1 || stageId == -2 || !chekateFilesExists())
                 mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_GREY) | SKIPBIT;
             else
                 mainMenuEntries[Main4EKATE].optionUnion = COLORTORGB(COLOR_BLUE);

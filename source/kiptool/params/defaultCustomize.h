@@ -447,8 +447,8 @@ const CustomizeTable defaultCustTable =
         // 4 ARB-RTW 0-4	// 5 ARB-WTR 0-4	// 6 eZQ Override 0-7	// 7 trDVFS 0-1		// 8 E-Boost 0-2	// 9 SSC Logic 0-1
         // 10 Latent 0-8  	// 11 REF-NEH 0-4	// 12 Clatok 0-1		// 13 CPriora 0-4	// 14 GetLow 0-3	// 15 GetHigh 0-3
         // 16 SYK-LOH 0-1
-        .sMEH = {7, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 2, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-        // DEF =  7  2  2  2  2  1  1  0  0  0  0  2  1  0  0  0  1 >> RESERVED >>
+        .sMEH = {7, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        // DEF =  7  2  2  2  2  2  1  0  0  0  0  2  1  0  0  0  0 >> RESERVED >>
         // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 
         // Secret Hardware Assisted Integration Tool 4 Advanced Necessities
