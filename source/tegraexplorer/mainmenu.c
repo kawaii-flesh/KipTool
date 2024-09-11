@@ -23,8 +23,9 @@
 #include "../utils/utils.h"
 #include "tconf.h"
 #include "tools.h"
+#include "../sdramTweak/sdramTweak.h"
 
-#define ENTRIES_COUNT 16
+#define ENTRIES_COUNT 17
 
 enum {
     MainExplore = 0,
@@ -35,6 +36,7 @@ enum {
     MainMisc,
     MainActivateTouchMode,
     Main4EKATE,
+    MainSDRAMTweak,
     MainProfiles,
     MainExit,
     MainPowerOff,
@@ -54,6 +56,7 @@ MenuEntry_t mainMenuEntries[ENTRIES_COUNT] = {
     [MainMisc] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Misc --"},
     [MainActivateTouchMode] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
     [Main4EKATE] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
+    [MainSDRAMTweak] = {.optionUnion = COLORTORGB(COLOR_BLUE), .name ="Apply sdram.ini"},
     [MainProfiles] = {.optionUnion = COLORTORGB(COLOR_BLUE) | ALLOCATED_NAME_BIT},
     [MainExit] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Exit --"},
     [MainPowerOff] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Power off"},
@@ -133,6 +136,7 @@ menuPaths mainMenuPaths[] = {[MainBrowseSd] = HandleSD,
                              [MainMountSd] = MountOrUnmountSD,
                              [MainActivateTouchMode] = ActivateTouchMode,
                              [Main4EKATE] = chekate,
+                             [MainSDRAMTweak] = applyNewChanges,
                              [MainProfiles] = profiles,
                              [MainViewCredits] = ViewCredits,
                              [MainRebootAMS] = RebootToAMS,
@@ -157,6 +161,7 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin") || chekateStageWasChanged);
         mainMenuEntries[MainRebootNormal].hide = chekateStageWasChanged;
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
+        mainMenuEntries[MainSDRAMTweak].hide = (!sd_mounted || !FileExists(SDRAM_TWEAK_KEYS_FILE_PATH) || !FileExists(SDRAM_TWEAK_KV_FILE_PATH) || !TConf.isMariko);
         if (sd_mounted) {
             set4ekateStagesOffsets();
             const int stageId = getCurrentStageId();

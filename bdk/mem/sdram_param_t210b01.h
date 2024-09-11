@@ -13,6 +13,7 @@
 
 #ifndef _SDRAM_PARAM_T210B01_H_
 #define _SDRAM_PARAM_T210B01_H_
+#include <utils/types.h>
 
 typedef struct _sdram_params_t210b01_t
 {

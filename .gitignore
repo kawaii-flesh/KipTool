@@ -13,3 +13,4 @@ tools/lz
 tools/bin2c
 source/format.sh
 updates.txt
+sdram_keys.bin
