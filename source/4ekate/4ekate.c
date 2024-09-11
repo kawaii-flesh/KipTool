@@ -14,9 +14,7 @@
 #include "../kiptool/gfx/menus/ktMenu.h"
 #include "../kiptool/helpers/rw.h"
 
-const char* chekateFilesPaths[CHEKATE_FILES_COUNT] = {"sd:/payload.bin", "sd:/bootloader/payloads/fusee.bin", "sd:/atmosphere/reboot_payload.bin",
-                                                      "sd:/bootloader/update.bin"};
-int paramsOffsets[CHEKATE_FILES_COUNT] = {0, 0, 0, 0};
+int paramsOffsets[PATCH_FILES_COUNT] = {0, 0, 0, 0};
 
 const CHEKATEParams stages[CHEKATE_STAGES_COUNT] = {
     // DEFAULT
@@ -59,15 +57,15 @@ int getParamsOffset(const char filePath[], int start) {
 }
 
 void set4ekateStagesOffsets() {
-    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
-        if (paramsOffsets[i] == 0) paramsOffsets[i] = getParamsOffset(chekateFilesPaths[i], 0x00015000);
+    for (int i = 0; i < PATCH_FILES_COUNT; ++i)
+        if (paramsOffsets[i] == 0) paramsOffsets[i] = getParamsOffset(patchFilesPaths[i], 0x00015000);
 }
 
 void load4EKATEParams(CHEKATEParams* params) {
-    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
+    for (int i = 0; i < PATCH_FILES_COUNT; ++i)
         if (paramsOffsets[i] == -1) return;
     FIL file;
-    FRESULT res = f_open(&file, chekateFilesPaths[0], FA_READ);
+    FRESULT res = f_open(&file, patchFilesPaths[0], FA_READ);
     if (res != FR_OK) {
         f_close(&file);
         return;
@@ -80,8 +78,8 @@ void load4EKATEParams(CHEKATEParams* params) {
 }
 
 bool chekateFilesExists() {
-    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
-        if (!FileExists(chekateFilesPaths[i])) return false;
+    for (int i = 0; i < PATCH_FILES_COUNT; ++i)
+        if (!FileExists(patchFilesPaths[i])) return false;
     return true;
 }
 
@@ -89,15 +87,15 @@ bool chekateStageWasChanged = false;
 bool set4EKATEParams(const CHEKATEParams* params) {
     gfx_clearscreenKT();
     gfx_printf("Patching files. Please wait ...");
-    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i)
+    for (int i = 0; i < PATCH_FILES_COUNT; ++i)
         if (paramsOffsets[i] == -1) return false;
-    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i) {
+    for (int i = 0; i < PATCH_FILES_COUNT; ++i) {
         FIL file;
         FRESULT res;
         unsigned int bytesWritten;
 
-        if (FileExists(chekateFilesPaths[i])) {
-            res = f_open(&file, chekateFilesPaths[i], FA_WRITE);
+        if (FileExists(patchFilesPaths[i])) {
+            res = f_open(&file, patchFilesPaths[i], FA_WRITE);
             if (res != FR_OK) {
                 return false;
             }
@@ -113,7 +111,7 @@ bool set4EKATEParams(const CHEKATEParams* params) {
 
 int getCurrentStageId() {
     bool unknown = false;
-    for (int i = 0; i < CHEKATE_FILES_COUNT; ++i) {
+    for (int i = 0; i < PATCH_FILES_COUNT; ++i) {
         if (paramsOffsets[i] == -1) {
             unknown = true;
             break;
@@ -121,7 +119,7 @@ int getCurrentStageId() {
     }
     if (unknown) {
         u8 buff[4];
-        readData(chekateFilesPaths[0], buff, 4, CHIFIX_DETECT_OFFSET);
+        readData(patchFilesPaths[0], buff, 4, CHIFIX_DETECT_OFFSET);
         if (compareU8Arrays(buff, chifixPattern, 4)) return -2;
         return -1;
     }

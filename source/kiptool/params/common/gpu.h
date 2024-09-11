@@ -15,7 +15,6 @@ const FixedLimits GPUvFL = {.min = 430, .max = 970, .stepSize = 5, .measure = "m
 // ERISTA GPU VOLT MIN = CPUv + 100mV // ? GPUv
 const Param GPUv = {.name = "UNDER LOGIC",
                     .measure = NULL,
-                    .description = NULL,
                     .offset = getOffset(defaultCustTable.GPUv),
                     .defaultValue = defaultCustTable.GPUv,
                     .limitsCount = 2,

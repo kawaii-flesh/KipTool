@@ -118,49 +118,35 @@ void getDisplayValue(const Param* param, char* displayBuff, unsigned int value) 
 }
 
 void getFormatingData(FormatingData* formatingData, const u8* custTable, const unsigned int paramsCount, const Param* params[]) {
-    char* displayBuff = calloc(1024, 1);
+    char* displayBuff = (char*)calloc(1024, 1);
     char* start = displayBuff;
-    unsigned int nameLen = 0;
-    unsigned int valueLen = 0;
-    unsigned int labelLen = 0;
+    unsigned int nameLen = 0, valueLen = 0, labelLen = 0;
+
     for (unsigned int i = 0; i < paramsCount; ++i) {
-        unsigned partsCount = 0;
+        unsigned int tmpLen = 0, partsCount = 0;
+        bool space = false;
+
+        // Формируем строку с именем и значением
         s_printf(displayBuff, "%s - ", params[i]->name);
         u32 value = getParamValueFromBuffer(custTable, params[i]);
         getDisplayValue(params[i], displayBuff + strlen(displayBuff), value);
         addPostfix(params[i], displayBuff, value, 1, 1);
-        bool space = false;
-        for (unsigned int c = 0; c < strlen(displayBuff); ++c) {
-            if (displayBuff[c] == '-' && space) ++partsCount;
-            space = displayBuff[c] == ' ';
-        }
-        space = false;
-        unsigned int tmp = 0;
-        while (*displayBuff != '-' || !space) {
-            space = *displayBuff == ' ';
-            ++displayBuff;
-            ++tmp;
-        }
-        space = false;
-        if (tmp > nameLen) nameLen = tmp;
-        tmp = 0;
-        while (*displayBuff != '-' || !space) {
-            space = *displayBuff == ' ';
-            ++displayBuff;
-            ++tmp;
-        }
-        space = false;
-        if (tmp > valueLen) valueLen = tmp;
-        if (partsCount == 3) {
-            tmp = 0;
-            while (*displayBuff != '-' || !space) {
-                space = *displayBuff == ' ';
-                ++displayBuff;
-                ++tmp;
+
+        // Подсчет частей строки и их длин
+        for (char* ptr = displayBuff; *ptr; ++ptr) {
+            if (*ptr == ' ' && *(ptr + 1) == '-') ++partsCount;
+
+            tmpLen++;
+            if (*ptr == '-' && space) {
+                if (partsCount == 1 && tmpLen > nameLen) nameLen = tmpLen;
+                if (partsCount == 2 && tmpLen > valueLen) valueLen = tmpLen;
+                if (partsCount == 3 && tmpLen > labelLen) labelLen = tmpLen;
+                tmpLen = 0;
             }
-            if (tmp > labelLen) labelLen = tmp;
+            space = (*ptr == ' ');
         }
     }
+
     formatingData->nameLen = nameLen;
     formatingData->valueLen = valueLen;
     formatingData->labelLen = labelLen;

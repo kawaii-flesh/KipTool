@@ -19,6 +19,7 @@
 #include "../hid/hid.h"
 #include "../tegraexplorer/tconf.h"
 #include "../utils/utils.h"
+#include "../kiptool/helpers/rw.h"
 
 void TakeScreenshot() {
     static u32 timer = 0;
@@ -67,7 +68,8 @@ void TakeScreenshot() {
     bmp->res_v = 2834;
     bmp->rsvd2 = 0;
 
-    sd_save_to_file(bitmap, file_size, path);
+    // sd_save_to_file(bitmap, file_size, path);
+    writeData(path, 0, bitmap, file_size, 0);
     free(bitmap);
     free(fb);
     free(path);

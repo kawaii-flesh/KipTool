@@ -16,7 +16,6 @@ typedef struct {
 typedef struct {
     const char* name;
     const char* measure;
-    const char* description;
     const unsigned int offset;
     const unsigned int defaultValue;
     const unsigned int limitsCount;

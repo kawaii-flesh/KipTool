@@ -25,7 +25,6 @@ const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSi
 // 2278400 2240000 2201600 2163200 2124800
 const Param eristaEmcMaxClock = {.name = "EMC Max Clock",
                                  .measure = "MHz",
-                                 .description = NULL,
                                  .offset = getOffset(defaultCustTable.eristaEmcMaxClock),
                                  .defaultValue = defaultCustTable.eristaEmcMaxClock,
                                  .limitsCount = 2,

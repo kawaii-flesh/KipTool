@@ -35,7 +35,6 @@ const FixedLimits marikoEmcMaxClockFL = {.min = 1333000, .max = 2733000, .stepSi
 // MANUAL 1333000-2733000 STEP 38.4MHz
 const Param marikoEmcMaxClock = {.name = "EMC Max Clock",
                                  .measure = "MHz",
-                                 .description = NULL,
                                  .offset = getOffset(defaultCustTable.marikoEmcMaxClock),
                                  .defaultValue = defaultCustTable.marikoEmcMaxClock,
                                  .limitsCount = 2,
@@ -50,7 +49,6 @@ const FixedLimits marikoEmcVddqVoltFL = {.min = 300000, .max = 800000, .stepSize
 // MANUAL 300'000-800'000 STEP 10'000
 const Param marikoEmcVddqVolt = {.name = "VDDQ MODE",
                                  .measure = "mV",
-                                 .description = NULL,
                                  .offset = getOffset(defaultCustTable.marikoEmcVddqVolt),
                                  .defaultValue = defaultCustTable.marikoEmcVddqVolt,
                                  .limitsCount = 2,
@@ -68,7 +66,6 @@ const FixedLimits marikoEmcDvbShiftFL = {.min = 600, .max = 1150, .stepSize = 50
 // 600-1150 MANUAL mV
 const Param marikoEmcDvbShift = {.name = "EMB ECO LOGIC",
                                  .measure = NULL,
-                                 .description = NULL,
                                  .offset = getOffset(defaultCustTable.marikoEmcDvbShift),
                                  .defaultValue = defaultCustTable.marikoEmcDvbShift,
                                  .limitsCount = 2,

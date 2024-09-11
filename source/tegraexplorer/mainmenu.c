@@ -20,10 +20,10 @@
 #include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../kiptool/kipWizard/kipWizard.h"
 #include "../kiptool/service/profile.h"
+#include "../sdramConfig/sdramConfig.h"
 #include "../utils/utils.h"
 #include "tconf.h"
 #include "tools.h"
-#include "../sdramTweak/sdramTweak.h"
 
 #define ENTRIES_COUNT 17
 
@@ -36,7 +36,7 @@ enum {
     MainMisc,
     MainActivateTouchMode,
     Main4EKATE,
-    MainSDRAMTweak,
+    MainSDRAMConfig,
     MainProfiles,
     MainExit,
     MainPowerOff,
@@ -56,7 +56,7 @@ MenuEntry_t mainMenuEntries[ENTRIES_COUNT] = {
     [MainMisc] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Misc --"},
     [MainActivateTouchMode] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
     [Main4EKATE] = {.optionUnion = COLORTORGB(COLOR_BLUE)},
-    [MainSDRAMTweak] = {.optionUnion = COLORTORGB(COLOR_BLUE), .name ="Apply sdram.ini"},
+    [MainSDRAMConfig] = {.optionUnion = COLORTORGB(COLOR_BLUE), .name = "SDRAM Config"},
     [MainProfiles] = {.optionUnion = COLORTORGB(COLOR_BLUE) | ALLOCATED_NAME_BIT},
     [MainExit] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .name = "\n-- Exit --"},
     [MainPowerOff] = {.optionUnion = COLORTORGB(COLOR_VIOLET), .name = "Power off"},
@@ -136,7 +136,7 @@ menuPaths mainMenuPaths[] = {[MainBrowseSd] = HandleSD,
                              [MainMountSd] = MountOrUnmountSD,
                              [MainActivateTouchMode] = ActivateTouchMode,
                              [Main4EKATE] = chekate,
-                             [MainSDRAMTweak] = applyNewChanges,
+                             [MainSDRAMConfig] = sdramConfig,
                              [MainProfiles] = profiles,
                              [MainViewCredits] = ViewCredits,
                              [MainRebootAMS] = RebootToAMS,
@@ -161,7 +161,8 @@ void EnterMainMenu() {
         mainMenuEntries[MainRebootUpdate].hide = (!sd_mounted || !FileExists("sd:/bootloader/update.bin") || chekateStageWasChanged);
         mainMenuEntries[MainRebootNormal].hide = chekateStageWasChanged;
         mainMenuEntries[MainRebootRCM].hide = TConf.isMariko;
-        mainMenuEntries[MainSDRAMTweak].hide = (!sd_mounted || !FileExists(SDRAM_TWEAK_KEYS_FILE_PATH) || !FileExists(SDRAM_TWEAK_KV_FILE_PATH) || !TConf.isMariko);
+        mainMenuEntries[MainSDRAMConfig].hide =
+            (!sd_mounted || !FileExists(SDRAM_CONFIG_KEYS_FILE_PATH) || !FileExists(SDRAM_CONFIG_KV_FILE_PATH) || !TConf.isMariko);
         if (sd_mounted) {
             set4ekateStagesOffsets();
             const int stageId = getCurrentStageId();

@@ -22,7 +22,6 @@ const FixedLimits commonCpuBoostClockFL = {.min = 1400000, .max = 3000000, .step
 // eBAMATIC
 const Param commonCpuBoostClock = {.name = "LAUNCH CONTROL TARGET",
                                    .measure = "MHz",
-                                   .description = NULL,
                                    .offset = getOffset(defaultCustTable.commonCpuBoostClock),
                                    .defaultValue = defaultCustTable.commonCpuBoostClock,
                                    .limitsCount = 2,
@@ -42,7 +41,6 @@ const FixedLimits CPUvFL = {.min = 430, .max = 670, .stepSize = 5, .measure = "m
 // ERISTA CPU VOLT MIN = CPUv + 205mV
 const Param CPUv = {.name = "UNDER LOGIC",
                     .measure = NULL,
-                    .description = NULL,
                     .offset = getOffset(defaultCustTable.CPUv),
                     .defaultValue = defaultCustTable.CPUv,
                     .limitsCount = 2,
@@ -60,7 +58,6 @@ const FixedLimits dCPUvFL = {.min = 750, .max = 850, .stepSize = 5, .measure = "
 // MANUAL 750-850
 const Param dCPUv = {.name = "MIN-HIGH LOGIC",
                      .measure = NULL,
-                     .description = NULL,
                      .offset = getOffset(defaultCustTable.dCPUv),
                      .defaultValue = defaultCustTable.dCPUv,
                      .limitsCount = 2,
@@ -87,7 +84,6 @@ const FixedLimits SpeedShiftFL = {.min = 25, .max = 175, .stepSize = 25};
 // Ov << 100 >> uV
 const Param SpeedShift = {.name = "SPEEDSHIFT",
                           .measure = NULL,
-                          .description = NULL,
                           .offset = getOffset(defaultCustTable.SpeedShift),
                           .defaultValue = defaultCustTable.SpeedShift,
                           .limitsCount = 2,

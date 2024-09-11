@@ -13,7 +13,6 @@ const FixedValues eristaGpuUVFV = {.valuesCount = 3,
 // ERISTA = eristaGpuDvfsTable uV - (12500 uV * marikoGpuUV)
 const Param eristaGpuUV = {.name = "ECO LOGIC",
                            .measure = NULL,
-                           .description = NULL,
                            .offset = getOffset(defaultCustTable.marikoGpuUV),
                            .defaultValue = defaultCustTable.marikoGpuUV,
                            .limitsCount = 1,
@@ -25,7 +24,6 @@ const FixedLimits eristaHGPUvFL = {.min = 850, .max = 1300, .stepSize = 50, .mea
 // eBAMATIC
 // ERISTA: 850-1300 MANUAL
 const Param eristaHGPUv = {.name = "OVER MODE",
-                           .description = NULL,
                            .offset = getOffset(defaultCustTable.hGPUv),
                            .defaultValue = defaultCustTable.hGPUv,
                            .limitsCount = 2,
@@ -36,7 +34,6 @@ const FixedLimits eristaGpuDvfsTable192mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable192mhz = {.name = "192mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -46,7 +43,6 @@ const FixedLimits eristaGpuDvfsTable230mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable230mhz = {.name = "230mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[1].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[1].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -56,7 +52,6 @@ const FixedLimits eristaGpuDvfsTable307mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable307mhz = {.name = "307mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[2].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[2].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -66,7 +61,6 @@ const FixedLimits eristaGpuDvfsTable384mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable384mhz = {.name = "384mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[3].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[3].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -76,7 +70,6 @@ const FixedLimits eristaGpuDvfsTable460mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable460mhz = {.name = "460mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[4].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[4].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -86,7 +79,6 @@ const FixedLimits eristaGpuDvfsTable537mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable537mhz = {.name = "537mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[5].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[5].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -96,7 +88,6 @@ const FixedLimits eristaGpuDvfsTable614mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable614mhz = {.name = "614mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[6].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[6].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -106,7 +97,6 @@ const FixedLimits eristaGpuDvfsTable691mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable691mhz = {.name = "691mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[7].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[7].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -116,7 +106,6 @@ const FixedLimits eristaGpuDvfsTable768mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable768mhz = {.name = "768mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[8].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[8].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -126,7 +115,6 @@ const FixedLimits eristaGpuDvfsTable844mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable844mhz = {.name = "844mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[9].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[9].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -136,7 +124,6 @@ const FixedLimits eristaGpuDvfsTable921mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable921mhz = {.name = "921mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[10].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[10].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -146,7 +133,6 @@ const FixedLimits eristaGpuDvfsTable998mhzFL = {.min = defaultCustTable.eristaGp
                                                 .stepSize = 500};
 const Param eristaGpuDvfsTable998mhz = {.name = "998mhz",
                                         .measure = "mV",
-                                        .description = NULL,
                                         .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[11].cvb_pll_param.c0),
                                         .defaultValue = defaultCustTable.eristaGpuDvfsTable[11].cvb_pll_param.c0,
                                         .limitsCount = 1,
@@ -156,7 +142,6 @@ const FixedLimits eristaGpuDvfsTable1075mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1075mhz = {.name = "1075mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[12].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[12].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -166,7 +151,6 @@ const FixedLimits eristaGpuDvfsTable1152mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1152mhz = {.name = "1152mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[13].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[13].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -176,7 +160,6 @@ const FixedLimits eristaGpuDvfsTable1228mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1228mhz = {.name = "1228mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[14].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[14].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -186,7 +169,6 @@ const FixedLimits eristaGpuDvfsTable1305mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1305mhz = {.name = "1305mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[15].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[15].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -196,7 +178,6 @@ const FixedLimits eristaGpuDvfsTable1344mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1344mhz = {.name = "1344mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[16].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[16].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -206,7 +187,6 @@ const FixedLimits eristaGpuDvfsTable1382mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1382mhz = {.name = "1382mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[17].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[17].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -216,7 +196,6 @@ const FixedLimits eristaGpuDvfsTable1420mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1420mhz = {.name = "1420mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[18].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[18].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -226,7 +205,6 @@ const FixedLimits eristaGpuDvfsTable1459mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1459mhz = {.name = "1459mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[19].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[19].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -236,7 +214,6 @@ const FixedLimits eristaGpuDvfsTable1497mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1497mhz = {.name = "1497mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[20].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[20].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -246,7 +223,6 @@ const FixedLimits eristaGpuDvfsTable1536mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1536mhz = {.name = "1536mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[21].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[21].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -256,7 +232,6 @@ const FixedLimits eristaGpuDvfsTable1574mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1574mhz = {.name = "1574mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[22].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[22].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -266,7 +241,6 @@ const FixedLimits eristaGpuDvfsTable1612mhzFL = {.min = defaultCustTable.eristaG
                                                  .stepSize = 500};
 const Param eristaGpuDvfsTable1612mhz = {.name = "1612mhz",
                                          .measure = "mV",
-                                         .description = NULL,
                                          .offset = getOffset(defaultCustTable.eristaGpuDvfsTable[23].cvb_pll_param.c0),
                                          .defaultValue = defaultCustTable.eristaGpuDvfsTable[23].cvb_pll_param.c0,
                                          .limitsCount = 1,
@@ -278,7 +252,6 @@ const Param eristaGpuDvfsTable1612mhz = {.name = "1612mhz",
 // MANUAL = -75000uV << Default >> +75000uV
 const Table eristaGpuDvfsTable = {
     .name = "GPU Volt Table",
-    .description = NULL,
     .baseOffset = getOffset(defaultCustTable.eristaGpuDvfsTable[0].cvb_pll_param.c0),
     .paramsCount = 24,
     .params = {&eristaGpuDvfsTable192mhz,  &eristaGpuDvfsTable230mhz,  &eristaGpuDvfsTable307mhz,  &eristaGpuDvfsTable384mhz,  &eristaGpuDvfsTable460mhz,
