@@ -17,9 +17,9 @@
 #include "../gfx/gfxutils.h"
 #include "../gfx/menu.h"
 #include "../hid/hid.h"
+#include "../kiptool/helpers/rw.h"
 #include "../tegraexplorer/tconf.h"
 #include "../utils/utils.h"
-#include "../kiptool/helpers/rw.h"
 
 void TakeScreenshot() {
     static u32 timer = 0;

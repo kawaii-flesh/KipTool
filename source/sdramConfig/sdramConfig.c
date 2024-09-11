@@ -10,9 +10,9 @@
 
 #include "../helpers/mem.h"
 #include "../hid/hid.h"
+#include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../kiptool/gfx/gfx.h"
 #include "../kiptool/gfx/menus/ktMenu.h"
-#include "../kiptool/gfx/dialogs/confirmationDialog.h"
 #include "../kiptool/helpers/rw.h"
 #include "../sharedValues/sharedValues.h"
 
@@ -139,7 +139,7 @@ void applyNewValues(char *section) {
     for (int fileIndex = 0; fileIndex < PATCH_FILES_COUNT; ++fileIndex) {
         gfx_printf("Patching...: %s\n", patchFilesPaths[fileIndex]);
         for (int i = 0; i < count; ++i) {
-            writeData(patchFilesPaths[fileIndex], sdramTableOffsets[fileIndex] + sizeof(u32) * _newValues[i].offset, &_newValues[i].value, sizeof(u32), 0); 
+            writeData(patchFilesPaths[fileIndex], sdramTableOffsets[fileIndex] + sizeof(u32) * _newValues[i].offset, &_newValues[i].value, sizeof(u32), 0);
         }
     }
     chekateStageWasChanged = true;
