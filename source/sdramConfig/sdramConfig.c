@@ -23,7 +23,7 @@ ValueOffset *_newValues = NULL;
 // "sd:/bootloader/payloads/fusee.bin"
 // "sd:/atmosphere/reboot_payload.bin"
 // "sd:/bootloader/update.bin"
-int sdramTableOffsets[PATCH_FILES_COUNT] = {0x0001804d, 0x00019dc0, 0x0001804d, 0x0001804d};
+int sdramTableOffsets[PATCH_FILES_COUNT] = {0x0189a3, 0x019dca, 0x0189a3, 0x0189a3};
 
 void initSDRAMConfig() {
     if (_keys == NULL) {
