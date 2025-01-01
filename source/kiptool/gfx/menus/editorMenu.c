@@ -128,7 +128,7 @@ void newEditorMenu(const u8* custTable, const Param* param) {
                     menuEntries[menuEntriesIndex].optionUnion = param->defaultValue == i ? COLORTORGB(COLOR_DEFAULT_PARAM) : COLORTORGB(COLOR_CHANGED_PARAM);
                 ++menuEntriesIndex;
             }
-        menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
+        menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_WHITE);
         menuEntries[menuEntriesIndex].type = ETReset;
 
         EditorAdditionalData editorAdditionalData = {.param = param, .currentValue = paramCurrentValue};

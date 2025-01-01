@@ -47,7 +47,13 @@ Input_t* hidRead() {
     u8 left_connected = 0;
     u8 right_connected = 0;
     if (controller != NULL) {
-        if (controller->home && !TConf.isMariko) RebootToPayloadOrRcm();
+        if (controller->home) {
+            if (TConf.isMariko)
+                power_off();
+            else {
+                RebootToPayloadOrRcm();
+            }
+        }
 
         if (controller->cap) TakeScreenshot();
 

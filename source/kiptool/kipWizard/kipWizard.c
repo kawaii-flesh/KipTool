@@ -18,12 +18,14 @@
 #include "../gfx/gfx.h"
 #include "../gfx/menus/ktMenu.h"
 #include "../gfx/menus/paramsMenu.h"
+#include "../gfx/menus/tableMenu.h"
 #include "../helpers/hw.h"
 #include "../helpers/kiprw.h"
 #include "../helpers/param.h"
 #include "../params/common/cpu.h"
 #include "../params/common/general.h"
 #include "../params/common/gpu.h"
+#include "../params/common/meh.h"
 #include "../params/common/ram.h"
 #include "../params/erista/cpu.h"
 #include "../params/erista/gpu.h"
@@ -43,10 +45,17 @@ const Tables* allGPUTables[] = {&cGPUTables, &mGPUTables, &eGPUTables};
 const Params* allRAMParams[] = {&cRAMParams, &mRAMParams, &eRAMParams};
 const Tables* allRAMTables[] = {&cRAMTables, &mRAMTables, &eRAMTables};
 
-void printParams(const CustomizeTable* custTable, char title[], int count, const Params* params[], const Tables* tables[]) {
+void printParams(const CustomizeTable* custTable, char title[], const Params* params[], const Tables* tables[]) {
     gfx_clearscreenKT();
-    newParamsMenu((const u8*)custTable, title, params, count, tables, count);
+    newParamsMenu((const u8*)custTable, title, params, tables);
 }
+
+void printTable(const CustomizeTable* custTable, const Table* table) {
+    gfx_clearscreenKT();
+    newTableMenu((const u8*)custTable, table);
+}
+
+enum MenuElements { TITLE = 0, CPU, GPU, RAM, PMEH, SMEH, NEW_LINE, APPLY_CHANGES, DASHBOARD, RESET_ALL };
 
 int kipWizard(char* path, FSEntry_t entry) {
     createDirIfNotExist(KT_DIR);
@@ -89,13 +98,13 @@ int kipWizard(char* path, FSEntry_t entry) {
     unsigned int startIndex = 0;
     if (kipVersion == KT_CUST_VER) {
         const enum Platform platform = getHWType();
-        int count = getHWType() == COMMON ? 3 : 2;
-        const Params* CPUParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams};
-        const Tables* CPUTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables};
-        const Params* GPUParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams};
-        const Tables* GPUTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables};
-        const Params* RAMParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams};
-        const Tables* RAMTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables};
+        const Params* CPUParams[] = {&cCPUParams, platform == MARIKO ? &mCPUParams : &eCPUParams, NULL};
+        const Tables* CPUTables[] = {&cCPUTables, platform == MARIKO ? &mCPUTables : &eCPUTables, NULL};
+        const Params* GPUParams[] = {&cGPUParams, platform == MARIKO ? &mGPUParams : &eGPUParams, NULL};
+        const Tables* GPUTables[] = {&cGPUTables, platform == MARIKO ? &mGPUTables : &eGPUTables, NULL};
+        const Params* RAMParams[] = {&cRAMParams, platform == MARIKO ? &mRAMParams : &eRAMParams, NULL};
+        const Tables* RAMTables[] = {&cRAMTables, platform == MARIKO ? &mRAMTables : &eRAMTables, NULL};
+        const Tables* MEHTables[] = {&cMEHTables, NULL};
 
         const unsigned int custTableSize = sizeof(CustomizeTable);
         CustomizeTable* custTable = malloc(custTableSize);
@@ -104,17 +113,20 @@ int kipWizard(char* path, FSEntry_t entry) {
         f_read(&kipFile, custTable, custTableSize, &bytesReaded);
         if (checkVersionAndMagicFromBuffer(custTable)) {
             char* displayBuff = malloc(1024);
-            MenuEntry entries[] = {{.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = "-- Kip Wizard --"},
-                                   {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ETLabel, .entry = "CPU Params"},
-                                   {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ETLabel, .entry = "GPU Params"},
-                                   {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ETLabel, .entry = "RAM Params"},
-                                   {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = ""},
-                                   {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ETLabel, .entry = "Apply changes"},
-                                   {.optionUnion = COLORTORGB(COLOR_YELLOW), .type = ETLabel, .entry = "Dashboard"},
-                                   {.optionUnion = COLORTORGB(COLOR_GREY), .type = ETLabel, .entry = "Reset all params to default values"}};
+            MenuEntry entries[] = {[TITLE] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = "-- Kip Wizard --"},
+                                   [CPU] = {.optionUnion = COLORTORGB(COLOR_GREEN), .type = ETLabel, .entry = "CPU Params"},
+                                   [GPU] = {.optionUnion = COLORTORGB(COLOR_ORANGE), .type = ETLabel, .entry = "GPU Params"},
+                                   [RAM] = {.optionUnion = COLORTORGB(COLOR_BLUE), .type = ETLabel, .entry = "RAM Params"},
+                                   [PMEH] = {.optionUnion = COLORTORGB(COLOR_YELLOW), .type = ETLabel, .entry = "pMeh Table"},
+                                   [SMEH] = {.optionUnion = COLORTORGB(COLOR_YELLOW), .type = ETLabel, .entry = "sMeh Table"},
+                                   [NEW_LINE] = {.optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT, .type = ETLabel, .entry = ""},
+                                   [APPLY_CHANGES] = {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ETLabel, .entry = "Apply changes"},
+                                   [DASHBOARD] = {.optionUnion = COLORTORGB(COLOR_YELLOW), .type = ETLabel, .entry = "Dashboard"},
+                                   [RESET_ALL] = {.optionUnion = COLORTORGB(COLOR_WHITE), .type = ETLabel, .entry = "Reset all params to default values"}};
             while (1) {
                 gfx_clearscreenKT();
-                MenuResult menuResult = newMenuKT(entries, 8, startIndex, JoyA, NULL, printEntry);
+                entries[APPLY_CHANGES].optionUnion = isChangesApplied() ? (COLORTORGB(COLOR_GREY) | SKIPBIT) : COLORTORGB(COLOR_WHITE);
+                MenuResult menuResult = newMenuKT(entries, 10, startIndex, JoyA, NULL, printEntry);
                 startIndex = menuResult.index;
                 if (menuResult.buttons & JoyB) {
                     if (isChangesApplied()) break;
@@ -126,29 +138,29 @@ int kipWizard(char* path, FSEntry_t entry) {
                     }
                     continue;
                 }
-                if (menuResult.selectableIndex == 3) {
+                if (menuResult.index == APPLY_CHANGES) {
                     const char* message[] = {"Do you want to apply changes?", "This will change your kip file", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         writeData(filePath, baseOffset, custTable, sizeof(CustomizeTable), 0);
                         gfx_printBottomInfoKT("[KIP File] Changes have been applied");
                         setIsChangesApplied(1);
                     }
-                } else if (menuResult.selectableIndex == 4) {
+                } else if (menuResult.index == DASHBOARD) {
                     gfx_clearscreenKT();
-                    showDashboard(custTable, count, CPUParams, CPUTables, GPUParams, GPUTables, RAMParams, RAMTables);
-                } else if (menuResult.selectableIndex == 5) {
+                    showDashboard(custTable, CPUParams, CPUTables, GPUParams, GPUTables, RAMParams, RAMTables, MEHTables);
+                } else if (menuResult.index == RESET_ALL) {
                     const char* message[] = {"Do you want to reset all params?", NULL};
                     if (confirmationDialog(message, ENO) == EYES) {
                         memcpy((u8*)custTable, (const u8*)&defaultCustTable, sizeof(CustomizeTable));
                         gfx_printBottomInfoKT("[Session] All params have been reset");
                         setIsChangesApplied(0);
                     }
-                } else if (menuResult.selectableIndex <= 2) {
+                } else if (menuResult.index <= RAM) {
                     char* title;
                     const Params** params;
                     const Tables** tables;
-                    switch (menuResult.selectableIndex) {
-                        case 0:
+                    switch (menuResult.index) {
+                        case CPU:
                             title = "CPU";
                             if (platform == COMMON) {
                                 params = allCPUParams;
@@ -158,7 +170,7 @@ int kipWizard(char* path, FSEntry_t entry) {
                                 tables = CPUTables;
                             }
                             break;
-                        case 1:
+                        case GPU:
                             title = "GPU";
                             if (platform == COMMON) {
                                 params = allGPUParams;
@@ -168,7 +180,7 @@ int kipWizard(char* path, FSEntry_t entry) {
                                 tables = GPUTables;
                             }
                             break;
-                        case 2:
+                        case RAM:
                             title = "RAM";
                             if (platform == COMMON) {
                                 params = allRAMParams;
@@ -179,7 +191,18 @@ int kipWizard(char* path, FSEntry_t entry) {
                             }
                             break;
                     }
-                    printParams(custTable, title, count, params, tables);
+                    printParams(custTable, title, params, tables);
+                } else if (menuResult.index > RAM && menuResult.index <= SMEH) {
+                    const Table* table;
+                    switch (menuResult.index) {
+                        case PMEH:
+                            table = &pMehTable;
+                            break;
+                        case SMEH:
+                            table = &sMehTable;
+                            break;
+                    }
+                    printTable(custTable, table);
                 }
             }
             free(displayBuff);
@@ -198,6 +221,5 @@ int kipWizard(char* path, FSEntry_t entry) {
         if (!(input->buttons)) input = hidWait();
         if (input->buttons & (BtnPow | JoyB)) break;
     }
-    free(filePath);
     return 0;
 }
