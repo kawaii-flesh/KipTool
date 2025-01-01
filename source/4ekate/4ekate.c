@@ -37,7 +37,7 @@ const CHEKATEParams stages[CHEKATE_STAGES_COUNT] = {
 const char* stagesTitles[CHEKATE_STAGES_COUNT] = {"4EKATE Stage - Default", "4EKATE Stage - ST1", "4EKATE Stage - ST2"};
 
 const char* chifixTitle = "4EKATE - 4IFIX";
-const u8 chifixPattern[4] = {0x8a, 0x1e, 0x02, 0x40};
+const u8 chifixPattern[4] = {0x46, 0x38, 0x02, 0x40};
 
 int getParamsOffset(const char filePath[], int start) {
     FIL file;

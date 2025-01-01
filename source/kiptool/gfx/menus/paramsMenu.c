@@ -41,12 +41,11 @@ void printParamEntry(MenuEntry* entry, u32 maxLen, u8 highlighted, u32 bg, Print
     gfx_putc('\n');
 }
 
-void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const unsigned int paramsArraysCount, const Tables* tables[],
-                   unsigned int tablesArraysCount) {
+void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* params[], const Tables* tables[]) {
     unsigned int totalEntriesCount = 2;
     unsigned int startIndex = 0;
-    for (unsigned int i = 0; i < paramsArraysCount; ++i) totalEntriesCount += params[i]->count;
-    for (unsigned int i = 0; i < tablesArraysCount; ++i) totalEntriesCount += tables[i]->count;
+    for (unsigned int i = 0; params[i] != NULL; ++i) totalEntriesCount += params[i]->count;
+    for (unsigned int i = 0; tables[i] != NULL; ++i) totalEntriesCount += tables[i]->count;
     MenuEntry* menuEntries = calloc(sizeof(MenuEntry), totalEntriesCount);
     menuEntries[0].optionUnion = COLORTORGB(COLOR_WHITE) | SKIPBIT;
     menuEntries[0].type = ETLabel;
@@ -54,7 +53,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
     while (1) {
         FormatingData formatingData = {0, 0, 0};
         unsigned int menuEntriesIndex = 1;
-        for (unsigned int paramArrayIndex = 0; paramArrayIndex < paramsArraysCount; ++paramArrayIndex) {
+        for (unsigned int paramArrayIndex = 0; params[paramArrayIndex] != NULL; ++paramArrayIndex) {
             for (unsigned int paramI = 0; paramI < params[paramArrayIndex]->count; ++paramI) {
                 const Param* param = params[paramArrayIndex]->params[paramI];
                 menuEntries[menuEntriesIndex].optionUnion =
@@ -69,7 +68,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
             if (tmp.valueLen > formatingData.valueLen) formatingData.valueLen = tmp.valueLen;
             if (tmp.labelLen > formatingData.labelLen) formatingData.labelLen = tmp.labelLen;
         }
-        for (unsigned int tableArrayIndex = 0; tableArrayIndex < tablesArraysCount; ++tableArrayIndex) {
+        for (unsigned int tableArrayIndex = 0; tables[tableArrayIndex] != NULL; ++tableArrayIndex) {
             for (unsigned int tableI = 0; tableI < tables[tableArrayIndex]->count; ++tableI) {
                 menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_YELLOW);
                 menuEntries[menuEntriesIndex].type = ETTable;
@@ -77,7 +76,7 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
                 ++menuEntriesIndex;
             }
         }
-        menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
+        menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_WHITE);
         menuEntries[menuEntriesIndex].type = ETReset;
         menuEntries[menuEntriesIndex].entry = "Reset all values for this category";
         PrintParamAdditionalData printParamAdditionalData = {.custTable = custTable, .formatingData = &formatingData};
@@ -121,12 +120,12 @@ void newParamsMenu(const u8* custTable, const char* sectionTitle, const Params* 
         } else if (selectedEntry.type == ETReset) {
             const char* message[] = {"Do you want to reset all params in this category?", NULL};
             if (confirmationDialog(message, ENO) == EYES) {
-                for (unsigned int i = 0; i < paramsArraysCount; ++i) {
+                for (unsigned int i = 0; params[i] != NULL; ++i) {
                     for (unsigned int j = 0; j < params[i]->count; ++j) {
                         setParamValueWithoutSaveSession(custTable, params[i]->params[j], params[i]->params[j]->defaultValue);
                     }
                 }
-                for (unsigned int i = 0; i < tablesArraysCount; ++i) {
+                for (unsigned int i = 0; tables[i] != NULL; ++i) {
                     for (unsigned int j = 0; j < tables[i]->count; ++j) {
                         for (unsigned int k = 0; k < tables[i]->tables[j]->paramsCount; ++k)
                             setParamValueWithoutSaveSession(custTable, tables[i]->tables[j]->params[k], tables[i]->tables[j]->params[k]->defaultValue);

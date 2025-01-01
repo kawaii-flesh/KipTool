@@ -54,8 +54,6 @@ void setCurrentProfile(const char profileName[]) {
                                  NULL};
     if (confirmationDialog(fileMessage, ENO) != EYES) return;
 
-    const char* currentProfile = getCurrentProfileName();
-
     char* newProfilePath = malloc(256);
     strcpy(newProfilePath, KT_PROFILES_DIR);
     strcat(newProfilePath, "/");

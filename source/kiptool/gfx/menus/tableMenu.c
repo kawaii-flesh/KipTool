@@ -29,7 +29,7 @@ void newTableMenu(const u8* custTable, const Table* table) {
         menuEntries[menuEntriesIndex].entry = param;
         ++menuEntriesIndex;
     }
-    menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_GREY);
+    menuEntries[menuEntriesIndex].optionUnion = COLORTORGB(COLOR_WHITE);
     menuEntries[menuEntriesIndex].type = ETReset;
     menuEntries[menuEntriesIndex].entry = "Reset the table to default values";
     unsigned int startIndex = 0;

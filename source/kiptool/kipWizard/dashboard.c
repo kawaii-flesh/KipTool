@@ -17,8 +17,8 @@
 #include "../helpers/param.h"
 
 typedef struct {
-    int lastX;
-    int lastY;
+    u32 lastX;
+    u32 lastY;
 } ShowResult;
 
 void printHWInfo() {
@@ -158,14 +158,14 @@ ShowResult showParams(const CustomizeTable* cust, int paramsCount, const Param* 
     return result;
 }
 
-ShowResult showTables(const CustomizeTable* cust, const Tables* tables[], int color, int count, int maxLengthInit, int x, int y) {
+ShowResult showTables(const CustomizeTable* cust, const Tables* tables[], int color, int maxLengthInit, int x, int y) {
     ShowResult result = {0, 0};
     int tmpX = x;
     int tmpY = y;
     int lineLength = 20;
     int fontSize = gfx_con.fntsz;
     gfx_con_setpos(tmpX, tmpY);
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; tables[i] != NULL; ++i) {
         for (int j = 0; j < tables[i]->count; ++j) {
             const Table* table = tables[i]->tables[j];
             gfx_printf("%k%s", color, table->name);
@@ -186,12 +186,12 @@ ShowResult showTables(const CustomizeTable* cust, const Tables* tables[], int co
     return result;
 }
 
-ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int count, int x, int y, int maxLength) {
+ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int x, int y, int maxLength) {
     ShowResult result = {0, 0};
     int tmpX = x;
     int tmpY = y;
     int fontSize = gfx_con.fntsz;
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; tables[i] != NULL; ++i) {
         for (int j = 0; j < tables[i]->count; ++j) {
             const Table* table = tables[i]->tables[j];
             gfx_con_setpos(tmpX, tmpY);
@@ -249,8 +249,8 @@ ShowResult showTablesH(const CustomizeTable* cust, const Tables* tables[], int c
     return result;
 }
 
-void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParams[], const Tables* cpuTables[], const Params* gpuParams[],
-                   const Tables* gpuTables[], const Params* ramParams[], const Tables* ramTables[]) {
+void showDashboard(const CustomizeTable* cust, const Params* cpuParams[], const Tables* cpuTables[], const Params* gpuParams[], const Tables* gpuTables[],
+                   const Params* ramParams[], const Tables* ramTables[], const Tables* mehTables[]) {
     if (getHWType() == COMMON) return;
     const int maxLengthInit = 27;
     int fontSize = gfx_con.fntsz;
@@ -267,7 +267,7 @@ void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParam
     for (int i = 0; i < lineLenth; ++i) gfx_printf("=");
     y += fontSize;
     gfx_con_setpos(x, y);
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; cpuParams[i] != NULL; ++i) {
         result = showParams(cust, cpuParams[i]->count, cpuParams[i]->params, maxLengthInit, x, y);
         y = result.lastY;
     }
@@ -282,7 +282,7 @@ void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParam
     for (int i = 0; i < lineLenth; ++i) gfx_printf("=");
     y += fontSize;
     gfx_con_setpos(x, y);
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; gpuParams[i] != NULL; ++i) {
         result = showParams(cust, gpuParams[i]->count, gpuParams[i]->params, maxLengthInit, x, y);
         y = result.lastY;
     }
@@ -297,7 +297,7 @@ void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParam
     for (int i = 0; i < lineLenth; ++i) gfx_printf("=");
     y += fontSize;
     gfx_con_setpos(x, y);
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; ramParams[i] != NULL; ++i) {
         result = showParams(cust, ramParams[i]->count, ramParams[i]->params, maxLengthInit, x, y);
         y = result.lastY;
     }
@@ -308,9 +308,14 @@ void showDashboard(const CustomizeTable* cust, int count, const Params* cpuParam
 
     y = initY;
     x = (maxLengthInit + 26 + (getHWType() == ERISTA ? 6 : 0)) * fontSize;
-    showTables(cust, gpuTables, COLORTORGB(COLOR_ORANGE), count, 10, x, y);
+    showTables(cust, gpuTables, COLORTORGB(COLOR_ORANGE), 10, x, y);
 
-    showTablesH(cust, ramTables, count, initX, result.lastY + 2 * fontSize, maxLengthInit);
+    showTablesH(cust, ramTables, initX, result.lastY + 2 * fontSize, maxLengthInit);
+    gfx_con_getpos(&result.lastX, &result.lastY);
+
+    x = initX;
+    y = result.lastY + fontSize * 2;
+    showTablesH(cust, mehTables, initX, result.lastY + 2 * fontSize, maxLengthInit);
     gfx_con_getpos(&result.lastX, &result.lastY);
 
     x = initX;
