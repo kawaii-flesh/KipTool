@@ -26,6 +26,7 @@ bool canUpdate() {
     return 1;
 }
 
+const u16 stickOffset = 500;
 Input_t* hidRead() {
     if (*isTouchEnabled()) {
         Input_t tmp = {0};
@@ -71,29 +72,29 @@ Input_t* hidRead() {
     if (left_connected) {
         // Hoag has inverted Y axis (only the left stick O_o)
         if (controller->sio_mode) controller->lstick_y *= -1;
-        if ((LbaseX == 0 || LbaseY == 0) || controller->l3) {
+        if ((LbaseX == 0 || LbaseY == 0) || controller->l3 || controller->zl) {
             LbaseX = controller->lstick_x;
             LbaseY = controller->lstick_y;
         }
-        inputs.up = (controller->up || inputs.volp || (controller->lstick_y > LbaseY + 500)) ? 1 : 0;
-        inputs.down = (controller->down || inputs.volm || (controller->lstick_y < LbaseY - 500)) ? 1 : 0;
-        inputs.left = (controller->left || (controller->lstick_x < LbaseX - 500)) ? 1 : 0;
-        inputs.right = (controller->right || (controller->lstick_x > LbaseX + 500)) ? 1 : 0;
+        inputs.up = (controller->up || inputs.volp || (controller->lstick_y > LbaseY + stickOffset)) ? 1 : 0;
+        inputs.down = (controller->down || inputs.volm || (controller->lstick_y < LbaseY - stickOffset)) ? 1 : 0;
+        inputs.left = (controller->left || (controller->lstick_x < LbaseX - stickOffset)) ? 1 : 0;
+        inputs.right = (controller->right || (controller->lstick_x > LbaseX + stickOffset)) ? 1 : 0;
     } else {
         inputs.up = inputs.volp;
         inputs.down = inputs.volm;
     }
 
     if (right_connected) {
-        if ((RbaseX == 0 || RbaseY == 0) || controller->r3) {
+        if ((RbaseX == 0 || RbaseY == 0) || controller->r3 || controller->zr) {
             RbaseX = controller->rstick_x;
             RbaseY = controller->rstick_y;
         }
 
-        inputs.rUp = (controller->rstick_y > RbaseY + 500) ? 1 : 0;
-        inputs.rDown = (controller->rstick_y < RbaseY - 500) ? 1 : 0;
-        inputs.rLeft = (controller->rstick_x < RbaseX - 500) ? 1 : 0;
-        inputs.rRight = (controller->rstick_x > RbaseX + 500) ? 1 : 0;
+        inputs.rUp = (controller->rstick_y > RbaseY + stickOffset) ? 1 : 0;
+        inputs.rDown = (controller->rstick_y < RbaseY - stickOffset) ? 1 : 0;
+        inputs.rLeft = (controller->rstick_x < RbaseX - stickOffset) ? 1 : 0;
+        inputs.rRight = (controller->rstick_x > RbaseX + stickOffset) ? 1 : 0;
     }
     inputs.a = inputs.a || inputs.power;
     inputs.b = inputs.b || (inputs.volp && inputs.volm);
