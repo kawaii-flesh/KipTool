@@ -4,8 +4,9 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues marikoEmcMaxClockFV = {.valuesCount = 11,
-                                         .values = {{.value = 1600000, .label = "S_LOH"},
+const FixedValues marikoEmcMaxClockFV = {.valuesCount = 12,
+                                         .values = {{.value = 0, .label = "eBAMATIC", .measure = ""},
+                                                    {.value = 1600000, .label = "S_LOH"},
                                                     {.value = 1734400, .label = "E_ST3"},
                                                     {.value = 1868800, .label = "E_ST2"},
                                                     {.value = 1996800, .label = "E_ST1"},
@@ -33,6 +34,7 @@ const FixedLimits marikoEmcMaxClockFL = {.min = 1333000, .max = 2733000, .stepSi
 // SAMSUNG B eBAL 4 < 3.9GHz
 // HYNIX CJR/DJR eBAL 4 < 3.8GHz
 // MANUAL 1333000-2733000 STEP 38.4MHz
+// eBAMATIC = auto (Samsung B-DIE → D_ST3, Hynix NME → S_ST1, others → S_ST2)
 const Param marikoEmcMaxClock = {.name = "EMC Max Clock",
                                  .measure = "MHz",
                                  .description = NULL,

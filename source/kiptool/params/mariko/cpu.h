@@ -50,7 +50,7 @@ const Param marikoCpuMaxVolt = {.name = "VMAX MODE",
                                 .limits = {{.type = EFixedValues, .values = &marikoCpuMaxVoltFV}, {.type = EFixedLimits, .values = &marikoCpuMaxVoltFL}}};
 
 const FixedValues marikoCpuUVFV = {.valuesCount = 7,
-                                   .values = {{.value = 0, .label = "ECO ALT-MODE"},
+                                   .values = {{.value = 0, .label = "eBAMATIC"},
                                               {.value = 1, .label = "ECO ST1"},
                                               {.value = 2},
                                               {.value = 3, .label = "ECO ST2"},

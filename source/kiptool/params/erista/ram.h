@@ -4,8 +4,9 @@
 #include "../param.h"
 #include "../table.h"
 
-const FixedValues eristaEmcMaxClockFV = {.valuesCount = 7,
-                                         .values = {{.value = 1600000, .label = "S-LOH"},
+const FixedValues eristaEmcMaxClockFV = {.valuesCount = 8,
+                                         .values = {{.value = 0, .label = "eBAMATIC", .measure = ""},
+                                                    {.value = 1600000, .label = "S-LOH"},
                                                     {.value = 1734400, .label = "E ST2"},
                                                     {.value = 1868800, .label = "E ST1"},
                                                     {.value = 1996800, .label = "D ST1"},
@@ -22,7 +23,7 @@ const FixedLimits eristaEmcMaxClockFL = {.min = 1600000, .max = 2366000, .stepSi
 // S ST1 2266 / 2265600
 // L-C4C 2366 / 2361600
 // MANUAL 1600000-2366000 STEP 38.4MHz
-// 2278400 2240000 2201600 2163200 2124800
+// eBAMATIC = auto (Samsung MGCH B-DIE → D_ST1 1996.8, others → D_ST2 2124.8)
 const Param eristaEmcMaxClock = {.name = "EMC Max Clock",
                                  .measure = "MHz",
                                  .description = NULL,

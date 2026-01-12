@@ -203,14 +203,24 @@ const Param pMeh21 = {.name = "pMeh 21 gVMINDick",
                       .limitsCount = 1,
                       .limits = {{.type = EFixedRange, .values = &pMeh21FR}}};
 
+const FixedRange pMeh22FR = {.start = 0, .end = 1};
+// 22 isKefir 0-1
+const Param pMeh22 = {.name = "pMeh 22 isKefir",
+                      .measure = NULL,
+                      .description = NULL,
+                      .offset = getOffset(defaultCustTable.pMEH[22]),
+                      .defaultValue = defaultCustTable.pMEH[22],
+                      .limitsCount = 1,
+                      .limits = {{.type = EFixedRange, .values = &pMeh22FR}}};
+
 // DEF =  0  2  0  2  2  0  0  0  0  0  0  0  1  0  0  0  0  0  0  1  4  2  >> RESERVED >>
 // NUM =  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 const Table pMehTable = {.name = "pMeh Table",
                          .description = NULL,
                          .baseOffset = getOffset(defaultCustTable.pMEH),
-                         .paramsCount = 22,  // 22-23 RESERVED
+                         .paramsCount = 23,  // 23 RESERVED
                          .params = {&pMeh0,  &pMeh1,  &pMeh2,  &pMeh3,  &pMeh4,  &pMeh5,  &pMeh6,  &pMeh7,  &pMeh8,  &pMeh9,  &pMeh10,
-                                    &pMeh11, &pMeh12, &pMeh13, &pMeh14, &pMeh15, &pMeh16, &pMeh17, &pMeh18, &pMeh19, &pMeh20, &pMeh21}};
+                                    &pMeh11, &pMeh12, &pMeh13, &pMeh14, &pMeh15, &pMeh16, &pMeh17, &pMeh18, &pMeh19, &pMeh20, &pMeh21, &pMeh22}};
 
 const FixedRange sMeh0FR = {.start = 1, .end = 9};
 // 0 ARB-Boost 1-9
